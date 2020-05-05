@@ -17,12 +17,12 @@
       <div >
         <div style="float:left;padding-right:20px;">
         <br>
-          <img style="hight:70; width:70;" src="{{public_path('')}}\assets\img\logo\bbl.png" />
+          <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" />
         </div>
         <div style="padding-top:10">
           <p> <span style="font-size:14pt;font-style:bold">SMK BAABUL KAMIL</span>
           <br> <span style="font-size:12pt">Terakreditasi 'A' | Program Keahlian : Multimedia, Adm Perkantoran & Perawatan</span>
-          <br> <span style="font-size:10pt">Alamat:Jl. Cikuda No. 08 Jatinanor, Tlp : (022) 7797312 / 085294124866</span>
+          <br> <span style="font-size:10pt">Alamat:Jl. Cikuda No. 08 Jatinangor, Tlp : (022) 7797312 / 085294124866</span>
           <br> <span style="font-size:10pt">Email: <span style="color:blue; font-style: italic;"> smkbaabulkamil_jatinangor@yahoo.com </span></span>
           | <span style="font-size:10pt">Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span>
           </p>
@@ -149,7 +149,7 @@
         <td width='50%'>
           <table style="text-align:center" width='100%'>
             <tr>
-              <td>Sumedang, {{$data['tanggal']}}</td>
+              <td>Jatinangor, {{$data['tanggal']}}</td>
             </tr>
             <tr>
             <td>Bendahara Sekolah</td>
@@ -161,7 +161,7 @@
     <br>
     <table width='100%'>
       <tr>
-        <td width='65%'>
+        <td width='50%'>
           <table width='100%'>
             <tr>
               <td>Catatan</td>
@@ -170,11 +170,11 @@
               <td>- Disimpan sebagai pembayaran bukti yang SAH</td>
             </tr>
             <tr style='font-size:14px'>
-              <td>- Uang yang dibawar tidak dapat diminta kembali</td>
+              <td>- Uang yang dibayar tidak dapat diminta kembali</td>
             </tr>
           </table>
         </td>
-        <td width='35%'>
+        <td width='50%'>
           <table width='100%'>
             <tr><td><br></td></tr>
             <tr><td><br></td></tr>

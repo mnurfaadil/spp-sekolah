@@ -33,7 +33,7 @@ $total_debit = 0;
     <tr>
         <td>{{$no++}}</td>
         <td style="text-align:left;">{{$data->created_at}}</td>
-        <td style="text-align:left;">{{$data->description}}</td>
+        <td style="text-align:left;word-wrap:break-word;">{{$data->description}}</td>
         <td style="text-align:right">{{number_format($data->debit,0,',','.')}}</td>
         <td style="text-align:right">{{number_format($data->kredit,0,',','.')}}</td>
         <td style="text-align:right">{{number_format($saldo,0,',','.')}}</td>

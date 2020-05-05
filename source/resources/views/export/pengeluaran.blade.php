@@ -29,8 +29,8 @@ $total = 0;
         <td>
             <img style="height:70; width:70;" src="C:\Users\Fadil\Documents\programming\GitRobi\spp-sekolah-server\nota\3aa7619c-8d0b-11ea-9aa2-025b510638641588488995_photo6102464760688781872.jpg" />
         </td>
-        <td style="text-align:left;">{{$data->created_at}} </td>
-        <td style="text-align:left;word-wrap:break-word;">{{$data->description}} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</td>
+        <td style="text-align:left;">{{$data->created_at}} {{}}</td>
+        <td style="text-align:left;word-wrap:break-word;">{{$data->description}}</td>
         <td style="text-align:right">{{number_format($data->kredit,0,',','.')}}</td>
     </tr>
 @endforeach

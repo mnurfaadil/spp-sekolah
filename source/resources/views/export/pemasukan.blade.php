@@ -31,7 +31,7 @@ $total = 0;
             <img style="height:70; width:70;" src="{{public_path('')}}\assets\img\logo\bbl.png" alt="Foto Bukti"/>
         </td>
         <td style="text-align:left;">{{$data->created_at}} </td>
-        <td style="text-align:left;">{{$data->description}}</td>
+        <td style="text-align:left;word-wrap:break-word;">{{$data->description}}</td>
         <td style="text-align:right">{{number_format($data->debit,0,',','.')}}</td>
     </tr>
 @endforeach
