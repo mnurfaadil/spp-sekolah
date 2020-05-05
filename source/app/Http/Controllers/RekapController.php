@@ -83,21 +83,63 @@ class RekapController extends Controller
     {
         $kls = $request->kls;
         $jur = $request->id_jur;
+        $akt = $request->akt;
 
-        if($kls=='' && $jur!=''){
-            $students = Student::where('major_id',$jur)->get();
-        }elseif ($jur=='' && $kls!='') {
-            $students = Student::where('kelas',$kls)->get();
-        }elseif ($jur=='' && $kls=='') {
-            $students = Student::all();
+        if($kls=='' && $jur!='' && $akt==''){
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
+                ->where('students.major_id',$jur)->get();
+        }elseif ($jur=='' && $kls!='' && $akt=='') {
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
+                ->where('students.kelas',$kls)->get();
+        }elseif ($jur=='' && $kls=='' && $akt!='') {
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
+                ->where('students.angkatan_id',$akt)->get();
+        }elseif ($jur!='' && $kls!='' && $akt=='') {
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
+                ->where('students.kelas',$kls)
+                ->where('students.major_id',$jur)
+                ->get();
+        }elseif ($jur=='' && $kls!='' && $akt!='') {
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
+                ->where('students.angkatan_id',$akt)
+                ->where('students.kelas',$kls)
+                ->get();
+        }elseif ($jur!='' && $kls=='' && $akt!='') {
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
+                ->where('students.angkatan_id',$akt)
+                ->where('students.major_id',$jur)
+                ->get();
+        }elseif ($jur!='' && $kls!='' && $akt!='') {
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
+                ->where('students.angkatan_id',$akt)
+                ->where('students.major_id',$jur)
+                ->where('students.kelas',$kls)
+                ->get();
         }else{
-            $students = Student::where('kelas',$kls)
-                ->where('major_id',$jur)
+            $students = DB::table('students')
+                ->select('students.*','angkatans.*')
+                ->join('angkatans','students.angkatan_id','=','angkatans.id')
                 ->get();
         }
+
         $no = 1;
         $title = "Data Siswa";
-        $pdf = PDF::loadView('export.siswa',compact('students','no','title','kls','jur'));
+        $majors = Major::where('id',$jur)->first();
+        $pdf = PDF::loadView('export.siswa',compact('students','no','title','kls','jur','majors'));
         return $pdf->stream();
     }
 

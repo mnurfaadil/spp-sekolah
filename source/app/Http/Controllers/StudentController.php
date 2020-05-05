@@ -44,24 +44,40 @@ class StudentController extends Controller
 
     public function filter(Request $request)
     {
-        if($request->kelas=='' && $request->jurusan!=''){
+        if($request->kelas=='' && $request->jurusan!='' && $request->angkatan==''){
             $students = Student::where('major_id',$request->jurusan)->get();
-        }elseif ($request->jurusan=='' && $request->kelas!='') {
+        }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan=='') {
             $students = Student::where('kelas',$request->kelas)->get();
-        }elseif ($request->jurusan=='' && $request->kelas=='') {
-            $students = Student::all();
-        }else{
+        }elseif ($request->jurusan=='' && $request->kelas=='' && $request->angkatan!='') {
+            $students = Student::where('angkatan_id',$request->angkatan)->get();
+        }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan=='') {
             $students = Student::where('kelas',$request->kelas)
                 ->where('major_id',$request->jurusan)
                 ->get();
+        }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan!='') {
+            $students = Student::where('angkatan_id',$request->angkatan)
+                ->where('kelas',$request->kelas)
+                ->get();
+        }elseif ($request->jurusan!='' && $request->kelas=='' && $request->angkatan!='') {
+            $students = Student::where('angkatan_id',$request->angkatan)
+                ->where('major_id',$request->jurusan)
+                ->get();
+        }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan!='') {
+            $students = Student::where('angkatan_id',$request->angkatan)
+                ->where('major_id',$request->jurusan)
+                ->where('kelas',$request->kelas)
+                ->get();
+        }else{
+            $students = Student::all();
         }
         $no=1;
         $kls=$request->kelas;
         $fil= $request->jurusan;
+        $fil2=$request->angkatan;
         $jml = Major::count();
         $majors = Major::all();
         $angkatan = Angkatan::all();
-        return view('master.student.index', compact('students','no','jml','majors','fil','kls','angkatan'));
+        return view('master.student.index', compact('students','no','jml','majors','fil','fil2','kls','angkatan'));
     }
 
     /**

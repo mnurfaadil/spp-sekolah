@@ -65,7 +65,7 @@
             <tr>
               <td>Jurusan</td>
               <td>:</td>
-              <td style='text-align:left'>{{$students[0]->major->nama}}</td>
+              <td style='text-align:left'>{{$majors->nama}}</td>
             </tr>
           @elseif ($jur=='' && $kls!='') {
             <tr>
@@ -82,7 +82,7 @@
             <tr>
               <td>Jurusan</td>
               <td>:</td>
-              <td style='text-align:left'>{{$students[0]->major->nama}}</td>
+              <td style='text-align:left'>{{$majors->nama}}</td>
             </tr>
           @endif
         </table>
@@ -92,7 +92,8 @@
             <th>No</th>
             <th>NIS</th>
             <th>Nama</th>
-            <th>Jenis Kelamin</th>
+            <th>L/P</th>
+            <th>Angkatan</th>
             <th>No Telp</th>
             <th>Alamat</th>
           </tr>
@@ -102,6 +103,7 @@
             <td>{{$data->nis}}</td>
             <td>{{$data->nama}}</td>
             <td>{{$data->jenis_kelamin}}</td>
+            <td>{{$data->angkatan}} - {{$data->tahun}}</td>
             <td>{{$data->phone}}</td>
             <td>{{$data->alamat}}</td>
           </tr>
