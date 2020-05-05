@@ -8,14 +8,77 @@
         <div class="left-custom-menu-adp-wrap comment-scrollbar">
             <nav class="sidebar-nav left-sidebar-menu-pro">
                 <ul class="metismenu" id="menu1">
+                @if(Auth::user()->role=="Sekolah")
                     <li>
-                        <a title="Dashboard" href="{{ url('/') }}" aria-expanded="false">
+                        @if(Request::is('home'))
+                        <a title="Dashboard" href="{{ url('/') }}" style="background-color:#3498db;color:white">                        
+                        @else
+                        <a title="Dashboard" href="{{ url('/') }}" style="color:#3498db">                        
+                        @endif
                             <span class="fa fa-home sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non ">Dashboard</span>
+                            <span class="mini-click-non ">Dashboard</span> {{Auth::user()->role}}
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="{{ Request::is('payment/*') ? 'background-color:#8e44ad;color:white' : 'color:#8e44ad;' }}">
+                            <span class="fa fa-credit-card sub-icon-mg" aria-hidden="true"></span>
+                            <span class="mini-click-non ">Pembayaran</span>
                         </a>
                     </li>
                     <li>
-                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false">
+                        @if(Request::is('income'))
+                        <a title="Data Pemasukan" class="" href="{{ route('income.index') }}" aria-expanded="false" style="background-color:#27ae60;color:white">
+                        @else
+                        <a title="Data Pemasukan" class="" href="{{ route('income.index') }}" aria-expanded="false" style="color:#27ae60;">
+                        @endif
+                            <span class="educate-icon educate-department sub-icon-mg" aria-hidden="true"></span>
+                            <span class="mini-click-non ">Pemasukan</span>
+                        </a>
+                    </li>
+                    <li>
+                        @if(Request::is('expense'))
+                        <a title="Data Pengeluaran" class="" href="{{ route('expense.index') }}" aria-expanded="false" style="background-color:orange;color:white">
+                        @else
+                        <a title="Data Pengeluaran" class="" href="{{ route('expense.index') }}" aria-expanded="false" style="color:orange;">
+                        @endif
+                            <span class="fa fa-tags sub-icon-mg" aria-hidden="true"></span>
+                            <span class="mini-click-non ">Pengeluaran</span>
+                        </a>
+                    </li>
+                    <li>
+                        @if(Request::is('rekap'))
+                        <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="background-color:#eb3b5a;color:white">
+                        @else
+                        <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="color:#eb3b5a;">
+                        @endif
+                            <span class="fa fa-files-o sub-icon-mg" aria-hidden="true"></span>
+                            <span class="mini-click-non ">Rekap</span>
+                        </a>
+                    </li>
+                    <li>
+                        @if(Request::is('user'))
+                        <a title="User Managemet" class="" href="{{ url('user') }}" aria-expanded="false" style="background-color:#3498db;color:white">
+                        @else
+                        <a title="User Managemet" class="" href="{{ url('user') }}" aria-expanded="false" style="color:#3498db;">
+                        @endif
+                            <span class="fa fa-id-badge sub-icon-mg" aria-hidden="true"></span>
+                            <span class="mini-click-non ">User Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        
+                        @if(Request::is('students'))
+                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
+                        @elseif(Request::is('majors'))
+                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
+                        @elseif(Request::is('angkatan'))
+                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
+                        @elseif(Request::is('financing'))
+                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
+                        @else
+                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="color:black;">
+                        @endif
                             <span class="fa fa-diamond sub-icon-mg" aria-hidden="true"></span>
                             <span class="mini-click-non "> Master</span>
                         </a>
@@ -27,36 +90,19 @@
                                         Pembiayaan</span></a></li>
                         </ul>
                     </li>
+                    
+                @else
                     <li>
-                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false">
-                            <span class="fa fa-credit-card sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non ">Pembayaran</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="Data Pembayaran" class="" href="{{ route('income.index') }}" aria-expanded="false">
-                            <span class="educate-icon educate-department sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non ">Pemasukan</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="Data Pengeluaran" class="" href="{{ route('expense.index') }}" aria-expanded="false">
-                            <span class="fa fa-tags sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non ">Pengeluaran</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false">
+                        @if(Request::is('rekap'))
+                        <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="background-color:#eb3b5a;color:white">
+                        @else
+                        <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="color:#eb3b5a;">
+                        @endif
                             <span class="fa fa-files-o sub-icon-mg" aria-hidden="true"></span>
                             <span class="mini-click-non ">Rekap</span>
                         </a>
                     </li>
-                    <li>
-                        <a title="User Managemet" class="" href="{{ url('user') }}" aria-expanded="false">
-                            <span class="fa fa-id-badge sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non ">User Management</span>
-                        </a>
-                    </li>
+                @endif
                 </ul>
             </nav>
         </div>

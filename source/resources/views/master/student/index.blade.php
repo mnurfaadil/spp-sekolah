@@ -30,9 +30,11 @@ SPP | Siswa
                                                 <select style="margin-left:5px;" class="form-control" name="jurusan">
                                                 <option value="">-- Pilih Jurusan --</option>
                                                 <option value="">Semua</option>
-                                                    @foreach($majors as $d)
-                                                    <option @if($fil==$d->id) selected @endif value="{{$d->id}}">{{$d->nama}}</option>
-                                                    @endforeach
+                                                    @if(isset($majors))
+                                                        @foreach($majors as $d)
+                                                        <option @if($fil==$d->id) selected @endif value="{{$d->id}}">{{$d->nama}}</option>
+                                                        @endforeach
+                                                    @endif
                                                 </select>
                                                 <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
                                             </div>
@@ -328,11 +330,13 @@ SPP | Siswa
                                 <label class="control-label col-md-2">Jurusan<kode>*</kode></label>
                                 <div class="chosen-select-single mg-b-20">
                                     <select class="chosen-select" disabled tabindex="-1" name="major_id" required>
-                                        <option @php value="{{$d->id}}">-- Pilih Jurusan --</option>
-                                        <option @php value="{{$d->id}}">Semua</option>
-                                        @foreach($majors as $d)
-                                        <option @php value="{{$d->id}}">{{$d->nama}}</option>
-                                        @endforeach
+                                        <option value="">-- Pilih Jurusan --</option>
+                                        <option value="">Semua</option>
+                                        @if(isset($majors))
+                                            @foreach($majors as $d)
+                                            <option @php value="{{$d->id}}">{{$d->nama}}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </div>
                             </div>

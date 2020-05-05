@@ -15,12 +15,12 @@ SPP | Dashboard
                             <h4>Pemasukan</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="educate-icon educate-department"></i>
+                            <i class="educate-icon educate-department" style="color:#27ae60"></i>
                         </div>
                         <div class="m-t-xl widget-cl-1">
-                            <h1 class="text-success">Rp. {{number_format($dashboard->pemasukan,0,',','.')}}</h1>
-                            <a class="btn btn-success btn-block loginbtn" style="color:white" href="{{route('expense.index')}}">
-                                {{ __('Detail') }}
+                            <h1 class="text-success" style="color:#27ae60">Rp. {{number_format($dashboard->pemasukan,0,',','.')}}</h1>
+                            <a class="btn btn-block loginbtn" style="background-color:#27ae60;color:white" href="{{route('income.index')}}">
+                                {{ __('Pemasukan') }}
                             </a>
                         </div>
                     </div>
@@ -33,16 +33,16 @@ SPP | Dashboard
                             <h4>Pengeluaran</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="educate-icon educate-apps"></i>
+                            <i class="educate-icon educate-apps" style="color:#f39c12"></i>
                         </div>
                             <div class="m-t-xl widget-cl-2">
-                            <h1 class="text-info">{{number_format($dashboard->pengeluaran,0,',','.')}}</h1>
-                            <a class="btn btn-success btn-block loginbtn" style="color:white" href="{{route('expense.index')}}">
-                                {{ __('Detail') }}
+                            <h1 class="text-info" style="color:#f39c12">Rp. {{number_format($dashboard->pengeluaran,0,',','.')}}</h1>
+                            <a class="btn btn-block loginbtn" style="background-color:#f39c12;color:white" href="{{route('expense.index')}}">
+                                {{ __('Pengeluaran') }}
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> 
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
                 <div class="hpanel widget-int-shape responsive-mg-b-30 res-tablet-mg-t-30 dk-res-t-pro-30">
@@ -51,11 +51,11 @@ SPP | Dashboard
                             <h4>Jumlah Siswa</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="educate-icon educate-professor"></i>
+                            <i class="educate-icon educate-professor" style="color:#2980b9"></i>
                         </div>
                         <div class="m-t-xl widget-cl-3">
-                            <h1 class="text-warning">{{number_format($dashboard->siswa,0,',','.')}}</h1>
-                            <a class="btn btn-success btn-block loginbtn" style="color:white" href="{{route('students.index')}}">
+                            <h1 class="text-success" style="color:#2980b9">{{number_format($dashboard->siswa,0,',','.')}}</h1>
+                            <a class="btn btn-block loginbtn" style="background-color:#2980b9;color:white" href="{{route('students.index')}}">
                                 {{ __('Detail') }}
                             </a>
                         </div>
@@ -69,11 +69,11 @@ SPP | Dashboard
                             <h4>Data Tunggakan</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="fa fa-times"></i>
+                            <i class="fa fa-times" style="color:#e74c3c"></i>
                         </div>
                         <div class="m-t-xl widget-cl-4">
                             <h1 class="text-danger">{{number_format($dashboard->nunggak,0,',','.')}}</h1>
-                            <a class="btn btn-success btn-block loginbtn" style="color:white" href="{{route('payment.index')}}">
+                            <a class="btn btn-block loginbtn" style="background-color:#e74c3c;color:white" href="{{route('payment.index')}}">
                                 {{ __('Detail') }}
                             </a>
                         </div>

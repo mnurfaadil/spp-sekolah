@@ -5,6 +5,7 @@ SPP | Change Password
 @endsection
 
 @section('content')
+
 <div class="row" align="center">
     <h2>{{ __('Change Password') }}</h2>
     <hr>
