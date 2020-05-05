@@ -61,13 +61,13 @@ class ExpenseController extends Controller
             Expense::create([
                 'id' => null,
                 'title' => $req['title'],
-                'description' => $req['description'],
                 'sumber' => $req['sumber'],
+                'description' => $req['description'],
                 'nominal' => $req['nominal'],
                 'foto' => $uuid.$nama_file,
             ]);
-            $desc = "Pembelian {$req['title']} oleh {$req['sumber']}";
             $id = DB::getPdo()->lastInsertId();
+            $desc = "Pembelian {$req['title']} oleh {$req['sumber']}";
             Pencatatan::create([
                 'id' => null,
                 'expense_id' =>$id,

@@ -21,4 +21,9 @@ class Expense extends Model
         "foto",
         "nominal",
     ];
+
+    public function pencatatan()
+    {
+        return $this->hasMany('App\Pencatatan');
+    }
 }

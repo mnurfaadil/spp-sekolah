@@ -61,8 +61,8 @@ class IncomeController extends Controller
                 'nominal' => $req['nominal'],
                 'foto' => $uuid.$nama_file,
             ]);
-            $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
             $id = DB::getPdo()->lastInsertId();
+            $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
             Pencatatan::create([
                 'id' => null,
                 'income_id' =>$id,

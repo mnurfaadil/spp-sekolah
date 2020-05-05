@@ -16,12 +16,16 @@
                         <a title="Dashboard" href="{{ url('/') }}" style="color:#3498db">                        
                         @endif
                             <span class="fa fa-home sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non ">Dashboard</span> {{Auth::user()->role}}
+                            <span class="mini-click-non ">Dashboard</span>
                         </a>
                     </li>
                     
                     <li>
+<<<<<<< HEAD
                         <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="{{ Request::is('payment/*') ? 'background-color:#8e44ad;color:white' : 'color:#8e44ad;' }}">
+=======
+                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="{{ Request::is('payment/*') ? 'background-color:#8e44ad;color:white' : Request::is('payment') ? 'background-color:#8e44ad;color:white' : 'color:#8e44ad;' }}">
+>>>>>>> robi
                             <span class="fa fa-credit-card sub-icon-mg" aria-hidden="true"></span>
                             <span class="mini-click-non ">Pembayaran</span>
                         </a>
