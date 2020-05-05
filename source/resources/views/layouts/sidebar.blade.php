@@ -16,29 +16,12 @@
                         <a title="Dashboard" href="{{ url('/') }}" style="color:#3498db">                        
                         @endif
                             <span class="fa fa-home sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non ">Dashboard</span> {{Auth::user()->role}}
+                            <span class="mini-click-non ">Dashboard</span>
                         </a>
                     </li>
                     
                     <li>
-<<<<<<< Updated upstream
-                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="{{ Request::is('payment/*') ? 'background-color:#8e44ad;color:white' : 'color:#8e44ad;' }}">
-=======
-                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false">
-                            <span class="fa fa-diamond sub-icon-mg" aria-hidden="true"></span>
-                            <span class="mini-click-non "> Master</span>
-                        </a>
-                        <ul class="submenu-angle" aria-expanded="false">
-                            <li><a title="Data Master Siswa" href="{{ route('students.index') }}"><span class="mini-sub-pro">Siswa</span></a></li>
-                            <li><a title="Data Master Jurusan" href="{{ route('majors.index') }}"><span class="mini-sub-pro">Jurusan</span></a></li>
-                            <li><a title="Data Master Jurusan" href="{{ route('angkatan.index') }}"><span class="mini-sub-pro">Angkatan</span></a></li>
-                            <li><a title="Data Master Kategori Pembiayaan" href="{{ url('financing') }}"><span class="mini-sub-pro">Kategori
-                                        Pembiayaan</span></a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false">
->>>>>>> Stashed changes
+                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="{{ Request::is('payment/*') ? 'background-color:#8e44ad;color:white' : Request::is('payment') ? 'background-color:#8e44ad;color:white' : 'color:#8e44ad;' }}">
                             <span class="fa fa-credit-card sub-icon-mg" aria-hidden="true"></span>
                             <span class="mini-click-non ">Pembayaran</span>
                         </a>

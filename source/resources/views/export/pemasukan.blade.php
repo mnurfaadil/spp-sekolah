@@ -12,6 +12,7 @@
 <table class="table1">
     <tr>
         <th>No</th>
+        <th>Foto</th>
         <th>Tanggal</th>
         <th>Deskripsi</th>
         <th>Nominal</th>
@@ -26,13 +27,16 @@ $total = 0;
 @endphp
     <tr>
         <td>{{$no++}}</td>
-        <td style="text-align:left;">{{$data->created_at}}</td>
+        <td>
+            <img style="height:70; width:70;" src="{{public_path('')}}\assets\img\logo\bbl.png" alt="Foto Bukti"/>
+        </td>
+        <td style="text-align:left;">{{$data->created_at}} </td>
         <td style="text-align:left;">{{$data->description}}</td>
         <td style="text-align:right">{{number_format($data->debit,0,',','.')}}</td>
     </tr>
 @endforeach
     <tr class="footer-section">
-        <th colspan="3" style="text-align:right"><span style="font-size:20px;font-weight:bold;">Total :</span></th>
+        <th colspan="4" style="text-align:right"><span style="font-size:20px;font-weight:bold;">Total :</span></th>
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total,0,',','.')}}</th>
     </tr>
 </table>

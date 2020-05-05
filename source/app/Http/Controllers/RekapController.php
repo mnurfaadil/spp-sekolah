@@ -47,6 +47,7 @@ class RekapController extends Controller
 
     public function print($id) 
     {
+        
         $t = now();
 
         $t = explode(" ", $t);
@@ -67,8 +68,13 @@ class RekapController extends Controller
             $rincian = "Pengeluaran";
             $title = "Laporan Pengeluaran";
             $datas = Pencatatan::where('kredit','<>','0')->get();
-            
             $pdf = PDF::loadView('export.pengeluaran',compact('tanggal','user','rincian','datas','no','title'));
+            return $pdf->stream();
+        }elseif($id=="Buku Besar"){
+            $rincian = "Buku Besar";
+            $title = "Laporan Keuangan";
+            $datas = Pencatatan::all();
+            $pdf = PDF::loadView('export.bukubesar',compact('tanggal','user','rincian','datas','no','title'));
             return $pdf->stream();
         }
     }

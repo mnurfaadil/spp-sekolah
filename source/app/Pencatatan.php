@@ -19,5 +19,17 @@ class Pencatatan extends Model
         "nominal",
         "debit",
         "kredit",
+        "expense_id",
+        "income_id",
     ];
+
+    public function pengeluaran()
+    {
+        return $this->belongsTo('App\Expense', 'expense_id');
+    }
+
+    public function pemasukan()
+    {
+        return $this->belongsTo('App\Income', 'income_id');
+    }
 }
