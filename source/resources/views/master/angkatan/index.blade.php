@@ -1,29 +1,37 @@
 @extends('layouts.app')
 
 @section('title')
-SPP | Jurusan
+SPP | Angkatan
 @endsection
 
 @section('content')
+
 <div id="edit-form">
 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
     <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
         <div class="panel-body custom-panel-jw">
-            <h3>Form Ubah Jurusan</h3>
+            <h3>Form Ubah Angkatan</h3>
             <hr>
             <div class="sparkline16-graph">
                 <div class="date-picker-inner">
                     <div class="basic-login-inner">
-                        <form method="post" id="form-jurusan">
+                        <form method="post" id="form-angkatan">
                             @method('PUT')
                             @csrf
-
                             <div class="form-group">
-                                <label>Nama Jurusan</label>
+                                <label>Angkatan</label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-mortar-board"></i></span>
-                                    <input type="text" class="form-control" name="jurusan"
-                                        placeholder="Masukan Nama Jurusan">
+                                    <input type="number" class="form-control" name="angkatan2"
+                                        placeholder="Masukan angkatan" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Tahun Angkatan</label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="number" class="form-control" name="tahun2"
+                                        placeholder="Masukan Tahun Angkatan" required>
                                 </div>
                             </div>
                             <div class="login-btn-inner">
@@ -41,25 +49,31 @@ SPP | Jurusan
     </div>
 </div>
 </div>
-
 <div id="add-form">
 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
     <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
         <div class="panel-body custom-panel-jw">
-            <h3>Form Tambah Jurusan</h3>
+            <h3>Form Tambah Angkatan</h3>
             <hr>
             <div class="sparkline16-graph">
                 <div class="date-picker-inner">
                     <div class="basic-login-inner">
-                        <form action="{{route('majors.store')}}" method="post" id="form-jurusan-add">
+                        <form action="{{route('angkatan.store')}}" method="post" id="form-angkatan">
                             @csrf
-
                             <div class="form-group">
-                                <label>Nama Jurusan</label>
+                                <label>Angkatan</label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-mortar-board"></i></span>
-                                    <input type="text" class="form-control" name="jurusan" id="a"
-                                        placeholder="Masukan Nama Jurusan">
+                                    <input type="number" class="form-control" name="angkatan"
+                                        placeholder="Masukan angkatan" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Tahun Angkatan</label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="number" class="form-control" name="tahun"
+                                        placeholder="Masukan Tahun Angkatan" required>
                                 </div>
                             </div>
                             <div class="login-btn-inner">
@@ -89,14 +103,14 @@ SPP | Jurusan
                                     <div class="main-sparkline13-hd">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <h3>Data Jurusan</h3>
+                                                <h3>Data angkatan</h3>
                                             </div>
-                                            <div class="col-md-6" >
-                                            <div style="float:right">
-                                            <button class="btn btn-success" onclick="addConfirm()">
-                                                <i class="fa fa-plus" ></i> Tambah
-                                            </button>
-                                            </div>
+                                            <div class="col-md-6">
+                                                <div style="float:right">
+                                                    <button class="btn btn-success" onclick="addConfirm()">
+                                                        <i class="fa fa-plus" ></i> Tambah
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -120,29 +134,26 @@ SPP | Jurusan
                                             <tr>
                                                 <th data-field="state" data-checkbox="true"></th>
                                                 <th data-field="id">No</th>
-                                                <th data-field="bulan" data-editable="false">Nama Jurusan</th>
+                                                <th data-field="angkatan" data-editable="false">Angkatan</th>
+                                                <th data-field="tahun" data-editable="false">Tahun Angkatan</th>
                                                 <th data-field="action" data-editable="false">
                                                     <div style="text-align:center;">Action</div>
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($majors as $data)
+                                            @foreach($angkatan as $data)
                                             <tr>
                                                 <td></td>
                                                 <td>{{$no++}}</td>
-                                                <td>{{$data->nama}}</td>
+                                                <td>{{$data->angkatan}}</td>
+                                                <td>{{$data->tahun}}</td>
                                                 <td>
                                                     <div style="text-align:center;">
                                                         <a href="#" class="btn btn-warning"
-                                                            onclick="editConfirm( '{{$data->id}}', '{{$data->nama}}')"
+                                                            onclick="editConfirm( '{{$data->id}}', '{{$data->angkatan}}','{{$data->tahun}}')"
                                                             title="Edit" style="margin-top:0;"><i
                                                                 class="fa fa-edit"></i></a>
-                                                        <a href="{{ route('majors.destroy',$data) }}"
-                                                            class="btn btn-danger"
-                                                            onclick="event.preventDefault();destroy('{{ route('majors.destroy',$data) }}');"
-                                                            title="Hapus" style="margin-top:0;"><i
-                                                                class="fa fa-trash"></i></a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -160,11 +171,6 @@ SPP | Jurusan
 </div>
 <!-- Static Table End -->
 
-<!-- hapus -->
-<form id="destroy-form" method="POST">
-    @method('DELETE')
-    @csrf
-</form>
 @endsection
 
 @push('styles')
@@ -185,15 +191,14 @@ SPP | Jurusan
         $('#add-form').show();
         $('#edit-form').hide();
     });
-    
-
-    function editConfirm(id, nama) {
+    function editConfirm(id, nama,tahun) {
         $('#add-form').hide();
         $('#edit-form').show();
         $('input[name=id]').attr('value', id);
-        $('input[name=jurusan]').attr('value', nama);
-        $('#form-jurusan').attr('action', "{{ url('majors') }}/" + id);
-        $('input[name=jurusan]').focus();
+        $('input[name=angkatan2]').attr('value', nama);
+        $('input[name=tahun2]').attr('value', tahun);
+        $('#form-angkatan').attr('action', "{{ url('angkatan') }}/" + id);
+        $('input[name=angkatan]').focus();
     }
 
     function addConfirm() {
@@ -202,23 +207,6 @@ SPP | Jurusan
         $('#a').focus();
         $('#edit-form').hide();
     }
-
-    function destroy(action) {
-        swal({
-            title: 'Apakah anda yakin?',
-            text: 'Setelah dihapus, Anda tidak akan dapat mengembalikan data ini!',
-            icon: 'warning',
-            buttons: ["Cancel", "Yes!"],
-        }).then(function (value) {
-            if (value) {
-                document.getElementById('destroy-form').setAttribute('action', action);
-                document.getElementById('destroy-form').submit();
-            } else {
-                swal("Data kamu aman!");
-            }
-        });
-    }
-
 </script>
 <!-- data table JS
 		============================================ -->
@@ -242,14 +230,14 @@ SPP | Jurusan
 @endpush
 
 @push('breadcrumb-left')
-<h2>Menu Jurusan</h2>
+<h2>Menu angkatan</h2>
 @endpush
 @push('breadcrumb-right')
 <div style="float:right">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="margin-bottom:0">
             <li class="breadcrumb-item"><a href="{{ url('/')}}">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Jurusan</li>
+            <li class="breadcrumb-item active" aria-current="page">angkatan</li>
         </ol>
     </nav>
 </div>

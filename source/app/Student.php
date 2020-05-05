@@ -35,6 +35,11 @@ class Student extends Model
         return $this->belongsTo('App\Major');
     }
 
+    public function angkatans()
+    {
+        return $this->belongsTo('App\Angkatan');
+    }
+
     /**
      * Relasi Many to Many
      */

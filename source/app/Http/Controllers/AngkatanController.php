@@ -1,18 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Angkatan;
 use Illuminate\Http\Request;
-use App\Major;
-use Illuminate\Support\Facades\Session;
 
-class MajorController extends Controller
+class AngkatanController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -20,9 +13,9 @@ class MajorController extends Controller
      */
     public function index()
     {
-        $majors = Major::all();
-        $no=1;
-        return view('master.major.index', compact('majors','no'));
+        $no = 1;
+        $angkatan = Angkatan::all();
+        return view('master.angkatan.index',compact('angkatan','no'));
     }
 
     /**
@@ -44,23 +37,32 @@ class MajorController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'jurusan' => 'required',
+            'angkatan' => 'required|numeric',
+            'tahun' => 'required|numeric',
         ]);
 
         try {
             $req = $request->all();
-            Major::create([
+            $cek = Angkatan::where('angkatan',$req['angkatan'])->count();
+            $cek2 = Angkatan::where('tahun',$req['tahun'])->count();
+            if($cek > 0 || $cek2 > 0 ){
+                return redirect()
+                    ->route('angkatan.index')
+                    ->with('error', 'Angkatan atau tahun angkatan sudah ada!');
+            }
+            Angkatan::create([
                 'id' => null,
-                'nama' => $req['jurusan'],
+                'angkatan' => $req['angkatan'],
+                'tahun' => $req['tahun'],
               ]);
           return redirect()
-              ->route('majors.index')
-              ->with('success', 'Data jurursan berhasil disimpan!');
+              ->route('angkatan.index')
+              ->with('success', 'Data angkatan berhasil disimpan!');
 
         }catch(Exception $e){
           return redirect()
-              ->route('majors.create')
-              ->with('error', 'Data jurursan gagal disimpan!');
+              ->route('angkatan.create')
+              ->with('error', 'Data angkatan gagal disimpan!');
         }
     }
 
@@ -96,23 +98,25 @@ class MajorController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'jurusan' => 'required',
+            'angkatan2' => 'required',
+            'tahun2' => 'required',
         ]);
 
         try {
           $req = $request->all();
-          $major = Major::findOrFail($id);
-          $major->nama = $req['jurusan'];
-          $major->save();
+          $angkatan = Angkatan::findOrFail($id);
+          $angkatan->angkatan = $req['angkatan2'];
+          $angkatan->tahun = $req['tahun2'];
+          $angkatan->save();
 
           return redirect()
-              ->route('majors.index')
-              ->with('success', 'Data jurusan berhasil diubah!');
+              ->route('angkatan.index')
+              ->with('success', 'Data angkatan berhasil diubah!');
 
         } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
           return redirect()
-              ->route('majors.index')
-              ->with('error', 'Data jurusan gagal diubah!');
+              ->route('angkatan.index')
+              ->with('error', 'Data angkatan gagal diubah!');
         }
     }
 
@@ -124,17 +128,6 @@ class MajorController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $major = Major::findOrFail($id)->delete();
-  
-            return redirect()
-                ->route('majors.index')
-                ->with('success', 'Data jurusan berhasil dihapus!');
-  
-          } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
-            return redirect()
-                ->route('majors.index')
-                ->with('error', 'Data jurusan gagal dihapus!');
-          }
+        //
     }
 }

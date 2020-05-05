@@ -88,18 +88,18 @@ SPP | Siswa
                                         <td>{{$data->nama}}</td>
                                         <td><div style="text-align:center;">{{$data->jenis_kelamin}}</div></td>
                                         <td><div style="text-align:center;">{{$data->kelas}}</div></td>
-                                        <td><div style="text-align:center;">{{$data->major->nama}}</div></td>
+                                        <td><div style="text-align:center;">{{$data->nama_major}}</div></td>
                                         <td><div style="text-align:center;">{{$data->alamat}}</div></td>
                                         <td>
                                         <div style="text-align:center;">
-                                          <a href="#" class="btn btn-info" onclick="detailConfirm( '{{$data->id}}','{{$data->nis}}','{{$data->nama}}','{{$data->jenis_kelamin}}','{{$data->kelas}}','{{$data->major_id}}', '{{$data->major->nama}}','{{$data->phone}}','{{$data->email}}','{{$data->tgl_masuk}}','{{$data->alamat}}')"title="Detail">
+                                          <a href="#" class="btn btn-info" onclick="detailConfirm( '{{$data->id}}','{{$data->nis}}','{{$data->nama}}','{{$data->jenis_kelamin}}','{{$data->kelas}}','{{$data->major_id}}', '{{$data->nama_major}}','{{$data->phone}}','{{$data->email}}','{{$data->tgl_masuk}}','{{$data->alamat}}')"title="Detail">
                                             <i class="fa fa-eye"> Detail</i>
                                           </a>
                                         <a href="#" class="btn btn-warning"
-                                            onclick="editConfirm( '{{$data->id}}','{{$data->nis}}','{{$data->nama}}','{{$data->jenis_kelamin}}','{{$data->kelas}}','{{$data->major_id}}', '{{$data->major->nama}}','{{$data->phone}}','{{$data->email}}','{{$data->tgl_masuk}}','{{$data->alamat}}')"
+                                            onclick="editConfirm( '{{$data->id}}','{{$data->nis}}','{{$data->nama_major}}','{{$data->jenis_kelamin}}','{{$data->kelas}}','{{$data->major_id}}', '{{$data->nama}}','{{$data->phone}}','{{$data->email}}','{{$data->tgl_masuk}}','{{$data->alamat}}','{{$data->angkatan_id}}','{{$data->angkatan}}', '{{$data->tahun}}')"
                                             title="Edit"><i class="fa fa-edit"> Edit</i></a>
-                                        <a href="{{ route('students.destroy',$data) }}" class="btn btn-danger"
-                                            onclick="event.preventDefault();destroy('{{ route('students.destroy',$data) }}');"
+                                        <a href="{{ route('students.destroy',$data->id) }}" class="btn btn-danger"
+                                            onclick="event.preventDefault();destroy('{{ route('students.destroy',$data->id) }}');"
                                             title="Hapus"><i class="fa fa-trash"></i> Hapus</a>
                                     </div>
                                     </td>
@@ -155,7 +155,7 @@ SPP | Siswa
                                     <div class="chosen-select-single mg-b-20">
                                         <select class="chosen-select" name="major_id" id="major_id_add" required>
                                             @foreach($majors as $d)
-                                            <option @php value="{{$d->id}}">{{$d->nama}}</option>
+                                            <option value="{{$d->id}}">{{$d->nama}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -167,6 +167,16 @@ SPP | Siswa
                                             <option value="X">X</option>
                                             <option value="XI">XI</option>
                                             <option value="XII">XII</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
+                                    <div class="chosen-select-single mg-b-20">
+                                        <select class="chosen-select" name="angkatan" id="angkatan_add" required>
+                                            @foreach($angkatan as $d)
+                                            <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -249,7 +259,7 @@ SPP | Siswa
                                     <select class="chosen-select" tabindex="-1" name="major_id" id="major_id_edit"
                                         required>
                                         @foreach($majors as $d)
-                                        <option @php value="{{$d->id}}">{{$d->nama}}</option>
+                                        <option value="{{$d->id}}">{{$d->nama}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -264,6 +274,16 @@ SPP | Siswa
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                    <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
+                                    <div class="chosen-select-single mg-b-20">
+                                        <select class="chosen-select" name="angkatan" id="angkatan_edit" required>
+                                            @foreach($angkatan as $d)
+                                            <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
                                 <input name='phone' id='phone' placeholder="Masukan No Telpon" type='number'
@@ -320,7 +340,7 @@ SPP | Siswa
                             <div class="form-group">
                                 <label class="control-label col-md-2">Jenis Kelamin<kode>*</kode></label>
                                 <div class="chosen-select-single mg-b-20">
-                                    <select class="chosen-select" disabled name="jenis_kelamin" id="jenis_kelamin_edit">
+                                    <select class="chosen-select" disabled name="jenis_kelamin" id="jenis_kelamin_detail">
                                         <option value="L">Laki - Laki</option>
                                         <option value="P">Perempuan</option>
                                     </select>
@@ -343,7 +363,7 @@ SPP | Siswa
                             <div class="form-group">
                                 <label class="control-label col-md-2">Kelas<kode>*</kode></label>
                                 <div class="chosen-select-single mg-b-20">
-                                    <select class="chosen-select" disabled name="kelas" id="kelas_edit" required>
+                                    <select class="chosen-select" disabled name="kelas" id="kelas_detail" required>
                                         <option value="">-- Pilih Kelas --</option>
                                         <option value="All">Semua</option>
                                         <option value="X">X</option>
@@ -410,13 +430,13 @@ SPP | Siswa
                 document.getElementById('display').innerHTML = value;
             }
 
-            function editConfirm(id, nis, nama, jenis_kelamin, kelas, major_id, major, phone, email, tgl_masuk, alamat) {
+            function editConfirm(id, nis, nama, jenis_kelamin, kelas, major_id, major, phone, email, tgl_masuk, alamat, angkatan_id, angkatan,tahun) {
                 $('#nis').attr('value', nis);
                 $('#nama').attr('value', nama);
                 $('#tgl_masuk').attr('value', tgl_masuk);
                 $('#email').attr('value', email);
                 $('#phone').attr('value', phone);
-                $('#alamat').attr('value', alamat);
+                $('#alamat').html(alamat);
 
                 $('#jenis_kelamin_edit').val(jenis_kelamin);
                 $('#jenis_kelamin_edit_chosen .chosen-single span').html((jenis_kelamin == 'L') ? 'Laki - Laki' :
@@ -424,6 +444,9 @@ SPP | Siswa
 
                 $('#major_id_edit').val(major_id);
                 $('#major_id_edit_chosen .chosen-single span').html(major);
+                
+                $('#angkatan_edit').val(angkatan_id);
+                $('#angkatan_edit_chosen .chosen-single span').html(angkatan+' - '+tahun );
 
                 $('#kelas_edit').val(kelas);
                 $('#kelas_edit_chosen .chosen-single span').html(kelas);
@@ -431,27 +454,6 @@ SPP | Siswa
                 $('#editSiswa').attr('action', "{{ url('students') }}/" + id)
                 $('#modalUpdate').modal();
             }
-
-            function detailConfirm(id, nis, nama, jenis_kelamin, kelas, major_id, major, phone, email, tgl_masuk, alamat) {
-                $('#nis2').attr('value', nis);
-                $('#nama2').attr('value', nama);
-                $('#tgl_masuk2').attr('value', tgl_masuk);
-                $('#email2').attr('value', email);
-                $('#phone2').attr('value', phone);
-                $('#alamat2').attr('value', alamat);
-
-                $('#jenis_kelamin_edit').val(jenis_kelamin);
-                $('#jenis_kelamin_edit_chosen .chosen-single span').html((jenis_kelamin == 'L')?'Laki - Laki':'Perempuan');
-
-                $('#major_id_edit').val(major_id);
-                $('#major_id_edit_chosen .chosen-single span').html(major);
-
-                $('#kelas_edit').val(kelas);
-                $('#kelas_edit_chosen .chosen-single span').html(kelas);
-
-                $('#modalDetail').modal();
-            }
-
 
 
             function destroy(action) {

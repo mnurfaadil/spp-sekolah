@@ -25,6 +25,8 @@ Route::get('/', function () {
 
 //majors
 Route::resource('/majors', 'MajorController');
+//angkatan
+Route::resource('/angkatan', 'AngkatanController');
 //student
 Route::resource('students', 'StudentController');
 Route::post('students_filter', 'StudentController@filter')->name('students.filter');
@@ -74,7 +76,7 @@ Route::resource('expense', 'ExpenseController');
 
 /**
  * Route resource untuk Pembayaran
- */
+ */ 
 Route::resource('rekap', 'RekapController');
 
 /**

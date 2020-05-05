@@ -8,6 +8,7 @@ use App\Student;
 use App\FinancingCategory;
 use App\Payment;
 use App\PaymentPeriodeDetail;
+use App\Angkatan;
 use Illuminate\Support\Facades\Session;
 
 use DB;
@@ -25,13 +26,20 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::all();
+        $angkatan = Angkatan::all();
+        // $students = Student::all();
         $no=1;
         $fil = '';
         $kls = '';
         $jml = Major::count();
         $majors = Major::all();
-        return view('master.student.index', compact('students','no','jml','majors','fil','kls'));
+
+        $students = DB::table('students')
+            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+            ->select('students.*','angkatans.*','majors.nama as nama_major')
+            ->get();
+        return view('master.student.index', compact('students','no','jml','majors','fil','kls','angkatan'));
     }
 
     public function filter(Request $request)
@@ -52,7 +60,8 @@ class StudentController extends Controller
         $fil= $request->jurusan;
         $jml = Major::count();
         $majors = Major::all();
-        return view('master.student.index', compact('students','no','jml','majors','fil','kls'));
+        $angkatan = Angkatan::all();
+        return view('master.student.index', compact('students','no','jml','majors','fil','kls','angkatan'));
     }
 
     /**
@@ -96,6 +105,7 @@ class StudentController extends Controller
                 'jenis_kelamin' => $req['jenis_kelamin'],
                 'major_id' => $req['major_id'],
                 'phone' => $req['phone'],
+                'angkatan_id' => $req['angkatan'],
                 'email' => $req['email'],
                 'alamat' => $req['alamat'],
                 'tgl_masuk' => $date,
@@ -186,6 +196,7 @@ class StudentController extends Controller
             $student->major_id = $req['major_id'];
             $student->kelas = $req['kelas'];
             $student->phone = $req['phone'];
+            $student->angkatan_id = $req['angkatan'];
             $student->email = $req['email'];
             $student->alamat = $req['alamat'];
             $student->tgl_masuk = $req['tgl_masuk'];
