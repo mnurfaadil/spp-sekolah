@@ -27,8 +27,13 @@ class HomeController extends Controller
 
     public function index()
     {
-        $dashboard= DB::table('dashboard_view')->first();
-        return view('dashboard.index',compact('dashboard'));
+        if(Auth::user()->role=="Sekolah"){    
+            $dashboard= DB::table('dashboard_view')->first();
+            return view('dashboard.index',compact('dashboard'));
+        }else{
+            return redirect()
+            ->route('rekap.index');
+        }
     }
 
     public function logout(){
@@ -87,8 +92,6 @@ class HomeController extends Controller
     public function update(Request $request)
     {
         $req=$request->all();
-        // echo '<pre>';
-        // var_dump(Auth::user()->id);die;
         try {
             $user = User::findOrFail( Auth::user()->id );
             if(Hash::check($req['old_password'], $user->password)){

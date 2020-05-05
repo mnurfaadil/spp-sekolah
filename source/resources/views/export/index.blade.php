@@ -15,13 +15,14 @@ SPP | Rekap
                             <h4>Pemasukan</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="educate-icon educate-department"></i>
+                            <i class="educate-icon educate-department" style="color:#27ae60"></i>
                         </div>
                         <div class="m-t-xl widget-cl-1">
-                        <a class="btn btn-success btn-block loginbtn" style="color:white" href="{{route('pdf.print','pemasukan')}}" target="_blank">
-                          <i class="fa fa-print"></i>
-                            {{ __('Cetak') }}
-                        </a>
+                            <h1 class="text-success" style="color:#27ae60">Rp. {{number_format($rekap->pemasukan,0,',','.')}}</h1>
+                            <a class="btn btn-block loginbtn" style="background-color:#27ae60;color:white" href="{{route('pdf.print','pemasukan')}}" target="_blank">
+                            <i class="fa fa-print"></i>
+                                {{ __('Cetak') }}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -33,31 +34,52 @@ SPP | Rekap
                             <h4>Pengeluaran</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="educate-icon educate-apps"></i>
+                            <i class="educate-icon educate-apps" style="color:#f39c12"></i>
                         </div>
                             <div class="m-t-xl widget-cl-2">
-                            <a class="btn btn-success btn-block loginbtn" style="color:white" href="{{route('pdf.print','pengeluaran')}}" target="_blank">
-                          <i class="fa fa-print"></i>
-                            {{ __('Cetak') }}
-                        </a>
+                            <h1 class="text-info" style="color:#f39c12">Rp. {{number_format($rekap->pengeluaran,0,',','.')}}</h1>
+                            <a class="btn btn-block loginbtn" style="background-color:#f39c12;color:white" href="{{route('pdf.print','pengeluaran')}}" target="_blank">
+                            <i class="fa fa-print"></i>
+                                {{ __('Cetak') }}
+                            </a>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="hpanel widget-int-shape responsive-mg-b-30 res-tablet-mg-t-30 dk-res-t-pro-30">
+                    <div class="panel-body">
+                        <div class="stats-title pull-left">
+                            <h4>Buku Besar</h4>
+                        </div>
+                        <div class="stats-icon pull-right">
+                            <i class="educate-icon educate-professor" style="color:#2980b9"></i>
+                        </div>
+                        <div class="m-t-xl widget-cl-3">
+                            <h1 class="text-success" style="color:#2980b9">Rp. {{number_format($rekap->saldo,0,',','.')}}</h1>
+                            <a class="btn btn-block loginbtn" style="background-color:#2980b9;color:white" href="{{route('pdf.print','pengeluaran')}}" target="_blank">
+                            <i class="fa fa-print"></i>
+                                {{ __('Cetak') }}
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                <div class="hpanel widget-int-shape responsive-mg-b-30">
+                <div class="hpanel widget-int-shape res-tablet-mg-t-30 dk-res-t-pro-30">
                     <div class="panel-body">
                         <div class="stats-title pull-left">
-                            <h4>Tunggakan</h4>
+                            <h4>Data Tunggakan</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="fa fa-times"></i>
+                            <i class="fa fa-times" style="color:#e74c3c"></i>
                         </div>
-                            <div class="m-t-xl widget-cl-2">
-                            <a class="btn btn-success btn-block loginbtn" style="color:white" data-toggle="modal" href="#modalAdd">
+                        <div class="m-t-xl widget-cl-4">
+                            <h1 class="text-danger">Rp. {{number_format($rekap->tunggakan,0,',','.')}}</h1>
+                            <a class="btn btn-success btn-block loginbtn" style="color:white" data-toggle="modal" href="#modalAdd" style="background-color:#e74c3c;color:white">
                           <i class="fa fa-print"></i>
-                            {{ __('Cetak') }}
-                        </a>
+                                {{ __('Cetak') }}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -65,7 +87,6 @@ SPP | Rekap
         </div>
     </div>
 </div>
-
 <!-- modal add -->
 <div class="modal fade bd-example-modal-lg" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">

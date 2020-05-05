@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Pencatatan;
 use App\Student;
 use App\PaymentPeriodeDetail;
-use App\FinancingCategory;
+use App\FinancingCategory; 
 use App\PaymentPeriode;
 use App\Payment;
 use App\Major;
@@ -30,7 +30,8 @@ class RekapController extends Controller
     {
         $categorys = FinancingCategory::all();
         $majors = Major::all();
-        return view('export.index',compact('categorys','majors'));
+        $rekap = DB::table('rekap_view')->first();
+        return view('export.index',compact('categorys','majors','rekap'));
     }
 
 
