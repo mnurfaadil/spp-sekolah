@@ -23,6 +23,7 @@ class Student extends Model
         "phone",
         "alamat",
         "email",
+        "angkatan_id",
         "tgl_masuk",
     ];
 

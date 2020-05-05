@@ -21,6 +21,7 @@ class CreateStudentsTable extends Migration
             $table->enum('kelas',['X','XI','XII']);
             $table->integer('major_id');
             $table->string('phone','14');
+            $table->integer('angkatan_id');
             $table->string('email');
             $table->string('alamat');
             $table->string('tgl_masuk');

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePaymentPeriodesTable extends Migration
+class CreateAngkatansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreatePaymentPeriodesTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_periodes', function (Blueprint $table) {
+        Schema::create('angkatans', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('financing_category_id');
-            $table->date('bulan');
+            $table->integer('angkatan');
             $table->year('tahun');
-            $table->integer('nominal');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreatePaymentPeriodesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_periodes');
+        Schema::dropIfExists('angkatans');
     }
 }
