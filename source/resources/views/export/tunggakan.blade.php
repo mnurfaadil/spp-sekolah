@@ -1,106 +1,59 @@
+@extends('export.layout.landscape')
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Rincian</title>
-    <style>
-.page_break { page-break-before: always; },
-</style>
-  </head>
-  <body>
-    <header class="clearfix">
-      <div style="text-align: center">
-      <h2>Rincian Tunggakan</h2>
-      </div>
-      <div id="project" style="font-size:16px">
-      <table>
-      <tbody>
-        <tr>
-          <td>NIS</td>
-          <td>:</td>
-          <td>Umar</td>
-        </tr>
-        <tr>
-          <td>Nama</td>
-          <td>:</td>
-          <td>Umar</td>
-        </tr>
-        <tr>
-          <td>Kelas</td>
-          <td>:</td>
-          <td>Umar</td>
-        </tr>
-        <tr>
-          <td>Jurusan</td>
-          <td>:</td>
-          <td>Umar</td>
-        </tr>
-      </tbody>
-      </table>
-      </div>
-    </header>
-    <br>
-    <hr>
-    <main style="align-item:center;">
-      <table style="font-size:14px;">
-        <thead>
-          <tr>
-            <th width="10%">NO</th>
-            <th width="65%">DESKRIPSI</th>
-            <th width="25%">TUNGGAKAN</th>
-          </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td colspan="3"><hr></td>
-          </tr>
-          <tr>
-            <td >
-            <div style="text-align:center">
-            1
-            </div>
-            </td>
-            <td >
-              <div style="word-wrap: break-word;">
-              Creating a recognizable autumn mozailana tumhere arpai design solution based on the company's existing visual identity</td>
-              </div>
-            <td class="unit">
-              <div style="text-align:right">
-              $40.00
-              </div>
-            </td>
-          </tr>
-          <tr>
-          <td colspan="3"><hr></td>
-          </tr>
-          <tr>
-            <td colspan="2">Total Tunggakan</td>
-            <td class="total">
-              <div style="text-align:right; font-size:16; font-weight:bold">
-              Rp. 40.00
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <br>
-    </main>
-    <footer>
-    <br>
-    <br>
-    <div style="widht:100%; text-align:right">
-    <p>
-    Sumedang, 05 Mei 2020<br>
-    Bendahara Sekolah
-    </p>
-    <br>
-    <br>
-    <p><span style="text-decoration: underline; font-weight:bold">
-    Muhammad Nurfaadil</span> <br>
-    NIP. 9918378723498
-    </p>
-    </div>
-    </footer>
-  </body>
-</html>
+@section('title-html')
+{{$title}}
+@endsection
+
+@section('title')
+{{$title}}
+@endsection
+
+@section('content')
+<table class="table1">
+    <tr>
+        <th>No</th> 
+        <th>Nama</th>
+        <th>Kelas</th>
+        <th>Akumulasi Biaya</th>
+        <th>Terbayar</th>
+        <th>Sisa Pembayaran</th>
+        <th>Tunggakan</th>
+    </tr>
+@php
+$total = [0,0,0,0];
+@endphp
+@foreach($datas as $data)
+@php
+  if($data->bulan_tidak_bayar!=0){
+    $besaran = intval($data->akumulasi);
+    $terbayar = intval(($data->terbayar!=0)?$data->terbayar:0);
+    $sisa = $besaran - $terbayar;
+    $total[0] += $besaran;
+    $total[1] += $terbayar;
+    $total[2] += $sisa;
+    $total[3] += intval($data->bulan_tidak_bayar);
+  }
+  
+@endphp
+  @if($data->bulan_tidak_bayar!=0)
+    <tr>
+        <td>{{$no++}}</td>
+        <td style="text-align:left;">{{$data->nama}}</td>
+        <td>{{$data->kelas}}&nbsp;-&nbsp;{{$data->jurusan}}</td>
+        <td style="text-align:right">{{number_format($data->akumulasi,0,',','.')}}</td>
+        <td style="text-align:right">{{number_format($data->terbayar,0,',','.')}}</td>
+        <td style="text-align:right">{{number_format($sisa,0,',','.')}}</td>
+        <td>{{$data->bulan_tidak_bayar}} Bulan</td>
+    </tr>
+  @endif
+@endforeach
+    <tr class="footer-section">
+        <th colspan="3" style="text-align:center"><span style="font-size:20px;font-weight:bold;">Total </span></th>
+        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
+        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
+        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
+        <th class="footer-right">{{$total[3]}} Bulan</th>
+    </tr>
+</table>
+<small>Dibuat pada {{now()}}</small>
+@endsection

@@ -78,12 +78,12 @@ SPP | Rekap
             </div>
             <div class="modal-body">
                 <div class="basic-login-form-ad">
-                    <form action="" role="form" method="post">
+                    <form action="{{route('rekap.store')}}" role="form" method="post" target='_blank'>
                         {{csrf_field()}}
                         <div class="form-group">
                             <label class="control-label col-md-2">Jenis Kategori<kode>*</kode></label>
                             <div class="chosen-select-single mg-b-20">
-                                <select class="chosen-select" name="jenis_kelamin" id="jenis_kelamin_add">
+                                <select class="chosen-select" name="jenis_kategori" id="jenis_kelamin_add" required>
                                     <option value="">-- Pilih Kategori --</option>
                                     @foreach($categorys as $d)
                                         <option @php value="{{$d->id}}">{{$d->nama}}</option>
