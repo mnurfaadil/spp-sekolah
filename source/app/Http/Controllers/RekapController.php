@@ -263,14 +263,47 @@ class RekapController extends Controller
         $kategori = FinancingCategory::findOrFail($request->jenis_kategori);
 
         if($kategori['jenis']=="Bayar per Bulan"){
-            
+            $datas = DB::table('students')
+                        ->selectRaw('financing_categories.id as financing_category_id, students.id as student_id, payments.id as payment_id, majors.id as major_id, payment_details.id as payment_detail_id, students.nama, students.`kelas`, majors.`nama` AS jurusan, financing_categories.`besaran` AS akumulasi, (SELECT SUM(nominal) FROM payment_details pd2 WHERE pd2.`id` = payment_details.id ) AS terbayar,(SELECT jenis_pembayaran FROM payments p2 WHERE p2.id = payments.id) AS metode')
+                        ->join('majors','majors.id','=','students.major_id')
+                        ->join('payments','payments.student_id','=','students.id')
+                        ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                        ->join('payment_details','payment_details.payment_id','=','payments.id')
+                        ->get();
+            $cek = $datas;
+            if($req['jenis_kategori'] != "all"){
+                $cek = $cek->where('financing_category_id', $req['jenis_kategori']);
+            }
+            if($req['major_id'] != "all"){
+                $cek = $cek->where('major_id', $req['major_id']);
+            }
+            if($req['kelas'] != "all"){
+                $cek = $cek->where('kelas', $req['kelas']);
+            }
         }else{
-
+            $datas = DB::table('students')
+                        ->selectRaw('financing_categories.id as financing_category_id, students.id as student_id, payments.id as payment_id, majors.id as major_id, payment_details.id as payment_detail_id, students.nama, students.`kelas`, majors.`nama` AS jurusan, financing_categories.`besaran` AS akumulasi, (SELECT SUM(nominal) FROM payment_details pd2 WHERE pd2.`id` = payment_details.id ) AS terbayar,(SELECT jenis_pembayaran FROM payments p2 WHERE p2.id = payments.id) AS metode')
+                        ->join('majors','majors.id','=','students.major_id')
+                        ->join('payments','payments.student_id','=','students.id')
+                        ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                        ->join('payment_details','payment_details.payment_id','=','payments.id')
+                        ->get();
+            $cek = $datas;
+            if($req['jenis_kategori'] != "all"){
+                $cek = $cek->where('financing_category_id', $req['jenis_kategori']);
+            }
+            if($req['major_id'] != "all"){
+                $cek = $cek->where('major_id', $req['major_id']);
+            }
+            if($req['kelas'] != "all"){
+                $cek = $cek->where('kelas', $req['kelas']);
+            }
         }
         echo '<pre>';
         var_dump($req);
         echo "<hr>";
-        var_dump($kategori);die;
+        // $cek = $datas->where('major_id',$request->major_id);
+        var_dump($cek);die;
 
 
         if ($request->major_id == 'all' && $request->kelas == 'all') {
