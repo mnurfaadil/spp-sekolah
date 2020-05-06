@@ -447,7 +447,7 @@ class PaymentController extends Controller
             'id' => null,
             'expense_id' => 0,
             'payment_id' => $request['payment_id'],
-            'debit' => $request['nominal'],
+            'debit' => $nominal,
             'description' => $desc,
             'kredit' => 0,
         ]);
