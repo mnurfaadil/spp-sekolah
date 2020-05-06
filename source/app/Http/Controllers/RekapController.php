@@ -367,7 +367,7 @@ class RekapController extends Controller
             ['status','=',"Lunas"]
         ])->get();
         echo '<pre>';
-        var_dump($datas[0]);die;
+        var_dump($datas);die;
         try {
             $data['tanggal'] = $this->getTanggalHariIni();
             $data['waktu'] = $this->getWaktuHariIni();

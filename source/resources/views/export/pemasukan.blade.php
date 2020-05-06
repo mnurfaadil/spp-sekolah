@@ -26,7 +26,7 @@ $total = 0;
     $total =$total + intval($data->debit);
     if(isset($data->pemasukan)){
         $url = "nota/{$data->pemasukan->foto}";
-        $url = asset('$url');
+        $url = asset('').$url;
     }
 @endphp
     <tr>

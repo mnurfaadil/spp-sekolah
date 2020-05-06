@@ -26,7 +26,7 @@ $total = 0;
     $total =$total + intval($data->kredit); 
     if(isset($data->pengeluaran)){
         $url = "nota/".$data->pengeluaran->foto;
-        $url = asset('$url');
+        $url = asset('').$url;
     } 
 @endphp
     <tr>
