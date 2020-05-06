@@ -366,6 +366,8 @@ class RekapController extends Controller
             ['payment_id','=',$payment],
             ['status','=',"Lunas"]
         ])->get();
+        echo '<pre>';
+        var_dump($datas[0]);die;
         try {
             $data['tanggal'] = $this->getTanggalHariIni();
             $data['waktu'] = $this->getWaktuHariIni();

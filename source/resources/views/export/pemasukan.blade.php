@@ -26,13 +26,14 @@ $total = 0;
     $total =$total + intval($data->debit);
     if(isset($data->pemasukan)){
         $url = "nota/{$data->pemasukan->foto}";
+        $url = asset('$url');
     }
 @endphp
     <tr>
         <td>{{$no++}}</td>
         <td>
             @if(isset($data->pemasukan))
-            <img style="height:70; width:70;" src="{{ asset('$url')}}" alt="Foto Bukti"/>
+            <img style="height:70; width:70;" src="{{$url}}" alt="Foto Bukti"/>
             @else
             &nbsp;
             @endif
