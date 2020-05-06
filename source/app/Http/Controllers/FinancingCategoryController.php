@@ -293,21 +293,21 @@ class FinancingCategoryController extends Controller
     /**
      * update periode
      */
-    public function periode_update(Request $req)
+    public function periode_update(Request $req, $id)
     {
         $bulan = ["Desember","Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November"];
         $d =$req->all();
         try {
             $temp = $this->convertToArrayDateValue($d['calendar']);
             $fixBulan = $bulan[(intval($temp[0])%12)];
-            $cek = PaymentPeriode::findOrFail($d['id_data']);
-            $cek->bulan = $fixBulan;
+            $cek = PaymentPeriode::findOrFail($id);
+            $cek->bulan = $temp[0];
             $cek->tahun = $temp[2];
             $cek->nominal = $d['nominal'];
             $cek->save();
             $fin = FinancingCategory::findOrFail($d['id']);
             $fin->besaran=$d['nominal'];
-            $fin->save;
+            $fin->save();
             FinancingCategoryReset::create([
                 'id'=>null,
                 'financing_category_id' => $d['id'],
@@ -323,7 +323,7 @@ class FinancingCategoryController extends Controller
                     ->with('error','Gagal diubah!');
         }
     }
-
+    
     /**
      * Remove the specified resource from storage.
      *

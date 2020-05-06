@@ -41,12 +41,13 @@ Route::resource('user', 'UserController');
  */
 Route::resource('financing', 'FinancingCategoryController');
 Route::get('financing/history/{id}', 'FinancingCategoryController@history');
-Route::get('financing/periode/{id}', 'FinancingCategoryController@periode')->name('financing.periode');
 Route::get('financing/ajax/periode/{id}', 'FinancingCategoryController@periode_ajax');
 
 /**
  * Route Periode Pembayaran
  */
+Route::get('financing/periode/{id}', 'FinancingCategoryController@periode')->name('financing.periode');
+Route::put('financing/periode/{id}', 'FinancingCategoryController@periode_update')->name('periode.update');
 Route::post('financing/periode/store', 'FinancingCategoryController@periode_store')->name('periode.store');
 Route::delete('financing/periode/destroy/{id}/{kategori}', 'FinancingCategoryController@periode_destroy')->name('periode.destroy');
  
