@@ -44,10 +44,10 @@ $total = [0,0,0,0];
         <td>
             @if($sisa==0)
                 Lunas
-            @elseif($data->cekNunggak > 0)
-                Nunggak
             @elseif($data->terbayar != 0)
                 Belum Lunas
+            @elseif($data->jenis_pembayaran == "Nunggak")
+                Nunggak
             @else
                 Belum dikonfirmasi
             @endif
