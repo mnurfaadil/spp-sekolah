@@ -21,11 +21,13 @@
                     </li>
                     
                     <li>
-<<<<<<< HEAD
-                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="{{ Request::is('payment/*') ? 'background-color:#8e44ad;color:white' : 'color:#8e44ad;' }}">
-=======
-                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="{{ Request::is('payment/*') ? 'background-color:#8e44ad;color:white' : Request::is('payment') ? 'background-color:#8e44ad;color:white' : 'color:#8e44ad;' }}">
->>>>>>> robi
+                        @if(Request::is('payment'))
+                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="background-color:#8e44ad;color:white">
+                        @elseif(Request::is('payment/*'))
+                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="background-color:#8e44ad;color:white">
+                        @else
+                        <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false" style="color:#8e44ad">
+                        @endif
                             <span class="fa fa-credit-card sub-icon-mg" aria-hidden="true"></span>
                             <span class="mini-click-non ">Pembayaran</span>
                         </a>
@@ -80,6 +82,10 @@
                         <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
                         @elseif(Request::is('financing'))
                         <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
+                        @elseif(Request::is('financing/*'))
+                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
+                        @elseif(Request::is('angkatan'))
+                        <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
                         @else
                         <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="color:black;">
                         @endif
@@ -88,20 +94,15 @@
                         </a>
                         <ul class="submenu-angle" aria-expanded="false">
                             <li><a title="Data Master Siswa" href="{{ route('students.index') }}"><span class="mini-sub-pro">Siswa</span></a></li>
-                            <li><a title="Data Master Jurusan" href="{{ route('majors.index') }}"><span class="mini-sub-pro">Jurusan</span></a>
-                            </li>
-                            <li><a title="Data Master Kategori Pembiayaan" href="{{ url('financing') }}"><span class="mini-sub-pro">Kategori
-                                        Pembiayaan</span></a></li>
+                            <li><a title="Data Master Jurusan" href="{{ route('majors.index') }}"><span class="mini-sub-pro">Jurusan</span></a></li>
+                            <li><a title="Data Master Angkatan" href="{{ route('angkatan.index') }}"><span class="mini-sub-pro">Angkatan</span></a></li>
+                            <li><a title="Data Master Kategori Pembiayaan" href="{{ url('financing') }}"><span class="mini-sub-pro">Kategori Pembiayaan</span></a></li>
                         </ul>
                     </li>
                     
                 @else
                     <li>
-                        @if(Request::is('rekap'))
                         <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="background-color:#eb3b5a;color:white">
-                        @else
-                        <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="color:#eb3b5a;">
-                        @endif
                             <span class="fa fa-files-o sub-icon-mg" aria-hidden="true"></span>
                             <span class="mini-click-non ">Rekap</span>
                         </a>

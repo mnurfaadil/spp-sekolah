@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinancingCategory extends Model
 {
-    /**
+    /** 
      * Nama table yang digunakan
      */
     protected $table = 'financing_categories';
@@ -25,7 +25,7 @@ class FinancingCategory extends Model
      */
     public function payments()
     {
-        return $this->belongsToMany('App\Student', 'payments', 'financing_category_id', 'student_id');
+        return $this->belongsTo('App\Payment');
     }
 
     /**

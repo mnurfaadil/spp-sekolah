@@ -236,6 +236,8 @@ class FinancingCategoryController extends Controller
         DB::statement(DB::raw('set @row:=0'));
         $periodes = PaymentPeriode::select(DB::raw('@row:=@row+1 as rowNumber'),'payment_periodes.*')
                                     ->where('financing_category_id',$id)
+                                    ->orderBy('tahun','ASC')
+                                    ->orderBy('bulan','ASC')
                                     ->get();
         return view('master.financingcategory.periode',compact('periodes','category','prev'));
     }

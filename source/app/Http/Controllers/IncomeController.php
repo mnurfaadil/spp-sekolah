@@ -66,14 +66,14 @@ class IncomeController extends Controller
             Pencatatan::create([
                 'id' => null,
                 'income_id' =>$id,
-                'payment_id' => 0,
+                'expense_id' =>0,
                 'debit' => $req['nominal'],
                 'description' => $desc,
                 'kredit' => 0,
             ]);
           return redirect()
               ->route('income.index')
-              ->with('success', 'Data pengeluaran berhasil disimpan!');
+              ->with('success', 'Data Pemasukan berhasil disimpan!');
 
         }catch(Exception $e){
           return redirect()
@@ -128,22 +128,21 @@ class IncomeController extends Controller
             $data->description = $req['description'];
             $data->sumber = $req['sumber'];
             $data->nominal = $req['nominal'];
-            $data->sumber = $req['sumber'];
             
             $data->save();
 
             $jur = DB::table('Pencatatans')
             ->where('Income_id', $id)
-            ->update(['kredit' => $req['nominal'] ]);
+            ->update(['debit' => $req['nominal'] ]);
 
           return redirect()
               ->route('income.index')
-              ->with('success', 'Data pengeluaran berhasil diubah!');
+              ->with('success', 'Data pemasukan berhasil diubah!');
 
         } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
           return redirect()
               ->route('income.index')
-              ->with('error', 'Data pengeluaran gagal diubah!');
+              ->with('error', 'Data pemasukan gagal diubah!');
         }
     }
 
@@ -162,12 +161,12 @@ class IncomeController extends Controller
             ->delete();
             return redirect()
                 ->route('income.index')
-                ->with('success', 'Data pengeluaran berhasil dihapus!');
+                ->with('success', 'Data pemasukan berhasil dihapus!');
   
           } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
             return redirect()
                 ->route('income.index')
-                ->with('error', 'Data pengeluaran gagal diubah!');
+                ->with('error', 'Data pemasukan gagal diubah!');
           }
     }
 }

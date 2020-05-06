@@ -99,13 +99,15 @@ Route::get('export/{id}','RekapController@print')->name('pdf.print');
 Route::get('export_kwitansi','RekapController@listdata')->name('pdf.print.kwitansi');
 Route::get('export/bulanan/{nama}/{id}','RekapController@rekapBulanan')->name('pdf.print.rekap.bulanan');
 Route::post('export/siswa/','RekapController@rekapSiswa')->name('pdf.print.rekap.siswa');
+//untuk jenis pembayaran bayar per bulan
 Route::get('export/bulanan/rekap/{nama}/{id}/{filter?}','RekapController@rekapBulanan')->name('pdf.print.rekap.bulanan');
 Route::get('export/bulanan/onepage/{nama}/{payment}','RekapController@kwitansiBulanan')->name('pdf.print.bulanan');
 Route::get('export/bulanan/detail/{nama}/{payment}','RekapController@kwitansiBulananSatuan')->name('pdf.print.bulanan.detail');
+//untuk jenis pembayaran sekali bayar
 Route::get('export/sesekali/rekap/{nama}/{id}','RekapController@rekapSesekali')->name('pdf.print.rekap.sesekali');
 Route::get('export/sesekali/onepage/{nama}/{payment}','RekapController@kwitansiSesekali')->name('pdf.print.sesekali');
 Route::get('export/sesekali/detail/{nama}/{payment}','RekapController@kwitansiSesekaliSatuan')->name('pdf.print.sesekali.detail');
 
 Auth::routes();
-
+ 
 Route::get('/home', 'HomeController@index')->name('home');

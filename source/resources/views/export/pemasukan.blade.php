@@ -40,5 +40,5 @@ $total = 0;
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total,0,',','.')}}</th>
     </tr>
 </table>
-<small>Dibuat pada {{now()}}</small>
+<small><span style="font-style:italic">Dicetak pada {{now()}}</span></small>
 @endsection

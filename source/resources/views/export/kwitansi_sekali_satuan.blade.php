@@ -29,7 +29,7 @@
         </div>
       </div>
         <hr class="garis_dua">
-        <center><h4>REKAP PEMBAYARAN SISWA</h4></center><hr>
+        <center><h4>BUKTI PEMBAYARAN SISWA</h4></center><hr>
         <table width='100%'>
           <tr>
             <td width='50%'>
@@ -81,59 +81,32 @@
         <thead>
           <tr>
             <th width="15%">NO</th>
-            <th width="30%">TANGGAL</th>
-            <th width="50%">DESKRIPSI</th>
-            <th width="35%">JUMLAH</th>
+            <th width="65%">DESKRIPSI</th>
+            <th width="20%">JUMLAH</th>
           </tr>
         </thead>
         <tbody>
         <tr>
-          <td colspan="4"><hr></td>
+          <td colspan="3"><hr></td>
           </tr>
-          @php
-            $total=0;
-            $i = 0 ;
-            $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-          @endphp
-          
-          @foreach($datas as $k)
-          @php
-            $cetak = $k->periode;
-            $b = $cetak->bulan;
-            $tahun = $cetak->tahun;
-            $bc = $bulan[$b];
-            $d = "Pembayaran SPP bulan {$bc} tahun {$tahun}";
-            $total += $cetak->nominal;
-          @endphp
           <tr>
             <td >
             <div style="text-align:center">
-            {{$no}} {{$cetak->bulan}}
+            {{$no}}
             </div>
             </td>
             <td >
               <div style="word-wrap: break-word;">
-              {{$cetak->created_at}}
+              {{$data['desc']}}
               </div>
-            </td>
-            <td >
-              <div style="word-wrap: break-word;">
-              {{$d}}
-              </div>
-            </td>
             <td class="unit">
               <div style="text-align:right">
-              {{number_format($cetak->nominal,0,',','.')}}
+              {{number_format($data['nominal'],0,',','.')}}
               </div>
             </td>
           </tr>
-          @php
-            $i++;
-            $no++;            
-          @endphp
-         @endforeach
           <tr>
-          <td colspan="4"><hr></td>
+          <td colspan="3"><hr></td>
           </tr>
         </tbody>
       </table>
@@ -145,15 +118,16 @@
                   <td>&nbsp;</td>
                 </tr> 
                 <tr>
-                  <td>&nbsp;</td>
+                <td>&nbsp;</td>
                 </tr>
               </table>
             </td>
             <td width='50%'>
             <table width='100%'>
               <tr>
-                <td><strong>Grand Total :</strong></td>
-                <td style="text-align:right"><strong>{{number_format($total,0,',','.')}}</strong></td>
+                <td><strong>Total :</strong></td>
+                <td style="text-align:right"><strong>
+              {{number_format($data['nominal'],0,',','.')}}</strong></td>
                 </tr> 
                 <tr>
                   <td colspan='2'><hr></td>
@@ -201,11 +175,11 @@
           </table>
         </td>
         <td width='50%'>
-          <table style="text-align:center" width='100%'>
+          <table width='100%'>
             <tr><td><br></td></tr>
             <tr><td><br></td></tr>
             <tr>
-              <td><span style="text-decoration: underline; font-weight:bold">  {{$user}} </span></td>
+              <td style="text-align:center"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
             </tr>
           </table>
         </td>

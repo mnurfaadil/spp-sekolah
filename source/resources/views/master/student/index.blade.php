@@ -148,7 +148,7 @@ SPP | Siswa
                                 {{csrf_field()}}
                                 <div class="form-group">
                                     <label class="control-label col-md-2">NIS<kode>*</kode></label>
-                                    <input name='nis' placeholder=" Masukan Nama Jurusan" type='text'
+                                    <input name='nis' placeholder="Masukan NIS" type='text'
                                         class='form-control' required>
                                 </div>
                                 <div class="form-group">
@@ -221,7 +221,7 @@ SPP | Siswa
                                                 <div class="input-group date">
                                                     <span class="input-group-addon"><i
                                                             class="fa fa-calendar"></i></span>
-                                                    <input type="text" name='tgl_masuk' class="form-control" required>
+                                                    <input type="text" name='tgl_masuk' class="form-control" required autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -255,7 +255,7 @@ SPP | Siswa
                             {{csrf_field()}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">NIS<kode>*</kode></label>
-                                <input name='nis' id='nis' placeholder=" Masukan Nama Jurusan" type='text'
+                                <input name='nis' id='nis' placeholder=" Masukan NIS" type='text'
                                     class='form-control' required>
                             </div>
                             <div class="form-group">

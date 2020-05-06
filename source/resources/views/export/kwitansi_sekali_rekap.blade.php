@@ -93,27 +93,22 @@
           @php
             $total=0;
             $i = 0 ;
-            $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
           @endphp
           
           @foreach($datas as $k)
           @php
-            $cetak = $k->periode;
-            $b = $cetak->bulan;
-            $tahun = $cetak->tahun;
-            $bc = $bulan[$b];
-            $d = "Pembayaran SPP bulan {$bc} tahun {$tahun}";
-            $total += $cetak->nominal;
+            $d = "Pembayaran cicilan ke {$no} untuk {$k->payment->category->nama}";
+            $total += $k->nominal;
           @endphp
           <tr>
             <td >
             <div style="text-align:center">
-            {{$no}} {{$cetak->bulan}}
+            {{$no}}
             </div>
             </td>
             <td >
               <div style="word-wrap: break-word;">
-              {{$cetak->created_at}}
+              {{$k->created_at}}
               </div>
             </td>
             <td >
@@ -123,7 +118,7 @@
             </td>
             <td class="unit">
               <div style="text-align:right">
-              {{number_format($cetak->nominal,0,',','.')}}
+              {{number_format($k->nominal,0,',','.')}}
               </div>
             </td>
           </tr>

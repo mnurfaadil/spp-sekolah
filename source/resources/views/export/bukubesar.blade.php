@@ -41,10 +41,10 @@ $total_debit = 0;
 @endforeach
     <tr class="footer-section">
         <th colspan="3" style="text-align:right"><span style="font-size:20px;font-weight:bold;">Total :</span></th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total_debit,0,',','.')}}</th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total_kredit,0,',','.')}}</th>
+        <th style="text-align:right;font-size:18px;font-weight:bold;">{{number_format($total_debit,0,',','.')}}</th>
+        <th style="text-align:right;font-size:18px;font-weight:bold;">{{number_format($total_kredit,0,',','.')}}</th>
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($saldo,0,',','.')}}</th>
     </tr>
 </table>
-<small>Dibuat pada {{now()}}</small>
+<small><span style="font-style:italic">Dicetak pada {{now()}}</span></small>
 @endsection

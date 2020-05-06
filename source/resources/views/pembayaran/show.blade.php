@@ -101,8 +101,6 @@ SPP | Pembayaran
                                             @else
                                                 @if($siswa->cekWaiting!=0 || $siswa->akumulasi==0)
                                                     <span class="badge" style="background-color:yellow;color:black">Waiting</span>
-                                                @elseif($siswa->cekWaiting!=0 && $siswa->cekWaiting!=$siswa->bulan_tidak_bayar||$sisa!=0)
-                                                    <span class="badge" style="background-color:red">Nunggak</span>
                                                 @endif
                                                 @if($siswa->bulan_tidak_bayar!=0 )
                                                     <span class="badge" style="background-color:red">Nunggak</span>

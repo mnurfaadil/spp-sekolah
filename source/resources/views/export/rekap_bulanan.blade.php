@@ -50,5 +50,5 @@ $total = [0,0,0,0];
         <th class="footer-right">{{$total[3]}} Bulan</th>
     </tr>
 </table>
-<small>Dibuat pada {{now()}}</small>
+<small><span style="font-style:italic">Dicetak pada {{now()}}</span></small>
 @endsection

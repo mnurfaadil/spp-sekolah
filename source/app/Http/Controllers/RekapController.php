@@ -7,18 +7,19 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Pencatatan;
 use App\Student;
-use App\PaymentPeriodeDetail;
 use App\FinancingCategory; 
+use App\Payment; 
+use App\PaymentDetail;
 use App\PaymentPeriode;
-use App\Payment;
+use App\PaymentPeriodeDetail;
 use App\Major;
 
 use PDF; 
-use DB;
+use DB; 
 class RekapController extends Controller
 {
     public function __construct()
-    {
+    { 
         $this->middleware('auth');
     }
     /**
@@ -214,19 +215,22 @@ class RekapController extends Controller
         $datas = PaymentPeriodeDetail::where([
             ['payment_id','=',$payment],
             ['status','=',"Lunas"]
-        ])->get();
+        ])->join('payment_periodes','payment_periodes.id','payment_periode_details.payment_periode_id')
+        ->orderBy('payment_periodes.bulan','asc')
+        ->orderBy('payment_periodes.tahun','asc')
+        ->get();
         try {
             $data['tanggal'] = $this->getTanggalHariIni();
             $data['waktu'] = $this->getWaktuHariIni();
-            $data['nis'] = $datas[0]->payment->student[0]->nis;
-            $data['nama'] = $datas[0]->payment->student[0]->nama;
-            $data['kelas'] = $datas[0]->payment->student[0]->kelas;
-            $data['jurusan'] = $datas[0]->payment->student[0]->major->nama;
+            $data['nis'] = $datas[0]->payment->student->nis;
+            $data['nama'] = $datas[0]->payment->student->nama;
+            $data['kelas'] = $datas[0]->payment->student->kelas;
+            $data['jurusan'] = $datas[0]->payment->student->major->nama;
         } catch (Throwable $th) {
             abort(500);die;
         }
         
-        $pdf = PDF::loadView('export.kwitansi_bulanan',compact('user','siswa','data','no','datas'));
+        $pdf = PDF::loadView('export.kwitansi_rekap',compact('user','siswa','data','no','datas'));
         $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
@@ -303,9 +307,78 @@ class RekapController extends Controller
         $no =1 ;
         $kategori =  FinancingCategory::where('id',$request->jenis_kategori)->first();
         
-        $title="Rekapitulasi Pembiayaan {$kategori['nama']}";
+        $title="Rekapitulasi Tunggakan {$kategori['nama']}";
         $pdf = PDF::loadView('export.tunggakan',compact('no','title','datas'));
         $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream();
+    }
+
+    //Method untuk pencetakan laporan kategori sekali bayar
+    public function rekapSesekali($kategori, $id, $filter = null)
+    {
+        $no = 1;
+        $datas=DB::table('students')
+            ->selectRaw('students.*,getNominalSekaliBayarTerbayar(students.id,financing_categories.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, financing_categories.besaran AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
+            ->leftJoin('majors','majors.id','=','students.major_id')
+            ->leftJoin('payments','payments.student_id','=','students.id')
+            ->leftJoin('financing_categories','financing_categories.id','=','payments.financing_category_id')
+            ->leftJoin('payment_details','payment_details.payment_id','=','payments.id')
+            ->where([
+                ['financing_categories.id','=',$id],
+            ])->get();
+        $title="Rekapitulasi Pembiayaan {$kategori}";
+        $pdf = PDF::loadView('export.rekap_sekali',compact('no','title','datas'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream();
+    }
+
+    /**
+     * Pencetakan Bukti Pembayaran (kwitansi) kategori Sekali Bayar
+     */
+    public function kwitansiSesekaliSatuan($siswa, $detail)
+    {
+        $no = 1;
+        $user= Auth::user()->name;
+        $siswa = Student::where('id',$siswa)->first();
+        $data = PaymentDetail::where('id',$detail)->first();
+        $idx_bulan = $this->convertSqlDateToMonth($data['tgl_dibayar']);
+        $bulan=$this->convertToBulan($idx_bulan);
+        $d = "Pembayaran {$data['payment']->category->nama}";
+        
+        $data['tanggal'] = $this->getTanggalHariIni();
+        $data['waktu'] = $this->getWaktuHariIni();
+        $data['desc'] = $d;
+
+        
+        
+        
+        $pdf = PDF::loadView('export.kwitansi_sekali_satuan',compact('user','siswa','data','no'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream();
+    }
+
+    public function kwitansiSesekali($siswa, $payment)
+    {
+        $no = 1;
+        $user= Auth::user()->name;
+        $siswa = Student::where('id',$siswa)->first();
+        $datas = PaymentDetail::where([
+            ['payment_id','=',$payment],
+            ['status','=',"Lunas"]
+        ])->get();
+        try {
+            $data['tanggal'] = $this->getTanggalHariIni();
+            $data['waktu'] = $this->getWaktuHariIni();
+            $data['nis'] = $datas[0]->payment->student->nis;
+            $data['nama'] = $datas[0]->payment->student->nama;
+            $data['kelas'] = $datas[0]->payment->student->kelas;
+            $data['jurusan'] = $datas[0]->payment->student->major->nama;
+        } catch (Throwable $th) {
+            abort(500);die;
+        }
+        
+        $pdf = PDF::loadView('export.kwitansi_sekali_rekap',compact('user','siswa','data','no','datas'));
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
 
@@ -381,6 +454,12 @@ class RekapController extends Controller
     public function convertSqlDateToHour($sql)
     {
         $t = explode(" ",$sql);
+        return $t[1];
+    }
+    
+    public function convertSqlDateToMonth($sql)
+    {
+        $t = explode("-",$sql);
         return $t[1];
     }
 

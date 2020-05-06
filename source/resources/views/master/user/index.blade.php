@@ -62,7 +62,7 @@ SPP | User Management
                                         <td><div style="text-align:center">{{$data->created_at}}</div></td>
                                         <td>
                                             <div style="text-align:center">
-                                              <a href="#" class="btn btn-info"
+                                              <a href="#" class="btn btn-warning"
                                               onclick="editConfirm( '{{$data->id}}', '{{$data->name}}', '{{$data->username}}','{{$data->email}}')"
                                               title="Edit"><i class="fa fa-edit"> Edit</i></a>
                                               <a href="{{ route('user.destroy',$data) }}" class="btn btn-danger"
@@ -198,7 +198,7 @@ SPP | User Management
       $('#nama').attr('value', nama);
       $('#username').attr('value', username);
       $('#email').attr('value', email);
-      $('#editForm').attr('action',"{{ url('users') }}/"+id)
+      $('#editForm').attr('action',"{{ url('user') }}/"+id)
       $('#modalUpdate').modal();
     }
 

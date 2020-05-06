@@ -45,7 +45,7 @@ class Student extends Model
      */
     public function payments()
     {
-        return $this->belongsToMany('App\FinancingCategory');
+        return $this->hasMany('App\Payment');
     }
 
     public function periode()
