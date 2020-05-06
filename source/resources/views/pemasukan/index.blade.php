@@ -93,7 +93,7 @@ SPP | Pemasukan
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h5 class="modal-title" id="modalAddLabel">Tambah Pengeluaran</h5>
+        <h5 class="modal-title" id="modalAddLabel">Tambah Pemasukan</h5>
       </div>
       <div class="modal-body">
       <div class="basic-login-form-ad">
@@ -159,11 +159,11 @@ SPP | Pemasukan
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h5 class="modal-title" id="modalUpdateLabel">Ubah Pengeluaran</h5>
+        <h5 class="modal-title" id="modalUpdateLabel">Ubah Pemasukan</h5>
       </div>
       <div class="modal-body">
       <div class="basic-login-form-ad">
-        <form action="" id='editPengeluaran' role="form" method="post" enctype="multipart/form-data">
+        <form action="" id='editPemasukan' role="form" method="post" enctype="multipart/form-data">
         @method('PUT')
           {{csrf_field()}}
           <div class="form-group">
@@ -259,7 +259,7 @@ SPP | Pemasukan
         $('#sumber_edit').val(sumber);
         $('#sumber_edit_chosen .chosen-single span').html(sumber);
         
-        $('#editPengeluaran').attr('action',"{{ url('income') }}/"+id)
+        $('#editPemasukan').attr('action',"{{ url('income') }}/"+id)
         $('#modalUpdate').modal();
     }
 
