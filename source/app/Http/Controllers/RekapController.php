@@ -288,22 +288,26 @@ class RekapController extends Controller
                         ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
                         ->join('payment_details','payment_details.payment_id','=','payments.id')
                         ->get();
-            $cek = $datas;
             if($req['jenis_kategori'] != "all"){
-                $cek = $cek->where('financing_category_id', $req['jenis_kategori']);
+                $datas = $datas->where('financing_category_id', $req['jenis_kategori']);
             }
             if($req['major_id'] != "all"){
-                $cek = $cek->where('major_id', $req['major_id']);
+                $datas = $datas->where('major_id', $req['major_id']);
             }
             if($req['kelas'] != "all"){
-                $cek = $cek->where('kelas', $req['kelas']);
+                $datas = $datas->where('kelas', $req['kelas']);
             }
         }
+        $no =1;
+        $title="Rekapitulasi Tunggakan {$kategori['nama']}";
+        $pdf = PDF::loadView('export.tunggakan_sekali',compact('no','title','datas'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream();
         echo '<pre>';
         var_dump($req);
         echo "<hr>";
         // $cek = $datas->where('major_id',$request->major_id);
-        var_dump($cek);die;
+        var_dump($datas);die;
 
 
         if ($request->major_id == 'all' && $request->kelas == 'all') {
