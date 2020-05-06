@@ -261,25 +261,30 @@ class RekapController extends Controller
         $req = $request->all();
 
         $kategori = FinancingCategory::findOrFail($request->jenis_kategori);
-
+        
+        $no =1;
+        $title="Rekapitulasi Tunggakan {$kategori['nama']}";
+        
         if($kategori['jenis']=="Bayar per Bulan"){
-            $datas = DB::table('students')
-                        ->selectRaw('financing_categories.id as financing_category_id, students.id as student_id, payments.id as payment_id, majors.id as major_id, payment_details.id as payment_detail_id, students.nama, students.`kelas`, majors.`nama` AS jurusan, financing_categories.`besaran` AS akumulasi, (SELECT SUM(nominal) FROM payment_details pd2 WHERE pd2.`id` = payment_details.id ) AS terbayar,(SELECT jenis_pembayaran FROM payments p2 WHERE p2.id = payments.id) AS metode')
-                        ->join('majors','majors.id','=','students.major_id')
-                        ->join('payments','payments.student_id','=','students.id')
-                        ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
-                        ->join('payment_details','payment_details.payment_id','=','payments.id')
-                        ->get();
-            $cek = $datas;
+            $datas=DB::table('students')
+                ->selectRaw('students.*,getNominalTerbayarBulanan(payments.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, getAkumulasiPerBulan(payments.id) AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_category_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
+                ->leftJoin('majors','majors.id','=','students.major_id')
+                ->leftJoin('payments','payments.student_id','=','students.id')
+                ->leftJoin('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->leftJoin('payment_periode_details','payment_periode_details.payment_id','=','payments.id')
+                ->get();
             if($req['jenis_kategori'] != "all"){
-                $cek = $cek->where('financing_category_id', $req['jenis_kategori']);
+                $datas = $datas->where('financing_category_id', $req['jenis_kategori']);
             }
             if($req['major_id'] != "all"){
-                $cek = $cek->where('major_id', $req['major_id']);
+                $datas = $datas->where('major_id', $req['major_id']);
             }
             if($req['kelas'] != "all"){
-                $cek = $cek->where('kelas', $req['kelas']);
+                $datas = $datas->where('kelas', $req['kelas']);
             }
+            $pdf = PDF::loadView('export.tunggakan',compact('no','title','datas'));
+            $pdf->setPaper('A4', 'landscape');
+            return $pdf->stream();
         }else{
             $datas = DB::table('students')
                         ->selectRaw('financing_categories.id as financing_category_id, students.id as student_id, payments.id as payment_id, majors.id as major_id, payment_details.id as payment_detail_id, students.nama, students.`kelas`, majors.`nama` AS jurusan, financing_categories.`besaran` AS akumulasi, (SELECT SUM(nominal) FROM payment_details pd2 WHERE pd2.`id` = payment_details.id ) AS terbayar,(SELECT jenis_pembayaran FROM payments p2 WHERE p2.id = payments.id) AS metode')
@@ -297,12 +302,11 @@ class RekapController extends Controller
             if($req['kelas'] != "all"){
                 $datas = $datas->where('kelas', $req['kelas']);
             }
+            $pdf = PDF::loadView('export.tunggakan_sekali',compact('no','title','datas'));
+            $pdf->setPaper('A4', 'landscape');
+            return $pdf->stream();
         }
-        $no =1;
-        $title="Rekapitulasi Tunggakan {$kategori['nama']}";
-        $pdf = PDF::loadView('export.tunggakan_sekali',compact('no','title','datas'));
-        $pdf->setPaper('A4', 'landscape');
-        return $pdf->stream();
+        
         echo '<pre>';
         var_dump($req);
         echo "<hr>";
