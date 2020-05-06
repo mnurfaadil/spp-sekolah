@@ -22,7 +22,7 @@ $total = 0;
 @endphp
 @foreach($datas as $data)
 @php
-    $url="";
+    $url=null;
     $total =$total + intval($data->kredit); 
     if(isset($data->pengeluaran)){
         $url = "nota/".$data->pengeluaran->foto;
@@ -31,7 +31,7 @@ $total = 0;
     <tr>
         <td>{{$no++}}</td>
         <td>
-            @if(isset($data->pemasukan))
+            @if($url)
             <img style="height:70; width:70;" src="{{ asset('$url')}}" alt="Foto Bukti"/>
             @else
             &nbsp;
