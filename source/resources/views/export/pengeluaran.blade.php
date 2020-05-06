@@ -38,7 +38,7 @@ $total = 0;
             &nbsp;
             @endif
         </td>
-        <td style="text-align:left;">{{$url}}</td>
+        <td style="text-align:left;">{{$data->created_at}}</td>
         <td style="text-align:left;word-wrap:break-word;">{{$data->description}}</td>
         <td style="text-align:right">{{number_format($data->kredit,0,',','.')}}</td>
     </tr>

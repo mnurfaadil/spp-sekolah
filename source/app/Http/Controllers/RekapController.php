@@ -364,10 +364,8 @@ class RekapController extends Controller
         $siswa = Student::where('id',$siswa)->first();
         $datas = PaymentDetail::where([
             ['payment_id','=',$payment],
-            ['status','=',"Lunas"]
+            ['status','<>',"Waiting"]
         ])->get();
-        echo '<pre>';
-        var_dump($datas);die;
         try {
             $data['tanggal'] = $this->getTanggalHariIni();
             $data['waktu'] = $this->getWaktuHariIni();
