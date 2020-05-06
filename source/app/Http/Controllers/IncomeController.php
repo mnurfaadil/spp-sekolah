@@ -166,7 +166,7 @@ class IncomeController extends Controller
           } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
             return redirect()
                 ->route('income.index')
-                ->with('error', 'Data pemasukan gagal diubah!');
+                ->with('error', 'Data pemasukan gagal dihapus!');
           }
     }
 }
