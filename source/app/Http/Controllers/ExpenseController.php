@@ -138,7 +138,7 @@ class ExpenseController extends Controller
             
             $data->save();
 
-            $jur = DB::table('Pencatatans')
+            $jur = DB::table('pencatatans')
             ->where('expense_id', $id)
             ->update(['kredit' => $req['nominal'] ]);
 
@@ -163,7 +163,7 @@ class ExpenseController extends Controller
     {
         try {
             Expense::findOrFail($id)->delete();
-            DB::table('Pencatatans')
+            DB::table('pencatatans')
             ->where('expense_id', $id)
             ->delete();
             return redirect()
