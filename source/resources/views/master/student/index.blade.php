@@ -403,17 +403,17 @@ SPP | Siswa
                                 </div>
                             </div>
                             <div class="form-group">
-                                    <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
-                                    <div class="chosen-select-single mg-b-20">
-                                        <select class="chosen-select" name="angkatan" id="angkatan_edit3" disabled>
-                                        @if(isset($angkatan))
-                                            @foreach($angkatan as $d)
-                                            <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
-                                            @endforeach
-                                        @endif
-                                        </select>
-                                    </div>
+                                <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
+                                <div class="chosen-select-single mg-b-20">
+                                    <select class="chosen-select" name="angkatan" id="angkatan_edit3" disabled>
+                                    @if(isset($angkatan))
+                                        @foreach($angkatan as $d)
+                                        <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
+                                        @endforeach
+                                    @endif
+                                    </select>
                                 </div>
+                            </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
                                 <input name='phone' id='phone3' placeholder="Masukan No Telpon" type='number'

@@ -170,6 +170,7 @@ SPP | Kategori Pembayaran
                                                 <td>{{ $periode->tahun }}</td>
                                                 <td>
                                                     <div style="text-align:right">
+                                      
                                                     {{ $periode->nominal }}
                                                     </div>
                                                 </td>
@@ -266,7 +267,6 @@ SPP | Kategori Pembayaran
         $('#edit-form').hide();
     });
     function editConfirm(periode) {
-        console.log(periode);
         var calendar = "0"+periode.bulan+"/01/"+periode.tahun;
         $('#add-form').hide();
         $('#edit-form').show();

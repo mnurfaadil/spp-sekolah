@@ -175,7 +175,8 @@ SPP | Cicilan Pembayaran
                                             </tr>
                                             @endforeach
                                             @php
-                                            $sisa=intval($financing->besaran)-$total;
+                                            $sisa=intval($financing->akumulasi)-$total;
+                                            $potongan = $financing->besaran - $financing->akumulasi;
                                             @endphp
                                         </tbody>
                                     </table>
@@ -196,6 +197,17 @@ SPP | Cicilan Pembayaran
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:18px;">
                                                                                 <strong>{{number_format($financing->besaran,0,',','.')}}</strong></span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Potongan</td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:18px;">
+                                                                                <strong>{{number_format($potongan,0,',','.')}}</strong></span>
                                                                         </div>
                                                                     </td>
                                                                 </tr>

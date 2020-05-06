@@ -258,6 +258,21 @@ class RekapController extends Controller
             abort(404);
         }
 
+        $req = $request->all();
+
+        $kategori = FinancingCategory::findOrFail($request->jenis_kategori);
+
+        if($kategori['jenis']=="Bayar per Bulan"){
+            
+        }else{
+
+        }
+        echo '<pre>';
+        var_dump($req);
+        echo "<hr>";
+        var_dump($kategori);die;
+
+
         if ($request->major_id == 'all' && $request->kelas == 'all') {
             $datas=DB::table('students')
                 ->selectRaw('students.*,getNominalTerbayarBulanan(payments.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, getAkumulasiPerBulan(payments.id) AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
