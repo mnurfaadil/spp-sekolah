@@ -35,7 +35,7 @@
             <td width='50%'>
               <table>
                 <tr>
-                  <td>&nbsp;</td>
+                  <td>DICETAK</td>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
                 </tr>  
@@ -45,7 +45,7 @@
                   <td>{{$data['tanggal']}}</td>
                 </tr>  
                 <tr>
-                  <td>WAKTU PENCETAKAN</td>
+                  <td>WAKTU</td>
                   <td>:</td>
                   <td>{{$data['waktu']}}</td>
                 </tr>  

@@ -23,12 +23,12 @@ $total = 0;
 @foreach($datas as $data)
 @php
     $total =$total + intval($data->debit);
-    
+    $url = "nota/{$data->pemasukan->foto}";
 @endphp
     <tr>
         <td>{{$no++}}</td>
         <td>
-            <img style="height:70; width:70;" src="{{public_path('')}}\assets\img\logo\bbl.png" alt="Foto Bukti"/>
+            <img style="height:70; width:70;" src="{{ asset('$url')}}" alt="Foto Bukti"/>
         </td>
         <td style="text-align:left;">{{$data->created_at}} </td>
         <td style="text-align:left;word-wrap:break-word;">{{$data->description}}</td>
