@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-SPP | Pembayaran
+SPP | Pembayaran {{$financing->nama}}
 @endsection
 
 @section('content')
@@ -16,13 +16,15 @@ SPP | Pembayaran
                             <div class="container-sm">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        
+
                                     </div>
                                     <div class="col-md-6">
                                         <div style="float:right; margin-right:15px">
                                             <div class="row">
-                                                <a href="#" style="float:right;color:black"class=" btn btn-success" target="_blank" title="Cetak rekapitulasi {{$financing->nama}}">
-                                                <i class="fa fa-print"></i>&nbsp;Cetak</a>
+                                                <a href="{{route('pdf.print.rekap.sesekali', [$financing->nama,$financing->id])}}"
+                                                    style="float:right;color:black" class=" btn btn-success"
+                                                    target="_blank" title="Cetak rekapitulasi {{$financing->nama}}">
+                                                    <i class="fa fa-print"></i>&nbsp;Cetak</a>
                                             </div>
                                         </div>
                                     </div>
@@ -51,6 +53,8 @@ SPP | Pembayaran
                                         <th data-field="name">Nama</th>
                                         <th data-field="kelas">Kelas</th>
                                         <th data-field="total">Akumulasi Biaya</th>
+                                        <th data-field="persentase">Persentase Potongan</th>
+                                        <th data-field="potongan">Nominal Potongan</th>
                                         <th data-field="terbayar">Sudah dibayar</th>
                                         <th data-field="tunggakan">Sisa Pembayaran</th>
                                         @if($financing->jenis=="Sekali Bayar")
@@ -63,12 +67,12 @@ SPP | Pembayaran
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($datas as $siswa)
-                                        @php
-                                            $besaran = $siswa->akumulasi;
-                                            $terbayar = intval(($siswa->terbayar!=0)?$siswa->terbayar:0);
-                                            $sisa = $besaran - $terbayar;
-                                        @endphp
+                                    @foreach($datas as $siswa)
+                                    @php
+                                    $besaran = $siswa->akumulasi;
+                                    $terbayar = intval(($siswa->terbayar!=0)?$siswa->terbayar:0);
+                                    $sisa = $besaran - $terbayar;
+                                    @endphp
                                     <tr>
                                         <td></td>
                                         <td>{{$no++}}</td>
@@ -77,6 +81,16 @@ SPP | Pembayaran
                                         <td>
                                             <div style="text-align:right">
                                                 {{number_format($siswa->akumulasi,0,',','.')}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="text-align:right">
+                                                {{$siswa->persentase}} %
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="text-align:right">
+                                                {{number_format($siswa->potongan,0,',','.')}}
                                             </div>
                                         </td>
                                         <td>
@@ -91,39 +105,47 @@ SPP | Pembayaran
                                         </td>
                                         <td>
                                             <div style="text-align:center">
-                                            @if($siswa->jenis_pembayaran=="Waiting")
-                                                <span class="badge" style="background-color:yellow;color:black">Waiting</span>
-                                            @else
+                                                @if($siswa->jenis_pembayaran=="Waiting")
+                                                <span class="badge"
+                                                    style="background-color:yellow;color:black">Waiting</span>
+                                                @else
                                                 {{$siswa->jenis_pembayaran}}
-                                            @endif
+                                                @endif
                                             </div>
                                         </td>
                                         <td>
                                             <div style="text-align:center">
-                                            @if($siswa->jenis_pembayaran=="Waiting")
-                                                <span class="badge" style="background-color:yellow;color:black">Waiting</span>
-                                            @elseif($siswa->jenis_pembayaran=="Nunggak")
+                                                @if($siswa->jenis_pembayaran=="Waiting")
+                                                <span class="badge"
+                                                    style="background-color:yellow;color:black">Waiting</span>
+                                                @elseif($siswa->jenis_pembayaran=="Nunggak")
                                                 <span class="badge" style="background-color:red">Nunggak</span>
-                                            @elseif($siswa->jenis_pembayaran=="Cicilan" && $sisa!=0)
-                                                <span class="badge" style="background-color:yellow;color:black">Belum Lunas</span>
-                                            @else
+                                                @elseif($siswa->jenis_pembayaran=="Cicilan" && $sisa!=0)
+                                                <span class="badge" style="background-color:yellow;color:black">Belum
+                                                    Lunas</span>
+                                                @else
                                                 <span class="badge" style="background-color:green">Lunas</span>
-                                            @endif
+                                                @endif
                                             </div>
                                         </td>
                                         <td>
                                             <div style="text-align:center">
-                                            @if($siswa->jenis_pembayaran=="Waiting" || $siswa->jenis_pembayaran=="Nunggak")
-                                                <button class="btn btn-warning" onclick="addConfirm({{$siswa->id}},{{$siswa->payment_id}})" title="Pilih Metode Pembayaran" style="color:black;  ">
+                                                @if($siswa->jenis_pembayaran=="Waiting" ||
+                                                $siswa->jenis_pembayaran=="Nunggak")
+                                                <button class="btn btn-warning"
+                                                    onclick="addConfirm({{$siswa->id}},{{$siswa->payment_id}})"
+                                                    title="Pilih Metode Pembayaran" style="color:black;  ">
                                                     <i class="fa fa-info-circle"> Metode</i>
                                                 </button>
-                                            @elseif($siswa->jenis_pembayaran=="Cicilan")
-                                                <a href="{{ route('payment.details.cicilan', [$siswa->financing_id, $siswa->id, $siswa->payment_id]) }}" class="btn btn-primary"
-                                                title="Cetak Bukti Pembayaran" style="color:white;"><i class="fa fa-eye"> Rincian</i></a>
-                                            @else
-                                            <a href="#"class=" btn btn-success" target="_blank" title="Cetak kwitansi">
-                                                <i class="fa fa-print"></i>&nbsp;Cetak</a>
-                                            @endif
+                                                @elseif($siswa->jenis_pembayaran=="Cicilan")
+                                                <a href="{{ route('payment.details.cicilan', [$siswa->financing_id, $siswa->id, $siswa->payment_id]) }}"
+                                                    class="btn btn-primary" title="Cetak Bukti Pembayaran"
+                                                    style="color:white;"><i class="fa fa-eye"> Rincian</i></a>
+                                                @else
+                                                <a href="{{ route('pdf.print.sesekali.detail',[$siswa->id,$siswa->detail_id]) }}"
+                                                    class=" btn btn-success" target="_blank" title="Cetak kwitansi">
+                                                    <i class="fa fa-print"></i>&nbsp;Cetak</a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -148,40 +170,47 @@ SPP | Pembayaran
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title" id="modalAddLabel">Pilih Metode Pembayaran Pembiayaan</h5>
+                <h5 class="modal-title" id="modalAddLabel">Pilih Metode Pembayaran</h5>
             </div>
             <div class="modal-body">
-                <form action="{{ route('payment.storeMethod') }}" role="form" method="post" id="store">
-                {{csrf_field()}}
-                <input type="hidden" name="payment_id">
-                <input type="hidden" name="financing_category_id" value="{{$financing->id}}">
-                <input type="hidden" name="financing_category" value="{{$financing->nama}}">
-                <input type="hidden" name="nominal" value="{{$financing->besaran}}">
-                <input type="hidden" name="student_id" id="student_id_add" value="">
-                <input type="hidden" name="penerima" value="{{ Auth::user()->nama }}">
-                <div class="row mb-3">
-                    <div class="col-md-3 col-sm-3">
-                        Pembiayaan
-                    </div>
-                    :
-                    <strong><span>{{$financing->nama}}</span></strong>
-                </div>
-                <div class="row">
-                    <div class="col-md-3 col-sm-3">
-                        Nominal Pembayaran
-                    </div>
-                    : <strong>Rp. <span >{{number_format($financing->besaran,0,',','.')}}</span></strong>
-                </div>
-                <hr>
-                <div class="form-group">
-                    <label class="control-label col-md-4">Metode Pembayaran<kode>*</kode></label>
-                    <div class="chosen-select-single mg-b-20">
-                        <select class="chosen-select" name="metode_pembayaran" id="metode_pembayaran_add">
-                            <option value="Tunai">Tunai</option>
-                            <option value="Cicilan">Cicilan</option>
-                            <option value="Nunggak">Nunggak</option>
-                        </select>
-                    </div>
+                <div class="basic-login-form-ad">
+                    <form action="{{ route('payment.storeMethod') }}" role="form" method="post" id="store">
+                        {{csrf_field()}}
+                        <input type="hidden" name="payment_id">
+                        <input type="hidden" name="financing_category_id" value="{{$financing->id}}">
+                        <input type="hidden" name="financing_category" value="{{$financing->nama}}">
+                        <input type="hidden" name="nominal" value="{{$financing->besaran}}">
+                        <input type="hidden" name="student_id" id="student_id_add" value="">
+                        <input type="hidden" name="penerima" value="{{ Auth::user()->nama }}">
+                        <div class="row mb-3">
+                            <div class="col-md-3 col-sm-3">
+                                Pembiayaan
+                            </div>
+                            :
+                            <strong><span>{{$financing->nama}}</span></strong>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3">
+                                Nominal Pembayaran
+                            </div>
+                            : <strong>Rp. <span>{{number_format($financing->besaran,0,',','.')}}</span></strong>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Persentase Potongan Biaya (%)<kode>*</kode></label>
+                            <input name='persentase' id='persentase_add' placeholder="Masukan persentase potongan biaya" type='number'
+                                    min="0" max="100" class='form-control' value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Metode Pembayaran<kode>*</kode></label>
+                            <div class="chosen-select-single mg-b-20">
+                                <select class="chosen-select" name="metode_pembayaran" id="metode_pembayaran_add" autofocus>
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Cicilan">Cicilan</option>
+                                    <option value="Nunggak">Nunggak</option>
+                                </select>
+                            </div>
+                        </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -205,27 +234,40 @@ SPP | Pembayaran
 <!-- normalize CSS -->
 <link rel="stylesheet" href="{{ asset('assets/css/data-table/bootstrap-table.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/data-table/bootstrap-editable.css') }}">
+
 <!-- forms CSS
 ============================================ -->
 <link rel="stylesheet" href="{{asset('assets/css/form/all-type-forms.css')}}">
 <!-- chosen CSS
 ============================================ -->
 <link rel="stylesheet" href="{{asset('assets/css/chosen/bootstrap-chosen.css')}}">
+
+<!-- datapicker CSS
+============================================ -->
+<link rel="stylesheet" href="{{asset('assets/css/datapicker/datepicker3.css')}}">
+
+<style>
+    kode {
+        color: red;
+    }
+
+</style>
 @endpush
 
 @push('scripts')
 
 <script>
-    function closeModal()
-    {
+    function closeModal() {
         $('.button_add').bind('click');
     }
+
     function addConfirm(student_id, payment_id) {
-      $('input[name=student_id]').attr('value',student_id);
-      $('input[name=payment_id]').attr('value',payment_id);
-      $('#modalAdd').modal();
+        $('input[name=student_id]').attr('value', student_id);
+        $('input[name=payment_id]').attr('value', payment_id);
+        $('#modalAdd').modal();
     }
-    function confirm(){
+
+    function confirm() {
         event.preventDefault();
         swal({
             title: 'Apakah anda yakin?',
@@ -240,9 +282,10 @@ SPP | Pembayaran
             }
         });
     }
+
 </script>
 <!-- data table JS
-		============================================ -->
+============================================ -->
 <script src="{{ asset('assets/js/data-table/bootstrap-table.js') }}"></script>
 <script src="{{ asset('assets/js/data-table/tableExport.js') }}"></script>
 <script src="{{ asset('assets/js/data-table/data-table-active.js') }}"></script>
@@ -252,7 +295,7 @@ SPP | Pembayaran
 <script src="{{ asset('assets/js/data-table/colResizable-1.5.source.js') }}"></script>
 <script src="{{ asset('assets/js/data-table/bootstrap-table-export.js') }}"></script>
 <!--  editable JS
-		============================================ -->
+============================================ -->
 <script src="{{ asset('assets/js/editable/jquery.mockjax.js') }}"></script>
 <script src="{{ asset('assets/js/editable/mock-active.js') }}"></script>
 <script src="{{ asset('assets/js/editable/select2.js') }}"></script>
@@ -261,20 +304,29 @@ SPP | Pembayaran
 <script src="{{ asset('assets/js/editable/bootstrap-editable.js') }}"></script>
 <script src="{{ asset('assets/js/editable/xediable-active.js') }}"></script>
 
+<!-- icheck JS
+============================================ -->
+<script src="{{ asset('assets/js/icheck/icheck.min.js')}}"></script>
+<script src="{{ asset('assets/js/icheck/icheck-active.js')}}"></script>
+
 <!-- chosen JS
-    ============================================ -->
+============================================ -->
 <script src="{{ asset('assets/js/chosen/chosen.jquery.js')}}"></script>
 <script src="{{ asset('assets/js/chosen/chosen-active.js')}}"></script>
+
+<!-- input-mask JS
+============================================ -->
+<script src="{{ asset('assets/js/input-mask/jasny-bootstrap.min.js')}}"></script>
 @endpush
 
 @push('breadcrumb-left')
 <div class="col-md-1" style="item-align:center">
-<a href="{{ url('/payment')}}" class="btn btn-primary" href="#" title="Kembali"><i class="fa fa-arrow-left" ></i></a>
+    <a href="{{ url('/payment')}}" class="btn btn-primary" href="#" title="Kembali"><i class="fa fa-arrow-left"></i></a>
 </div>
 <div class="col-md-11">
     <div style="margin-left:15px;">
-    <h4>Menu Pembayaran {{$financing->nama}}</h4>
-    <span class="all-pro-ad">Kategori Pembayaran : <strong>{{$financing->jenis}}</strong></span>
+        <h4>Menu Pembayaran {{$financing->nama}}</h4>
+        <span class="all-pro-ad">Kategori Pembayaran : <strong>{{$financing->jenis}}</strong></span>
     </div>
 </div>
 @endpush

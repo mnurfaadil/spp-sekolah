@@ -53,11 +53,11 @@ SPP | Rekap
                             <h4>Buku Besar</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="educate-icon educate-professor" style="color:#2980b9"></i>
+                            <i class="fa fa-bookmark-o" style="color:#2980b9"></i>
                         </div>
                         <div class="m-t-xl widget-cl-3">
                             <h1 class="text-success" style="color:#2980b9">Rp. {{number_format($rekap->saldo,0,',','.')}}</h1>
-                            <a class="btn btn-block loginbtn" style="background-color:#2980b9;color:white" href="{{route('pdf.print','pengeluaran')}}" target="_blank">
+                            <a class="btn btn-block loginbtn" style="background-color:#2980b9;color:white" href="{{route('pdf.print','Buku Besar')}}" target="_blank">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
                             </a>
@@ -69,14 +69,14 @@ SPP | Rekap
                 <div class="hpanel widget-int-shape res-tablet-mg-t-30 dk-res-t-pro-30">
                     <div class="panel-body">
                         <div class="stats-title pull-left">
-                            <h4>Data Tunggakan</h4>
+                            <h4>Tunggakan</h4>
                         </div>
                         <div class="stats-icon pull-right">
                             <i class="fa fa-times" style="color:#e74c3c"></i>
                         </div>
                         <div class="m-t-xl widget-cl-4">
                             <h1 class="text-danger">Rp. {{number_format($rekap->tunggakan,0,',','.')}}</h1>
-                            <a class="btn btn-success btn-block loginbtn" style="color:white" data-toggle="modal" href="#modalAdd" style="background-color:#e74c3c;color:white">
+                            <a class="btn btn-block loginbtn" data-toggle="modal" href="#modalAdd" style="background-color:#e74c3c;color:white">
                           <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
                             </a>
@@ -140,7 +140,7 @@ SPP | Rekap
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type='submit' class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
+                    <button type='submit' class="btn btn-primary"><i class="fa fa-print"></i> Cetak</button>
                 </div>
             </form>
         </div>

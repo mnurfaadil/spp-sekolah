@@ -18,6 +18,7 @@
         <th>Terbayar</th>
         <th>Sisa Pembayaran</th>
         <th>Metode Pembayaran</th>
+        <th>Keterangan</th>
     </tr>
 @php
 $total = [0,0,0,0];
@@ -39,7 +40,18 @@ $total = [0,0,0,0];
         <td style="text-align:right">{{number_format($data->akumulasi,0,',','.')}}</td>
         <td style="text-align:right">{{number_format($data->terbayar,0,',','.')}}</td>
         <td style="text-align:right">{{number_format($sisa,0,',','.')}}</td>
-        <td>{{$data->bulan_tidak_bayar}} Bulan</td>
+        <td>{{$data->jenis_pembayaran}}</td>
+        <td>
+            @if($sisa==0)
+                Lunas
+            @elseif($data->terbayar != 0)
+                Belum Lunas
+            @elseif($data->jenis_pembayaran == "Nunggak")
+                Nunggak
+            @else
+                Belum dikonfirmasi
+            @endif
+        </td>
     </tr>
 @endforeach
     <tr class="footer-section">
@@ -47,7 +59,9 @@ $total = [0,0,0,0];
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
-        <th class="footer-right">{{$total[3]}} Bulan</th>
+        <th class="footer-right">&nbsp;</th>
+        <th class="footer-right">&nbsp;</th>
     </tr>
 </table>
+<small><span style="font-style:italic">Dicetak pada {{now()}}</span></small>
 @endsection

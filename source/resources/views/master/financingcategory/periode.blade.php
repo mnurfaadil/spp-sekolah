@@ -6,6 +6,7 @@ SPP | Kategori Pembayaran
 
 @section('content')
 
+<div id="add-form">
 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
 
     <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
@@ -44,12 +45,67 @@ SPP | Kategori Pembayaran
                                 </div>
                             </div>
                         </form>
+                        </div>
+                        
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<div id="edit-form">
+<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+
+    <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
+        <div class="panel-body custom-panel-jw">
+            <h3><a href="">Ubah Periode {{ $category[0]->nama}}</a></h3>
+            <p class="all-pro-ad">Ubah periode pembayaran disini</p>
+            <hr>
+
+            <div class="sparkline16-graph">
+                <div class="date-picker-inner">
+
+                    <div class="basic-login-inner">
+                        <form action="" method="post">
+                        @method('PUT')
+                            @csrf
+                            <input type="hidden" name="id" value="{{ $category[0]->id}}">
+                            <input type="hidden" name="id_data">
+                            <div class="form-group data-custon-pick" id="data_4">
+                                <label>Pilih Periode (mm/dd/yyyy)</label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" name="calendar" value="06/01/2020" id="edit_calendar">
+                                </div>
+                            </div>
+                            <div class="form-group data-custon-pick">
+                                <label>Nominal</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><strong>Rp.</strong></span>
+                                    <input type="nominal" class="form-control" name="nominal" value="{{ $category[0]->besaran}}" id="edit_nominal">
+                                </div>
+                            </div>
+                            <div class="login-btn-inner">
+                                <div class="inline-remember-me">
+                                    <button class="btn btn-sm btn-primary pull-right login-submit-cs"
+                                        type="submit">Submit</button>
+                                    <label>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
 <div class="col-lg-8 col-md-6 col-sm-6 col-xs-12">
     <div class="hpanel hblue contact-panel contact-panel-cs responsive-mg-b-30">
         <div class="panel-body custom-panel-jw">
@@ -63,6 +119,13 @@ SPP | Kategori Pembayaran
                                         <div class="col-md-6">
                                             <div class="main-sparkline13-hd">
                                                 <h3>Periode Pembayaran {{$category[0]->nama}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div style="float:right">
+                                                <button class="btn btn-success" onclick="addConfirm()">
+                                                    <i class="fa fa-plus" ></i> Tambah
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -107,11 +170,17 @@ SPP | Kategori Pembayaran
                                                 <td>{{ $periode->tahun }}</td>
                                                 <td>
                                                     <div style="text-align:right">
+                                      
                                                     {{ $periode->nominal }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div style="text-align:center">
+                                                    <button class="btn btn-warning editable"
+                                                title="Edit periode {{$category[0]->nama}}" style="color:white" 
+                                                onclick="editConfirm({{$periode}});">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
                                                 <button class="btn btn-danger editable"
                                                 title="Hapus periode {{$category[0]->nama}}" style="color:white" 
                                                 onclick="event.preventDefault();destroy('{{ route('periode.destroy',[$periode,$category[0]->id]) }}');">
@@ -192,6 +261,27 @@ SPP | Kategori Pembayaran
                 swal("Data kamu aman!");
             }
         });
+    }
+    $(document).ready(function(){
+        $('#add-form').show();
+        $('#edit-form').hide();
+    });
+    function editConfirm(periode) {
+        var calendar = "0"+periode.bulan+"/01/"+periode.tahun;
+        $('#add-form').hide();
+        $('#edit-form').show();
+        $('#edit_calendar').attr('value', calendar);
+        $('#edit_nominal').attr('value', periode.nominal);
+        $('#edit-form').attr('action', "{{ url('financing/periode') }}/" + periode.id);
+        $('#edit_nominal').focus();
+    }
+
+    function addConfirm() {
+        $('#add-form').show();
+        $('.input[name=calendar]').attr('value','');
+        $('.input[name=nominal]').attr('value','');
+        $('.input[name=nominal]').focus();
+        $('#edit-form').hide();
     }
 </script>
 

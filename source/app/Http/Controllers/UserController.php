@@ -75,9 +75,27 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        $this->validate($request,[
+            'nama' => 'required',
+        ]);
+
+        try {
+          $req = $request->all();
+          $user = User::findOrFail($id);
+          $user->name = $req['nama'];
+          $user->save();
+
+          return redirect()
+              ->route('user.index')
+              ->with('success', 'Data user berhasil diubah!');
+
+        } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
+          return redirect()
+              ->route('user.index')
+              ->with('error', 'Data user gagal diubah!');
+        }
     }
 
     /**

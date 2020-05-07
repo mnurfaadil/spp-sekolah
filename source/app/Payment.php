@@ -17,7 +17,8 @@ class Payment extends Model
     protected $fillable = [
         "student_id",
         "financing_category_id", 
-        "jenis_pembayaran",
+        "jenis_pembayaran", 
+        "persentase",
     ];
 
     /**
@@ -40,14 +41,14 @@ class Payment extends Model
     {
         return $this->belongsToMany('App\User');
     }
-
+ 
     public function student()
     {
-        return $this->belongsToMany('App\Student', 'payments', 'student_id');
+        return $this->belongsTo('App\Student', 'student_id');
     }
 
     public function category()
     {
-        return $this->belongsToMany('App\FinancingCategory', 'payments', 'financing_category_id');
+        return $this->belongsTo('App\FinancingCategory', 'financing_category_id');
     }
 }

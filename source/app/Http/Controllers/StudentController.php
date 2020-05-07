@@ -127,8 +127,8 @@ class StudentController extends Controller
                 'alamat' => $req['alamat'],
                 'tgl_masuk' => $date,
                 ]);
-            $categories = FinancingCategory::all();
             $id = DB::getPdo()->lastInsertId();
+            $categories = FinancingCategory::all();
             for ($i=0; $i < $categories->count(); $i++) 
             { 
                 Payment::create([
@@ -139,7 +139,7 @@ class StudentController extends Controller
             }
             $status = "Waiting";
             $payment = Payment::where('student_id',$id)->get();
-            for ($i=0; $i < $categories->count(); $i++) { 
+            for ($i=0; $i < $categories->count(); $i++) {  
                 if($categories[$i]->jenis=="Bayar per Bulan"){
                     for ($j=0; $j < $payment->count(); $j++) { 
                         if($payment[$j]->financing_category_id==$categories[$i]->id){

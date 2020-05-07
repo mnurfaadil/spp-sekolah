@@ -20,5 +20,11 @@ class Income extends Model
         "sumber",
         "foto",
         "nominal",
+        "created_at",
     ];
+
+    public function pencatatan()
+    {
+        return $this->hasMany('App\Pencatatan');
+    }
 }

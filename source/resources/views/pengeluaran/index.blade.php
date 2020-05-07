@@ -42,6 +42,7 @@ SPP | Pengeluaran
                                     <tr>
                                         <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id">No</th>
+                                        <th data-field="tanggal">Tanggal</th>
                                         <th data-field="foto">Foto</th>
                                         <th data-field="title">Judul</th>
                                         <th data-field="description">Deskripsi</th>
@@ -52,9 +53,14 @@ SPP | Pengeluaran
                                 </thead>
                                 <tbody>
                                 @foreach($datas as $data)
+                                  @php
+                                    $temp = strtotime($data->created_at);
+                                    $tanggal = date('j - M - Y', $temp);
+                                  @endphp
                                     <tr>
                                         <td></td>
                                         <td>{{$no++}}</td>
+                                        <td>{{ $tanggal }}</td>
                                         <td class="avatar text-center">
                                           <img class="rounded-circle" style="width: 100px; height: 100px;" src="nota/{{ $data -> foto }}" alt="">  
                                         </td>
@@ -67,7 +73,7 @@ SPP | Pengeluaran
                                         </div>
                                         </td>
                                         <td>
-                                          <a href="#" class="btn btn-warning" onclick="editConfirm( '{{$data->id}}','{{$data->title}}','{{$data->description}}','{{$data->sumber}}','{{$data->nominal}}')" title="Edit"><i class="fa fa-edit"> Edit</i></a>
+                                          <a href="#" class="btn btn-warning" onclick="editConfirm( '{{$data->created_at}}','{{$data->id}}','{{$data->title}}','{{$data->description}}','{{$data->sumber}}','{{$data->nominal}}')" title="Edit"><i class="fa fa-edit"> Edit</i></a>
                                           <a href="{{ route('expense.destroy',$data) }}" class="btn btn-danger" onclick="event.preventDefault();destroy('{{ route('expense.destroy',$data) }}');" title="Hapus"><i class="fa fa-trash"></i> Hapus</a>
                                         </td>
                                     </tr>
@@ -98,6 +104,19 @@ SPP | Pengeluaran
         <form action="{{ route('expense.store') }}" role="form" method="post" enctype="multipart/form-data">
           {{csrf_field()}}
           <div class="form-group">
+              <label class="control-label col-md-6">Tanggal<kode>*</kode> format (bulan/tanggal/tahun)</label>
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group data-custon-pick" id="data_3">
+                          <div class="input-group date">
+                              <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                              <input type="text" name='tanggal' id='tanggal' class="form-control" placeholder="Tanggal Pengeluaran" autocomplete="off">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="form-group">
             <label class="control-label col-md-2">Judul<kode>*</kode></label>
             <input name='title' placeholder=" Masukan Title" type='text' class='form-control' required>
           </div>
@@ -116,7 +135,7 @@ SPP | Pengeluaran
           </div>
           <div class="form-group">
             <label class="control-label col-md-2">Nominal<kode>*</kode></label>
-            <input name='nominal' placeholder="Masukan Nominal" type='number' class='form-control' required>
+            <input name='nominal' placeholder="Masukan Nominal" type='number' min="0" class='form-control' required>
           </div>
           <div class="form-group">
           <div class="form-group-inner">
@@ -165,6 +184,19 @@ SPP | Pengeluaran
         @method('PUT')
           {{csrf_field()}}
           <div class="form-group">
+              <label class="control-label col-md-6">Tanggal<kode>*</kode> format (bulan/tanggal/tahun)</label>
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group data-custon-pick" id="data_3">
+                          <div class="input-group date">
+                              <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                              <input type="text" name='tanggal' id='tanggal_edit' class="form-control" placeholder="Tanggal Pengeluaran"  autocomplete="off">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="form-group">
             <label class="control-label col-md-2">Judul<kode>*</kode></label>
             <input name='title' id='title' placeholder=" Masukan Title" type='text' class='form-control' required>
           </div>
@@ -183,7 +215,7 @@ SPP | Pengeluaran
           </div>
           <div class="form-group">
             <label class="control-label col-md-2">Nominal<kode>*</kode></label>
-            <input name='nominal' id='nominal' placeholder="Masukan Nominal" type='number' class='form-control' required>
+            <input name='nominal' id='nominal' placeholder="Masukan Nominal" type='number' min="0" class='form-control' required>
           </div>
           <div class="form-group">
           <div class="form-group-inner">
@@ -248,17 +280,26 @@ SPP | Pengeluaran
 @push('scripts')
 
     <script>
-    function editConfirm(id,title,description,sumber,nominal)
+    function editConfirm(tanggal, id,title,description,sumber,nominal)
     {
-        $('#title').attr('value',title);
-        $('#description').html(description);
-        $('#nominal').attr('value',nominal);
-        
-        $('#sumber_edit').val(sumber);
-        $('#sumber_edit_chosen .chosen-single span').html(sumber);
-        
-        $('#editPengeluaran').attr('action',"{{ url('expense') }}/"+id)
-        $('#modalUpdate').modal();
+      let date = convertDate(tanggal);
+      $('#title').attr('value',title);
+      $('#description').html(description);
+      $('#nominal').attr('value',nominal);
+      $('#tanggal_edit').attr('value', date);
+      $('#sumber_edit').val(sumber);
+      $('#sumber_edit_chosen .chosen-single span').html(sumber);
+      
+      $('#editPengeluaran').attr('action',"{{ url('expense') }}/"+id)
+      $('#modalUpdate').modal();
+    }
+
+    function convertDate(date){
+      let temp = date.split(" ");
+      let temp_date = temp[0];
+      let oke = temp_date.split("-");
+      let fix = oke[1]+"/"+oke[2]+"/"+oke[0];
+      return fix;
     }
 
     function destroy(action){

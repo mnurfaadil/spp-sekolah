@@ -78,10 +78,15 @@ SPP | Cicilan Pembayaran
                                         </div>
                                         <div class="col-md-6">
                                             <div style="float:right;">
-                                                <a href="{{ route('financing.periode',$financing->id)}}"
+                                            @if(isset($payment_details[0]))
+                                                <a href="{{ route('pdf.print.sesekali',[$datas[0]->id, $payment_details[0]->payment_id]) }}" target="_blank"
                                                     style="color:white" class=" btn btn-success" title="Cetak kwitansi">
                                                     <i class="fa fa-print"></i>&nbsp; Cetak</a>
-
+                                            @else
+                                            <a href="#" 
+                                                    style="color:white" class=" btn btn-success" title="Data pembayaran kosong" disabled>
+                                                    <i class="fa fa-print"></i>&nbsp; Cetak</a>
+                                            @endif
                                             </div>
                                         </div>
                                     </div>
@@ -163,14 +168,15 @@ SPP | Cicilan Pembayaran
                                                 </td>
                                                 <td>
                                                     <div style="text-align: center;">
-                                                    <a href="#" style="color:white;margin-top:0"class=" btn btn-success" target="_blank" title="Cetak bukti pembayaran">
+                                                    <a href="{{ route('pdf.print.sesekali.detail',[$datas[0]->id,$data->id]) }}" style="color:white;margin-top:0"class=" btn btn-success" target="_blank" title="Cetak bukti pembayaran">
                                                 <i class="fa fa-print"></i></a>
                                                     </div>
                                                 </td>
                                             </tr>
                                             @endforeach
                                             @php
-                                            $sisa=intval($financing->besaran)-$total;
+                                            $sisa=intval($financing->akumulasi)-$total;
+                                            $potongan = $financing->besaran - $financing->akumulasi;
                                             @endphp
                                         </tbody>
                                     </table>
@@ -191,6 +197,17 @@ SPP | Cicilan Pembayaran
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:18px;">
                                                                                 <strong>{{number_format($financing->besaran,0,',','.')}}</strong></span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Potongan</td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:18px;">
+                                                                                <strong>{{number_format($potongan,0,',','.')}}</strong></span>
                                                                         </div>
                                                                     </td>
                                                                 </tr>

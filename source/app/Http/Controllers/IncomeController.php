@@ -43,6 +43,8 @@ class IncomeController extends Controller
     {
         try {
             $req = $request->all();
+            $sql_date = $this->convertDateToSQLDate($request->tanggal);
+            $req['tanggal'] = $sql_date;
             $uuid = Uuid::uuid1();
             // menyimpan data file yang diupload ke variabel $file
             $file = $request->file('foto');
@@ -55,25 +57,27 @@ class IncomeController extends Controller
             
             Income::create([
                 'id' => null,
+                'created_at' => $req['tanggal'],
                 'title' => $req['title'],
                 'description' => $req['description'],
                 'sumber' => $req['sumber' ],
                 'nominal' => $req['nominal'],
                 'foto' => $uuid.$nama_file,
             ]);
-            $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
             $id = DB::getPdo()->lastInsertId();
+            $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
             Pencatatan::create([
                 'id' => null,
                 'income_id' =>$id,
-                'payment_id' => 0,
+                'expense_id' =>0,
                 'debit' => $req['nominal'],
                 'description' => $desc,
                 'kredit' => 0,
+                'created_at' =>$req['tanggal'],
             ]);
           return redirect()
               ->route('income.index')
-              ->with('success', 'Data pengeluaran berhasil disimpan!');
+              ->with('success', 'Data Pemasukan berhasil disimpan!');
 
         }catch(Exception $e){
           return redirect()
@@ -115,6 +119,8 @@ class IncomeController extends Controller
     {   
         try {
             $req = $request->all();
+            $sql_date = $this->convertDateToSQLDate($request->tanggal);
+            $req['tanggal'] = $sql_date;
             $data = Income::findOrFail($id);
             if ($request->file('foto')!='') {
                 $file = $request->file('foto');
@@ -128,22 +134,27 @@ class IncomeController extends Controller
             $data->description = $req['description'];
             $data->sumber = $req['sumber'];
             $data->nominal = $req['nominal'];
-            $data->sumber = $req['sumber'];
-            
+            $data->created_at = $req['tanggal'];
             $data->save();
 
-            $jur = DB::table('Pencatatans')
-            ->where('Income_id', $id)
-            ->update(['kredit' => $req['nominal'] ]);
+            $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
+
+            $jur = DB::table('pencatatans')
+            ->where('income_id', $id)
+            ->update([
+                'debit' => $req['nominal'],
+                'description' => $desc,
+                'created_at' => $req['tanggal']
+            ]);
 
           return redirect()
               ->route('income.index')
-              ->with('success', 'Data pengeluaran berhasil diubah!');
+              ->with('success', 'Data pemasukan berhasil diubah!');
 
         } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
           return redirect()
               ->route('income.index')
-              ->with('error', 'Data pengeluaran gagal diubah!');
+              ->with('error', 'Data pemasukan gagal diubah!');
         }
     }
 
@@ -157,17 +168,22 @@ class IncomeController extends Controller
     {
         try {
             Income::findOrFail($id)->delete();
-            DB::table('Pencatatans')
-            ->where('Income_id', $id)
+            DB::table('pencatatans')
+            ->where('income_id', $id)
             ->delete();
             return redirect()
                 ->route('income.index')
-                ->with('success', 'Data pengeluaran berhasil dihapus!');
+                ->with('success', 'Data pemasukan berhasil dihapus!');
   
           } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
             return redirect()
                 ->route('income.index')
-                ->with('error', 'Data pengeluaran gagal diubah!');
+                ->with('error', 'Data pemasukan gagal dihapus!');
           }
+    }
+    public function convertDateToSQLDate($date)
+    {
+        $temp = explode("/",$date);
+        return $temp[2]."-".$temp[0]."-".$temp[1];
     }
 }

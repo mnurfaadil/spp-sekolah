@@ -114,7 +114,7 @@ class PaymentController extends Controller
 
     /**
      * Display the specified resource.
-     *
+    *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -127,6 +127,7 @@ class PaymentController extends Controller
         $cek = FinancingCategory::findOrFail($id);    
         if($cek->jenis=="Bayar per Bulan")
         {
+           
             $datas=DB::table('students')
                         ->selectRaw('students.*,getNominalTerbayarBulanan(payments.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, getAkumulasiPerBulan(payments.id) AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
                         ->leftJoin('majors','majors.id','=','students.major_id')
@@ -144,7 +145,7 @@ class PaymentController extends Controller
             return view('pembayaran.show', compact('datas','financing','periode','no'));
         }else{
             $datas=DB::table('students')
-                        ->selectRaw('students.*, majors.nama as jurusan, financing_categories.`besaran` AS akumulasi, financing_categories.`nama` AS financing_nama, paid_once(payments.id) AS terbayar, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
+                        ->selectRaw('students.*, majors.nama as jurusan, (financing_categories.`besaran` - ((select persentase from payments p2 where p2.id = payments.id)*financing_categories.besaran)/100) AS akumulasi, (select persentase from payments p3 where p3.id = payments.id) as persentase, (((select persentase from payments p4 where p4.id = payments.id)*financing_categories.besaran)/100) as potongan,payment_details.id as detail_id,financing_categories.`nama` AS financing_nama, paid_once(payments.id) AS terbayar, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
                         ->leftJoin('majors','majors.id','=','students.major_id')
                         ->leftJoin('payments','payments.student_id','=','students.id')
                         ->leftJoin('financing_categories','financing_categories.id','=','payments.financing_category_id')
@@ -293,30 +294,32 @@ class PaymentController extends Controller
         $req['date'] = date('Y-m-d', time());
         $req['user_id'] = Auth::user()->id;
         $obj = Student::where('id',$req['student_id'])->first();
-        
-        $desc = "Pembayaran ".$req['financing_category']." dari ".$obj['nama']." kelas ".$obj['kelas']." ( ".$obj->major->nama." )"." diterima oleh ".$req['penerima'];
+        $percent = $req['persentase'];
+        $nominal = intval($req['nominal'])-((intval($req['nominal'])*$percent)/100);
         if($req['metode_pembayaran']=='Tunai')
         {
+            $desc = "Pembayaran ".$req['financing_category']." dari ".$obj['nama']." kelas ".$obj['kelas']." ( ".$obj->major->nama." )"." diterima oleh ".$req['penerima'];
             $payment = Payment::findOrFail($req['payment_id']);
-            $payment->jenis_pembayaran="Tunai";
+            $payment->jenis_pembayaran = "Tunai";
+            $payment->persentase = $percent;
             $payment->save();
             PaymentDetail::create([
                 'id' => null,
                 'payment_id' => $payment->id,
                 'tgl_dibayar' => $req['date'],
-                'nominal' => $req['nominal'],
+                'nominal' => $nominal,
                 'user_id' => $req['user_id'],
                 'status' => 'Lunas',
                 ]);
-            $id = DB::getPdo()->lastInsertId();
-            Pencatatan::create([
+                $id = DB::getPdo()->lastInsertId();
+                Pencatatan::create([
                 'id' => null,
                 'expense_id' => 0,
                 'payment_id' => $id,
-                'debit' => $req['nominal'],
+                'debit' => $nominal,
                 'description' => $desc,
                 'kredit' => 0,
-            ]);
+                ]);
             return redirect()
             ->route('payment.show', $req['financing_category_id'])
             ->with('success', 'Lunas!');
@@ -333,6 +336,7 @@ class PaymentController extends Controller
             $cek = Payment::where('id',$req['payment_id'])->first();
             if($cek->jenis_pembayaran=="Waiting"){
                 $cek->jenis_pembayaran="Cicilan";
+                $cek->persentase = $percent;
                 $cek->save();
                 return redirect()
                     ->route('payment.details.cicilan', [$req['financing_category_id'], $req['student_id'], $cek->id])
@@ -361,7 +365,7 @@ class PaymentController extends Controller
                 ->get();
         //data master show data untuk header
         $financing = FinancingCategory::findOrFail($id)
-                    ->selectRaw('*, getBesaranBiayaKategoriPembiayaan(financing_categories.id) as besaran')
+                    ->selectRaw('*, getBesaranBiayaKategoriPembiayaan(financing_categories.id) as besaran, (financing_categories.`besaran` - ((select persentase from payments p2 where p2.id = '.$id_payment.')*financing_categories.besaran)/100) AS akumulasi')
                     ->where('id',$id)
                     ->get();
         $financing = $financing[0];
@@ -394,24 +398,35 @@ class PaymentController extends Controller
         $request = $request->all();
         
         $total = FinancingCategory::select('besaran')->where('id', $request['financing_category_id'])->first();
-        $sudah_dibayar = PaymentDetail::selectRaw('sum(nominal) as nominal')->where('payment_id',$request['payment_id'])->first();
-        $total =$total->besaran;
+        $potongan = Payment::select('persentase')
+            ->where('financing_category_id', $request['financing_category_id'])
+            ->where('student_id', $request['student_id'])->first();
+        $sudah_dibayar = PaymentDetail::selectRaw('sum(nominal) as nominal, count(*) as hitungan')->where('payment_id',$request['payment_id'])->first();
+        $hitungan = $sudah_dibayar->hitungan+1;
+        $total = intval($total->besaran)-(intval($potongan->persentase)*intval($total->besaran)/100);
         $sudah_dibayar = intval($sudah_dibayar->nominal);
         $selisih = $total - ($sudah_dibayar + intval($request['nominal']));
         $sisa = intval($request['nominal'])+intval($selisih);
         $nominal = $request['nominal'];
         $status = 'Nunggak';
+        //
+        /**
+         * Total 400.000
+         * sudah dibayar 0
+         * selisih = 400.000 - (0 + 5000000) = -100.000
+         * sisa= 500.000 - 100.000 = 400.000
+         * 
+         */
         if($selisih<0){
             $nominal = $sisa;
             $status = 'Lunas';
         }elseif($selisih==0){
             $status='Lunas';
         }
-        $penerima=Auth::user()->nama;
+        $penerima=Auth::user()->name;
         $siswa=Student::where('id',$request['student_id'])->first();
         $category=FinancingCategory::where('id',$request['financing_category_id'])->first();
-        $desc = "Penerimaan pembayaran cicilan {$category['nama']} dari {$siswa['nama']} kelas {$siswa['kelas']} {$siswa->major->nama} diterima oleh {$penerima}";
-        
+        $desc = "Penerimaan pembayaran cicilan ke {$hitungan} untuk {$category['nama']} dari {$siswa['nama']} kelas {$siswa['kelas']} {$siswa->major->nama} diterima oleh {$penerima}";
         $date = $this->convertToCorrectDateValue($request['calendar']);
         PaymentDetail::create([
             'id' => null,
@@ -421,11 +436,18 @@ class PaymentController extends Controller
             'user_id' => Auth::user()->id,
             'status' => $status,
         ]);
+        if($status=="Lunas"){
+            $details = PaymentDetail::where('payment_id', $request['payment_id'])->get();
+            foreach ($details as $d) {
+                $d->status=$status;
+                $d->save();
+            }
+        }
         Pencatatan::create([
             'id' => null,
             'expense_id' => 0,
             'payment_id' => $request['payment_id'],
-            'debit' => $request['nominal'],
+            'debit' => $nominal,
             'description' => $desc,
             'kredit' => 0,
         ]);
@@ -507,6 +529,8 @@ class PaymentController extends Controller
                     ->leftJoin('students','students.id','=','payments.student_id')
                     ->leftJoin('users','users.id','=','payment_periode_details.user_id')
                     ->leftJoin('payment_periodes','payment_periodes.id','=','payment_periode_details.payment_periode_id')
+                    ->orderBy('payment_periodes.bulan','asc')
+                    ->orderBy('payment_periodes.tahun','asc')
                     ->where('payment_id',$id)->get();
         //
         $datas=Student::selectRaw('students.id, students.nis, students.nama, students.kelas, students.major_id, payments.jenis_pembayaran, `getNominalTerbayarBulanan`(payments.id) AS terbayar, getAkumulasiPerBulan(payments.id) AS akumulasi, payments.id as payment_id, financing_categories.id as financing_id')
@@ -592,7 +616,7 @@ class PaymentController extends Controller
     public function convertToCorrectDateValue($date)
     {
         $date = explode("/", $date);
-        $date = $date[2]."/".$date[1]."/".$date[0];
+        $date = $date[2]."-".$date[1]."-".$date[0];
         return $date;
     }
 

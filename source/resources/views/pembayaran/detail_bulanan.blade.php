@@ -14,8 +14,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
 
     <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
         <div class="panel-body custom-panel-jw">
-            <h3>Form Pembayaran</h3>
-            <p class="all-pro-ad">Masukan pembayaran disini</p>
+            <h3>Data Diri Siswa</h3>
             <hr>
 
             <div class="sparkline16-graph">
@@ -65,7 +64,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                         <div class="col-md-6">
                                             
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6"> 
                                             <div style="float:right;">
                                                 <a href="{{ route('pdf.print.bulanan',[$datas['id'],$datas->payment_id])}}"
                                                     style="color:white; margin-top:0" class=" btn btn-success" target="_blank"><i

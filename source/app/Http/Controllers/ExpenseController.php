@@ -48,6 +48,8 @@ class ExpenseController extends Controller
     {
         try {
             $req = $request->all();
+            $sql_date = $this->convertDateToSQLDate($request->tanggal);
+            $req['tanggal'] = $sql_date;
             $uuid = Uuid::uuid1();
             // menyimpan data file yang diupload ke variabel $file
             $file = $request->file('foto');
@@ -61,13 +63,14 @@ class ExpenseController extends Controller
             Expense::create([
                 'id' => null,
                 'title' => $req['title'],
-                'description' => $req['description'],
+                'created_at' => $req['tanggal'],
                 'sumber' => $req['sumber'],
+                'description' => $req['description'],
                 'nominal' => $req['nominal'],
                 'foto' => $uuid.$nama_file,
             ]);
-            $desc = "Pembelian {$req['title']} oleh {$req['sumber']}";
             $id = DB::getPdo()->lastInsertId();
+            $desc = "Pembelian {$req['title']} oleh {$req['sumber']}";
             Pencatatan::create([
                 'id' => null,
                 'expense_id' =>$id,
@@ -75,6 +78,7 @@ class ExpenseController extends Controller
                 'debit' => 0,
                 'description' => $desc,
                 'kredit' =>$req['nominal'],
+                'created_at' =>$req['tanggal'],
             ]); 
 
           return redirect()
@@ -121,6 +125,8 @@ class ExpenseController extends Controller
     {   
         try {
             $req = $request->all();
+            $sql_date = $this->convertDateToSQLDate($request->tanggal);
+            $req['tanggal'] = $sql_date;
             $data = Expense::findOrFail($id);
             if ($request->file('foto')!='') {
                 $file = $request->file('foto');
@@ -128,19 +134,23 @@ class ExpenseController extends Controller
                 $tujuan_upload = 'nota';
                 $file->move($tujuan_upload,$nama_file);
                 $data->foto = $nama_file;
-                
-              }
+            }
             $data->title = $req['title'];
             $data->description = $req['description'];
             $data->sumber = $req['sumber'];
             $data->nominal = $req['nominal'];
-            $data->sumber = $req['sumber'];
-            
+            $data->created_at = $req['tanggal'];
             $data->save();
 
-            $jur = DB::table('Pencatatans')
+            $desc = "Pembelian {$req['title']} oleh {$req['sumber']}";
+
+            $jur = DB::table('pencatatans')
             ->where('expense_id', $id)
-            ->update(['kredit' => $req['nominal'] ]);
+            ->update([
+                'kredit' => $req['nominal'],
+                'description' => $desc,
+                'created_at' => $req['tanggal']
+            ]);
 
           return redirect()
               ->route('expense.index')
@@ -163,7 +173,7 @@ class ExpenseController extends Controller
     {
         try {
             Expense::findOrFail($id)->delete();
-            DB::table('Pencatatans')
+            DB::table('pencatatans')
             ->where('expense_id', $id)
             ->delete();
             return redirect()
@@ -175,5 +185,10 @@ class ExpenseController extends Controller
                 ->route('expense.index')
                 ->with('error', 'Data pengeluaran gagal diubah!');
           }
+    }
+    public function convertDateToSQLDate($date)
+    {
+        $temp = explode("/",$date);
+        return $temp[2]."-".$temp[0]."-".$temp[1];
     }
 }

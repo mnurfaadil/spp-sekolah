@@ -148,7 +148,7 @@ SPP | Siswa
                                 {{csrf_field()}}
                                 <div class="form-group">
                                     <label class="control-label col-md-2">NIS<kode>*</kode></label>
-                                    <input name='nis' placeholder=" Masukan Nama Jurusan" type='text'
+                                    <input name='nis' placeholder="Masukan NIS" type='text'
                                         class='form-control' required>
                                 </div>
                                 <div class="form-group">
@@ -221,7 +221,7 @@ SPP | Siswa
                                                 <div class="input-group date">
                                                     <span class="input-group-addon"><i
                                                             class="fa fa-calendar"></i></span>
-                                                    <input type="text" name='tgl_masuk' class="form-control" required>
+                                                    <input type="text" name='tgl_masuk' class="form-control" required autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -255,7 +255,7 @@ SPP | Siswa
                             {{csrf_field()}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">NIS<kode>*</kode></label>
-                                <input name='nis' id='nis' placeholder=" Masukan Nama Jurusan" type='text'
+                                <input name='nis' id='nis' placeholder=" Masukan NIS" type='text'
                                     class='form-control' required>
                             </div>
                             <div class="form-group">
@@ -403,17 +403,17 @@ SPP | Siswa
                                 </div>
                             </div>
                             <div class="form-group">
-                                    <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
-                                    <div class="chosen-select-single mg-b-20">
-                                        <select class="chosen-select" name="angkatan" id="angkatan_edit3" disabled>
-                                        @if(isset($angkatan))
-                                            @foreach($angkatan as $d)
-                                            <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
-                                            @endforeach
-                                        @endif
-                                        </select>
-                                    </div>
+                                <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
+                                <div class="chosen-select-single mg-b-20">
+                                    <select class="chosen-select" name="angkatan" id="angkatan_edit3" disabled>
+                                    @if(isset($angkatan))
+                                        @foreach($angkatan as $d)
+                                        <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
+                                        @endforeach
+                                    @endif
+                                    </select>
                                 </div>
+                            </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
                                 <input name='phone' id='phone3' placeholder="Masukan No Telpon" type='number'
