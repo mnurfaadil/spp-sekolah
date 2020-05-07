@@ -12,20 +12,50 @@ SPP | Pengeluaran
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="sparkline13-list">
                     <div class="sparkline13-hd">
-                        <div class="main-sparkline13-hd">
+                      <div class="main-sparkline13-hd">
                         <div class="container-sm">
-                            <div class="row">
-                                <div class="col-md-6">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <form action="{{route('expense.filter')}}" role="form" method="post">
+                                @csrf
+                                <div style="float:left; display:flex; flex-direction:row; max-height:55">
+                                  <select class="form-control" name="bulan">
+                                    <option value="">-- Pilih Bulan -- </option>
+                                    <option value="">Semua</option>
+                                    @foreach($bulan as $bl)
+                                      @php
+                                        $bln = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                        $print = $bln[$bl->bulan];
+                                      @endphp
+                                      <option  value="{{ $bl->bulan }}">{{ $print }}</option>
+                                    @endforeach
+                                  </select>
+                                  <select style="margin-left:5px;" class="form-control" name="tahun">
+                                    <option value="">-- Pilih Tahun  --</option>
+                                    <option value="">Semua</option>
+                                      @foreach($tahun as $th)
+                                      <option  value="{{ $th->tahun }}">{{ $th->tahun }}</option>
+                                      @endforeach
+                                    </select>
+                                    <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
                                 </div>
-                                <div class="col-md-6">
-                                <div style="float:right;">
-                                      <a href="{{route('pdf.print','pengeluaran')}}" style="color:white; margin-top:0" class=" btn btn-info" target="_blank"><i class="fa fa-print"></i>&nbsp; Cetak</a>
-                                      <a data-toggle="modal" href="#modalAdd" @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
-                                    </div>
-                                </div>
+                              </form>
                             </div>
+                            <div class="col-md-6">
+                              <div style="float:right;">
+                                <form action="{{route('pdf.print')}}" target="_blank" role="form" method="post">
+                                  @csrf
+                                  <input type="hidden" name='bulan' value='{{$bln1}}'>
+                                  <input type="hidden" name='id' value='pengeluaran'>
+                                  <input type="hidden" name='tahun' vlaue='{{$thn1}}'>
+                                  <button type='submit' style="color:white; margin-top:0" class=" btn btn-info" target="_blank"><i class="fa fa-print"></i>&nbsp; Cetak</button>
+                                  <a data-toggle="modal" href="#modalAdd" @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        </div>
+                      </div>
                     </div>
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
@@ -40,7 +70,6 @@ SPP | Pengeluaran
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id">No</th>
                                         <th data-field="tanggal">Tanggal</th>
                                         <th data-field="foto">Foto</th>
@@ -54,11 +83,10 @@ SPP | Pengeluaran
                                 <tbody>
                                 @foreach($datas as $data)
                                   @php
-                                    $temp = strtotime($data->created_at);
+                                    $temp = strtotime($data->updated_at);
                                     $tanggal = date('j - M - Y', $temp);
                                   @endphp
                                     <tr>
-                                        <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{ $tanggal }}</td>
                                         <td class="avatar text-center">

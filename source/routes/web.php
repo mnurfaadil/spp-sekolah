@@ -74,6 +74,7 @@ Route::post('payment/perbulan/detail/add','PaymentController@addPeriodeBulanan')
  * Route resource untuk Pengeluaran 
  */
 Route::resource('expense', 'ExpenseController');
+Route::post('expense/filter', 'ExpenseController@filter')->name('expense.filter');
 
 /**
  * Route resource untuk Pembayaran
@@ -96,7 +97,7 @@ Route::get('/change', 'HomeController@edit')->name('password.edit');
 Route::post('/change', 'HomeController@update')->name('password.ubah');
 
 Route::get('export','RekapController@index')->name('pdf');
-Route::get('export/{id}','RekapController@print')->name('pdf.print');
+Route::post('export','RekapController@print')->name('pdf.print');
 Route::get('export_kwitansi','RekapController@listdata')->name('pdf.print.kwitansi');
 Route::get('export/bulanan/{nama}/{id}','RekapController@rekapBulanan')->name('pdf.print.rekap.bulanan');
 Route::post('export/siswa/','RekapController@rekapSiswa')->name('pdf.print.rekap.siswa');

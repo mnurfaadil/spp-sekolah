@@ -13,6 +13,7 @@ use App\PaymentDetail;
 use App\PaymentPeriode;
 use App\PaymentPeriodeDetail;
 use App\Major;
+use App\Expense;
 
 use PDF; 
 use DB; 
@@ -46,7 +47,7 @@ class RekapController extends Controller
         # code...
     }
 
-    public function print($id) 
+    public function print(Request $request) 
     {
         
         $t = now();
@@ -58,7 +59,7 @@ class RekapController extends Controller
 
         $user= Auth::user()->nama;
 
-        if($id=="pemasukan"){ 
+        if($request->id=="pemasukan"){ 
             $rincian = "Pemasukan";
             
             $datas = Pencatatan::where('debit','<>','0')->get();
@@ -66,14 +67,40 @@ class RekapController extends Controller
             $pdf = PDF::loadView('export.pemasukan',compact('tanggal','user','rincian','datas','no','title'));
             $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
-        }elseif($id=="pengeluaran"){
+        }elseif($request->id=="pengeluaran"){
             $rincian = "Pengeluaran";
             $title = "Laporan Pengeluaran";
-            $datas = Pencatatan::where('kredit','<>','0')->get();
+
+            if ($request->bulan == '' && $request->tahun!='') {
+                $datas = Expense::orderBy('expenses.updated_at', 'desc')
+                    ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
+                    ->whereYear('expenses.expenses.updated_at',$request->tahun)
+                    ->where('pencatatans.kredit','<>','0')
+                    ->get();
+            }elseif ($request->bulan != '' && $request->tahun=='') {
+                $datas = Expense::orderBy('expenses.updated_at', 'desc')
+                    ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
+                    ->whereMonth('expenses.updated_at',$request->bulan)
+                    ->where('pencatatans.kredit','<>','0')
+                    ->get();
+            }elseif ($request->bulan == '' && $request->tahun=='') {
+                $datas = Expense::orderBy('expenses.updated_at', 'desc')
+                    ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
+                    ->where('pencatatans.kredit','<>','0')
+                    ->get();
+            }else{
+                $datas = Expense::orderBy('expenses.updated_at', 'desc')
+                ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
+                    ->whereMonth('expenses.updated_at',$request->bulan)
+                    ->whereYear('expenses.updated_at',$request->tahun)
+                    ->where('pencatatans.kredit','<>','0')
+                    ->get();
+            }
             $pdf = PDF::loadView('export.pengeluaran',compact('tanggal','user','rincian','datas','no','title'));
             $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
-        }elseif($id=="Buku Besar"){
+
+        }elseif($request->id=="Buku Besar"){
             $rincian = "Buku Besar";
             $title = "Laporan Keuangan";
             $datas = Pencatatan::all();
