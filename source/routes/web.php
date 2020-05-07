@@ -71,7 +71,7 @@ Route::post('payment/perbulan/detail/','PaymentController@bulananStore')->name('
 Route::put('payment/perbulan/detail/update','PaymentController@updateStatusBulanan')->name('payment.monthly.detail.update');
 Route::post('payment/perbulan/detail/add','PaymentController@addPeriodeBulanan')->name('payment.monthly.detail.add');
 /**
- * Route resource untuk Pengeluaran
+ * Route resource untuk Pengeluaran 
  */
 Route::resource('expense', 'ExpenseController');
 

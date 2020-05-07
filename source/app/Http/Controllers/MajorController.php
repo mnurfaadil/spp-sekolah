@@ -20,7 +20,7 @@ class MajorController extends Controller
      */
     public function index()
     {
-        $majors = Major::all();
+        $majors = Major::orderBy('id','desc')->get();
         $no=1;
         return view('master.major.index', compact('majors','no'));
     }

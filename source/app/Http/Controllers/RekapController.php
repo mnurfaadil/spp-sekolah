@@ -64,18 +64,21 @@ class RekapController extends Controller
             $datas = Pencatatan::where('debit','<>','0')->get();
             $title = "Laporan Pemasukan";
             $pdf = PDF::loadView('export.pemasukan',compact('tanggal','user','rincian','datas','no','title'));
+            $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }elseif($id=="pengeluaran"){
             $rincian = "Pengeluaran";
             $title = "Laporan Pengeluaran";
             $datas = Pencatatan::where('kredit','<>','0')->get();
             $pdf = PDF::loadView('export.pengeluaran',compact('tanggal','user','rincian','datas','no','title'));
+            $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }elseif($id=="Buku Besar"){
             $rincian = "Buku Besar";
             $title = "Laporan Keuangan";
             $datas = Pencatatan::all();
             $pdf = PDF::loadView('export.bukubesar',compact('tanggal','user','rincian','datas','no','title'));
+            $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }
     }
@@ -147,13 +150,15 @@ class RekapController extends Controller
         $title = "Data Siswa";
         $majors = Major::where('id',$jur)->first();
         $pdf = PDF::loadView('export.siswa',compact('students','no','title','kls','jur','majors'));
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
 
     public function listdata()
     {
         $pdf = PDF::loadView('export.kwitansi');
-        $pdf->setPaper('A4', 'landscape');
+        // $pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
 
@@ -182,7 +187,8 @@ class RekapController extends Controller
         }
         $title="Rekapitulasi Pembiayaan {$kategori}";
         $pdf = PDF::loadView('export.rekap_bulanan',compact('no','title','datas'));
-        $pdf->setPaper('A4', 'landscape');
+        //$pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
 
@@ -203,7 +209,8 @@ class RekapController extends Controller
         
         
         $pdf = PDF::loadView('export.kwitansi_bulanan_satuan',compact('user','siswa','data','no'));
-        $pdf->setPaper('A4', 'landscape');
+        //$pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
     
@@ -283,7 +290,8 @@ class RekapController extends Controller
                 $datas = $datas->where('kelas', $req['kelas']);
             }
             $pdf = PDF::loadView('export.tunggakan',compact('no','title','datas'));
-            $pdf->setPaper('A4', 'landscape');
+            //$pdf->setPaper('A4', 'landscape');
+            $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }else{
             $datas = DB::table('students')
@@ -292,6 +300,7 @@ class RekapController extends Controller
                         ->join('payments','payments.student_id','=','students.id')
                         ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
                         ->join('payment_details','payment_details.payment_id','=','payments.id')
+                        ->orderBy
                         ->get();
             if($req['jenis_kategori'] != "all"){
                 $datas = $datas->where('financing_category_id', $req['jenis_kategori']);
@@ -303,11 +312,11 @@ class RekapController extends Controller
                 $datas = $datas->where('kelas', $req['kelas']);
             }
             $pdf = PDF::loadView('export.tunggakan_sekali',compact('no','title','datas'));
-            $pdf->setPaper('A4', 'landscape');
+            //$pdf->setPaper('A4', 'landscape');
+            $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }
     }
-
     //Method untuk pencetakan laporan kategori sekali bayar
     public function rekapSesekali($kategori, $id, $filter = null)
     {
@@ -323,7 +332,8 @@ class RekapController extends Controller
             ])->get();
         $title="Rekapitulasi Pembiayaan {$kategori}";
         $pdf = PDF::loadView('export.rekap_sekali',compact('no','title','datas'));
-        $pdf->setPaper('A4', 'landscape');
+        //$pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
 
@@ -344,11 +354,9 @@ class RekapController extends Controller
         $data['waktu'] = $this->getWaktuHariIni();
         $data['desc'] = $d;
 
-        
-        
-        
         $pdf = PDF::loadView('export.kwitansi_sekali_satuan',compact('user','siswa','data','no'));
-        $pdf->setPaper('A4', 'landscape');
+        //$pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
 

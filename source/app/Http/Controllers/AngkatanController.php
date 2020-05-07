@@ -14,7 +14,7 @@ class AngkatanController extends Controller
     public function index()
     {
         $no = 1;
-        $angkatan = Angkatan::all();
+        $angkatan = Angkatan::orderBy('id','desc')->get();
         return view('master.angkatan.index',compact('angkatan','no'));
     }
 

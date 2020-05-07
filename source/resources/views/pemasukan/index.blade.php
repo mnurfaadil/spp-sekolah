@@ -16,6 +16,30 @@ SPP | Pemasukan
                         <div class="container-sm">
                             <div class="row">
                                 <div class="col-md-6">
+                                  <form action="{{route('students.filter')}}" role="form" method="post">
+                                      @csrf
+                                      <div style="float:left; display:flex; flex-direction:row; max-height:55">
+                                        <select class="form-control" name="bulan">
+                                          <option value="">-- Pilih Bulan -- </option>
+                                          <option value="">Semua</option>
+                                          @foreach($bulan as $bl)
+                                            @php
+                                              $bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                              $print = $bulan[$bl->bulan];
+                                            @endphp
+                                            <option  value="{{ $bl->bulan }}">{{ $print }}</option>
+                                          @endforeach
+                                        </select>
+                                        <select style="margin-left:5px;" class="form-control" name="tahun">
+                                          <option value="">-- Pilih Tahun  --</option>
+                                          <option value="">Semua</option>
+                                            @foreach($tahun as $th)
+                                            <option  value="{{ $th->tahun }}">{{ $th->tahun }}</option>
+                                            @endforeach
+                                          </select>
+                                          <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
+                                      </div>
+                                  </form>
                                 </div>
                                 <div class="col-md-6">
                                     <div style="float:right;">
@@ -112,7 +136,7 @@ SPP | Pemasukan
                       <div class="form-group data-custon-pick" id="data_3">
                           <div class="input-group date">
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                              <input type="text" name='tanggal' id='tanggal' class="form-control" placeholder="Tanggal Pemasukan"  autocomplete="off">
+                              <input type="text" name='tanggal' id='tanggal' class="form-control" placeholder="Tanggal Pemasukan"  autocomplete="off" required>
                           </div>
                       </div>
                   </div>
@@ -192,7 +216,7 @@ SPP | Pemasukan
                       <div class="form-group data-custon-pick" id="data_3">
                           <div class="input-group date">
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                              <input type="text" name='tanggal' id='tanggal_edit' class="form-control" placeholder="Tanggal Pemasukan"  autocomplete="off">
+                              <input type="text" name='tanggal' id='tanggal_edit' class="form-control" placeholder="Tanggal Pemasukan"  autocomplete="off" required>
                           </div>
                       </div>
                   </div>
