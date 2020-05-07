@@ -49,7 +49,7 @@ class RekapController extends Controller
     public function print(Request $request) 
     {
         $req= $request->all();
-        $t = now();
+        $t = now(); 
 
         $t = explode(" ", $t);
         $t = explode("-", $t[0]);
@@ -94,13 +94,13 @@ class RekapController extends Controller
             if ($request->bulan == '' && $request->tahun!='') {
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
                     ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
-                    ->whereYear('expenses.updated_at',$request->tahun)
+                    ->whereYear('expenses.created_at',$request->tahun)
                     ->where('pencatatans.kredit','<>','0')
                     ->get();
             }elseif ($request->bulan != '' && $request->tahun=='') {
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
                     ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
-                    ->whereMonth('expenses.updated_at',$request->bulan)
+                    ->whereMonth('expenses.created_at',$request->bulan)
                     ->where('pencatatans.kredit','<>','0')
                     ->get();
             }elseif ($request->bulan == '' && $request->tahun=='') {
@@ -111,8 +111,8 @@ class RekapController extends Controller
             }else{
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
                 ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
-                    ->whereMonth('expenses.updated_at',$request->bulan)
-                    ->whereYear('expenses.updated_at',$request->tahun)
+                    ->whereMonth('expenses.created_at',$request->bulan)
+                    ->whereYear('expenses.created_at',$request->tahun)
                     ->where('pencatatans.kredit','<>','0')
                     ->get();
             }

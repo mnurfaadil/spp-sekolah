@@ -19,9 +19,7 @@ class IncomeController extends Controller
     public function index()
     {
         $datas = Income::orderBy('updated_at', 'desc')
-        // ->whereYear('created_at','=','2001')
         ->get();
-        // ->whereMonth('updated_at','=','2')
         $no=1;
         $bulan = Income::selectRaw('MONTH(created_at) AS bulan')
                 ->groupBy('bulan')

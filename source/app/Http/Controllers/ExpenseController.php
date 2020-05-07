@@ -9,7 +9,7 @@ use App\Expense;
 use App\Pencatatan;
 use Illuminate\Support\Facades\Session;
 
-class ExpenseController extends Controller
+class ExpenseController extends Controller 
 {
     public function __construct()
     {
@@ -25,7 +25,18 @@ class ExpenseController extends Controller
     {
         $datas = Expense::orderBy('updated_at', 'desc')->get();
         $no=1;
-        return view('pengeluaran.index', compact('datas','no'));
+        $bulan = Expense::selectRaw('MONTH(created_at) AS bulan')
+                ->groupBy('bulan')
+                ->orderBy('bulan')
+                ->get();
+        $tahun = Expense::selectRaw('YEAR(created_at) AS tahun')
+                ->groupBy('tahun')
+                ->orderBy('tahun')
+                ->get();
+        $bln1 = '';
+        $thn1 = '';
+
+        return view('pengeluaran.index', compact('datas','no','bulan','tahun','bln1','thn1'));
     }
 
     /**
@@ -74,7 +85,7 @@ class ExpenseController extends Controller
             Pencatatan::create([
                 'id' => null,
                 'expense_id' =>$id,
-                'payment_id' => 0,
+                'payment_   id' => 0,
                 'debit' => 0,
                 'description' => $desc,
                 'kredit' =>$req['nominal'],
@@ -92,6 +103,38 @@ class ExpenseController extends Controller
         }
     }
 
+    public function filter(Request $request)
+    {
+        if ($request->bulan == '' && $request->tahun!='') {
+            $datas = Expense::orderBy('updated_at', 'desc')
+                ->whereYear('created_at',$request->tahun)
+                ->get();
+        }elseif ($request->bulan != '' && $request->tahun=='') {
+            $datas = Expense::orderBy('updated_at', 'desc')
+                ->whereMonth('created_at',$request->bulan)
+                ->get();
+        }elseif ($request->bulan == '' && $request->tahun=='') {
+            $datas = Expense::orderBy('updated_at', 'desc')->get();
+        }else{
+            $datas = Expense::orderBy('updated_at', 'desc')
+                ->whereMonth('created_at',$request->bulan)
+                ->whereYear('created_at',$request->tahun)
+                ->get();
+        }
+        $bln1 = $request->bulan;
+        $thn1 = $request->tahun;
+        $no=1;
+        $bulan = Expense::selectRaw('MONTH(created_at) AS bulan')
+                ->groupBy('bulan')
+                ->orderBy('bulan')
+                ->get();
+        $tahun = Expense::selectRaw('YEAR(created_at) AS tahun')
+                ->groupBy('tahun')
+                ->orderBy('tahun')
+                ->get();
+        return view('pengeluaran.index', compact('datas','no','bulan','tahun','bln1','thn1'));
+    }
+    
     /**
      * Display the specified resource.
      *
