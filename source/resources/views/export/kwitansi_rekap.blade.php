@@ -173,7 +173,7 @@
               <td>- Disimpan sebagai pembayaran bukti yang SAH</td>
             </tr>
             <tr style='font-size:14px'>
-              <td>- Uang yang dibawar tidak dapat diminta kembali</td>
+              <td>- Uang yang dibayar tidak dapat diminta kembali</td>
             </tr>
           </table>
         </td>

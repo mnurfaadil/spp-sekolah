@@ -30,6 +30,7 @@ class StudentController extends Controller
         // $students = Student::all();
         $no=1;
         $fil = '';
+        $fil2 = '';
         $kls = '';
         $jml = Major::count();
         $majors = Major::all();
@@ -39,7 +40,7 @@ class StudentController extends Controller
             ->join('majors', 'majors.id', '=', 'students.angkatan_id')
             ->select('students.*','angkatans.*','majors.nama as nama_major')
             ->get();
-        return view('master.student.index', compact('students','no','jml','majors','fil','kls','angkatan'));
+        return view('master.student.index', compact('students','no','jml','majors','fil','kls','angkatan','fil2'));
     }
 
     public function filter(Request $request)
