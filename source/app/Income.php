@@ -20,7 +20,7 @@ class Income extends Model
         "sumber",
         "foto",
         "nominal",
-        "updated_at",
+        "created_at",
     ];
 
     public function pencatatan()

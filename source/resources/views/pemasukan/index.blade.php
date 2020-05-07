@@ -90,9 +90,9 @@ SPP | Pemasukan
                                 <tbody>
                                 @foreach($datas as $data)
                                   @php
-                                    $temp = strtotime($data->updated_at);
+                                    $temp = strtotime($data->created_at);
                                     $tanggal = date('j - M - Y', $temp);
-                                    $url = asset('nota')."/".$data -> foto;
+                                    $url = asset('nota')."/".$data->foto;
                                   @endphp
                                     <tr>
                                         <td></td>

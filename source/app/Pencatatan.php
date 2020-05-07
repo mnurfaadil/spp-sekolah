@@ -22,7 +22,6 @@ class Pencatatan extends Model
         "expense_id",
         "income_id",
         "created_at",
-        "updated_at",
     ];
 
     public function pengeluaran()
