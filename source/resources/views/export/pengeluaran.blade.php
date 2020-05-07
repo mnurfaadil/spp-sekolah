@@ -27,7 +27,9 @@ $total = 0;
     if(isset($data->pengeluaran)){
         $url = "nota/".$data->pengeluaran->foto;
         $url = asset('').$url;
-    } 
+    }
+    $temp = strtotime($data->created_at);
+    $tanggal = date('j - M - Y', $temp); 
 @endphp
     <tr>
         <td>{{$no++}}</td>
@@ -38,7 +40,7 @@ $total = 0;
             &nbsp;
             @endif
         </td>
-        <td style="text-align:left;">{{$data->created_at}}</td>
+        <td style="text-align:left;">{{$tanggal}}</td>
         <td style="text-align:left;word-wrap:break-word;">{{$data->description}}</td>
         <td style="text-align:right">{{number_format($data->kredit,0,',','.')}}</td>
     </tr>
