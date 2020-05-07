@@ -86,6 +86,7 @@ SPP | Siswa
                                         <th data-field="jenis_kelamin"><div style="text-align:center;">L/P</div></th>
                                         <th data-field="kelas"><div style="text-align:center;">Kelas</div></th>
                                         <th data-field="major"><div style="text-align:center;">Nama Jurusan</div></th>
+                                        <th data-field="angkatan"><div style="text-align:center;">Angkatan</div></th>
                                         <th data-field="alamat"><div style="text-align:center;">Alamat</div></th>
                                         <th data-field="phone"><div style="text-align:center;">Kontak</div></th>
                                         <th data-field="action"><div style="text-align:center;">Action</div></th>
@@ -102,6 +103,7 @@ SPP | Siswa
                                         <td><div style="text-align:center;">{{$data->jenis_kelamin}}</div></td>
                                         <td><div style="text-align:center;">{{$data->kelas}}</div></td>
                                         <td><div style="text-align:center;">{{$data->nama_major}}</div></td>
+                                        <td><div style="text-align:center;">{{$data->angkatan}} ({{$data->tahun}})</div></td>
                                         <td><div style="text-align:center;">{{$data->alamat}}</div></td>
                                         <td><div style="text-align:center;">{{$data->phone}}</div></td>
                                         <td>
@@ -502,7 +504,7 @@ SPP | Siswa
 
             function editConfirm(id, nis, nama, jenis_kelamin, kelas, major_id, major, phone, email, tgl_masuk, alamat, angkatan_id, angkatan,tahun) {
                 $('#nis').attr('value', nis);
-                $('#nama').attr('value', nama);
+                $('#nama').attr('value', major);
                 $('#tgl_masuk').attr('value', tgl_masuk);
                 $('#email').attr('value', email);
                 $('#phone').attr('value', phone);
@@ -513,7 +515,7 @@ SPP | Siswa
                     'Perempuan');
 
                 $('#major_id_edit').val(major_id);
-                $('#major_id_edit_chosen .chosen-single span').html(major);
+                $('#major_id_edit_chosen .chosen-single span').html(nama);
                 
                 $('#angkatan_edit').val(angkatan_id);
                 $('#angkatan_edit_chosen .chosen-single span').html(angkatan+' - '+tahun );

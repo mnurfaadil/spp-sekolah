@@ -110,7 +110,7 @@ SPP | Pengeluaran
                       <div class="form-group data-custon-pick" id="data_3">
                           <div class="input-group date">
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                              <input type="text" name='tanggal' id='tanggal' class="form-control" placeholder="Tanggal Pengeluaran" autocomplete="off">
+                              <input type="text" name='tanggal' id='tanggal' class="form-control" placeholder="Tanggal Pengeluaran" autocomplete="off" required>
                           </div>
                       </div>
                   </div>
@@ -190,7 +190,7 @@ SPP | Pengeluaran
                       <div class="form-group data-custon-pick" id="data_3">
                           <div class="input-group date">
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                              <input type="text" name='tanggal' id='tanggal_edit' class="form-control" placeholder="Tanggal Pengeluaran"  autocomplete="off">
+                              <input type="text" name='tanggal' id='tanggal_edit' class="form-control" placeholder="Tanggal Pengeluaran"  autocomplete="off" required>
                           </div>
                       </div>
                   </div>

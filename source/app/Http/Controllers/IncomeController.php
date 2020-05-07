@@ -18,9 +18,17 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        $datas = Income::all();
+        $datas = Income::orderBy('id', 'desc')->get();
         $no=1;
-        return view('pemasukan.index', compact('datas','no'));
+        $bulan = Income::selectRaw('MONTH(updated_at) AS bulan')
+                ->groupBy('bulan')
+                ->orderBy('bulan')
+                ->get();
+        $tahun = Income::selectRaw('YEAR(updated_at) AS tahun')
+                ->groupBy('tahun')
+                ->orderBy('tahun')
+                ->get();
+        return view('pemasukan.index', compact('datas','no','bulan','tahun'));
     }
 
     /**

@@ -39,6 +39,7 @@ class StudentController extends Controller
             ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
             ->join('majors', 'majors.id', '=', 'students.angkatan_id')
             ->select('students.*','angkatans.*','majors.nama as nama_major')
+            ->orderBy('students.updated_at','desc')
             ->get();
         return view('master.student.index', compact('students','no','jml','majors','fil','kls','angkatan','fil2'));
     }
@@ -46,30 +47,75 @@ class StudentController extends Controller
     public function filter(Request $request)
     {
         if($request->kelas=='' && $request->jurusan!='' && $request->angkatan==''){
-            $students = Student::where('major_id',$request->jurusan)->get();
+            $students = DB::table('students')
+            ->where('major_id',$request->jurusan)
+            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+            ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
+            ->orderBy('students.nama','asc')->get();
         }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan=='') {
-            $students = Student::where('kelas',$request->kelas)->get();
+            $students = DB::table('students')
+            ->where('kelas',$request->kelas)
+            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+            ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
+            ->orderBy('students.nama','asc')->get();
         }elseif ($request->jurusan=='' && $request->kelas=='' && $request->angkatan!='') {
-            $students = Student::where('angkatan_id',$request->angkatan)->get();
+            $students = DB::table('students')
+            ->where('angkatan_id',$request->angkatan)
+            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+            ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
+            ->orderBy('students.nama','asc')->get();
         }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan=='') {
-            $students = Student::where('kelas',$request->kelas)
+            $students = 
+            DB::table('students')
+                ->where('kelas',$request->kelas)
                 ->where('major_id',$request->jurusan)
+                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
+                ->orderBy('students.nama','asc')
                 ->get();
         }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan!='') {
-            $students = Student::where('angkatan_id',$request->angkatan)
+            $students = 
+            DB::table('students')
+                ->where('angkatan_id',$request->angkatan)
                 ->where('kelas',$request->kelas)
+                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
+                ->orderBy('students.nama','asc')
                 ->get();
         }elseif ($request->jurusan!='' && $request->kelas=='' && $request->angkatan!='') {
-            $students = Student::where('angkatan_id',$request->angkatan)
+            $students = 
+            DB::table('students')
+                ->where('angkatan_id',$request->angkatan)
                 ->where('major_id',$request->jurusan)
+                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
+                ->orderBy('students.nama','asc')
                 ->get();
         }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan!='') {
-            $students = Student::where('angkatan_id',$request->angkatan)
+            $students =
+            DB::table('students')
+                ->where('angkatan_id',$request->angkatan)
                 ->where('major_id',$request->jurusan)
                 ->where('kelas',$request->kelas)
+                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
+                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+                ->orderBy('students.nama','asc')
                 ->get();
         }else{
-            $students = Student::all();
+            $students = 
+                DB::table('students')
+                ->select('students.*','angkatans.*','majors.nama as nama_major')
+                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
+                ->orderBy('students.id','desc')
+                ->get();
         }
         $no=1;
         $kls=$request->kelas;
@@ -204,7 +250,7 @@ class StudentController extends Controller
             if (strlen($req['phone'])>14) {
                 return redirect()
                     ->route('students.index')
-                    ->with('success', 'Data siswa berhasil disimpan!');
+                    ->with('error', 'Digit no HP terlalu banyak!');
             }
             $student = Student::findOrFail($id);
             $student->nama = $req['nama'];
