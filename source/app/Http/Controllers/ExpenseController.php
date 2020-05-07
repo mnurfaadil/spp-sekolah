@@ -9,7 +9,7 @@ use App\Expense;
 use App\Pencatatan;
 use Illuminate\Support\Facades\Session;
 
-class ExpenseController extends Controller
+class ExpenseController extends Controller 
 {
     public function __construct()
     {
@@ -25,11 +25,11 @@ class ExpenseController extends Controller
     {
         $datas = Expense::orderBy('updated_at', 'desc')->get();
         $no=1;
-        $bulan = Expense::selectRaw('MONTH(updated_at) AS bulan')
+        $bulan = Expense::selectRaw('MONTH(created_at) AS bulan')
                 ->groupBy('bulan')
                 ->orderBy('bulan')
                 ->get();
-        $tahun = Expense::selectRaw('YEAR(updated_at) AS tahun')
+        $tahun = Expense::selectRaw('YEAR(created_at) AS tahun')
                 ->groupBy('tahun')
                 ->orderBy('tahun')
                 ->get();
@@ -85,7 +85,7 @@ class ExpenseController extends Controller
             Pencatatan::create([
                 'id' => null,
                 'expense_id' =>$id,
-                'payment_id' => 0,
+                'payment_   id' => 0,
                 'debit' => 0,
                 'description' => $desc,
                 'kredit' =>$req['nominal'],
@@ -107,28 +107,28 @@ class ExpenseController extends Controller
     {
         if ($request->bulan == '' && $request->tahun!='') {
             $datas = Expense::orderBy('updated_at', 'desc')
-                ->whereYear('updated_at',$request->tahun)
+                ->whereYear('created_at',$request->tahun)
                 ->get();
         }elseif ($request->bulan != '' && $request->tahun=='') {
             $datas = Expense::orderBy('updated_at', 'desc')
-                ->whereMonth('updated_at',$request->bulan)
+                ->whereMonth('created_at',$request->bulan)
                 ->get();
         }elseif ($request->bulan == '' && $request->tahun=='') {
             $datas = Expense::orderBy('updated_at', 'desc')->get();
         }else{
             $datas = Expense::orderBy('updated_at', 'desc')
-                ->whereMonth('updated_at',$request->bulan)
-                ->whereYear('updated_at',$request->tahun)
+                ->whereMonth('created_at',$request->bulan)
+                ->whereYear('created_at',$request->tahun)
                 ->get();
         }
         $bln1 = $request->bulan;
         $thn1 = $request->tahun;
         $no=1;
-        $bulan = Expense::selectRaw('MONTH(updated_at) AS bulan')
+        $bulan = Expense::selectRaw('MONTH(created_at) AS bulan')
                 ->groupBy('bulan')
                 ->orderBy('bulan')
                 ->get();
-        $tahun = Expense::selectRaw('YEAR(updated_at) AS tahun')
+        $tahun = Expense::selectRaw('YEAR(created_at) AS tahun')
                 ->groupBy('tahun')
                 ->orderBy('tahun')
                 ->get();
