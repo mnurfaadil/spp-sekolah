@@ -74,6 +74,7 @@ Route::post('payment/perbulan/detail/add','PaymentController@addPeriodeBulanan')
  * Route resource untuk Pengeluaran 
  */
 Route::resource('expense', 'ExpenseController');
+Route::post('expense/filter', 'ExpenseController@filter')->name('expense.filter');
 
 /**
  * Route resource untuk Pembayaran

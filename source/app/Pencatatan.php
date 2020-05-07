@@ -21,6 +21,7 @@ class Pencatatan extends Model
         "kredit",
         "expense_id",
         "income_id",
+        "created_at",
         "updated_at",
     ];
 
