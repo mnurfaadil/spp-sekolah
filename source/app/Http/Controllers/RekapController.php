@@ -46,9 +46,9 @@ class RekapController extends Controller
         # code...
     }
 
-    public function print($id) 
+    public function print(Request $request) 
     {
-        
+        $req= $request->all();
         $t = now();
 
         $t = explode(" ", $t);
@@ -57,11 +57,32 @@ class RekapController extends Controller
         $no=1;
 
         $user= Auth::user()->nama;
-
-        if($id=="pemasukan"){ 
+        if($request->id=="pemasukan"){ 
             $rincian = "Pemasukan";
+            if(isset($request->bulan) && isset($request->tahun)){
+                $datas = Pencatatan::orderBy('id', 'desc')
+                        ->join('incomes','incomes.id','=','pencatatans.income_id')
+                        ->whereMonth('incomes.updated_at','=',$request->bulan)
+                        ->whereYear('incomes.updated_at','=',$request->year)
+                        ->where('debit','<>','0')->get();
+            }
+            elseif(isset($request->tahun)){
+                $datas = Pencatatan::orderBy('id', 'desc')
+                        ->join('incomes','incomes.id','=','pencatatans.income_id')
+                        ->whereYear('incomes.updated_at','=',$request->year)
+                        ->where('debit','<>','0')->get();
+            }
+            elseif(isset($request->bulan)){
+                $datas = Pencatatan::orderBy('id', 'desc')
+                        ->join('incomes','incomes.id','=','pencatatans.income_id')
+                        ->whereMonth('incomes.updated_at','=',$request->bulan)
+                        ->where('debit','<>','0')->get();
+            }else{
+                $datas = Pencatatan::where('debit','<>','0')
+                        ->orderBy('id', 'desc')
+                        ->get();
+            }
             
-            $datas = Pencatatan::where('debit','<>','0')->get();
             $title = "Laporan Pemasukan";
             $pdf = PDF::loadView('export.pemasukan',compact('tanggal','user','rincian','datas','no','title'));
             $pdf->setPaper('A4', 'potrait');

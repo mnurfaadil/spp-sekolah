@@ -16,12 +16,12 @@ SPP | Pemasukan
                         <div class="container-sm">
                             <div class="row">
                                 <div class="col-md-6">
-                                  <form action="{{route('students.filter')}}" role="form" method="post">
+                                  <form action="{{route('income.filter')}}" role="form" method="post">
                                       @csrf
                                       <div style="float:left; display:flex; flex-direction:row; max-height:55">
                                         <select class="form-control" name="bulan">
                                           <option value="">-- Pilih Bulan -- </option>
-                                          <option value="">Semua</option>
+                                          <option value="all">Semua</option>
                                           @foreach($bulan as $bl)
                                             @php
                                               $bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -32,7 +32,7 @@ SPP | Pemasukan
                                         </select>
                                         <select style="margin-left:5px;" class="form-control" name="tahun">
                                           <option value="">-- Pilih Tahun  --</option>
-                                          <option value="">Semua</option>
+                                          <option value="all">Semua</option>
                                             @foreach($tahun as $th)
                                             <option  value="{{ $th->tahun }}">{{ $th->tahun }}</option>
                                             @endforeach
@@ -42,9 +42,19 @@ SPP | Pemasukan
                                   </form>
                                 </div>
                                 <div class="col-md-6">
-                                    <div style="float:right;">
-                                      <a href="{{route('pdf.print','pemasukan')}}" style="color:white; margin-top:0" class=" btn btn-info" target="_blank"><i class="fa fa-print"></i>&nbsp; Cetak</a>
+                                    <div style="float:right;display:flex;flex-direction:column">
+                                      
+                                  <form action="{{route('pdf.print','pemasukan')}}" role="form" method="post" target="_blank">
+                                      @csrf
+                                      <input type="hidden" name="id" value="pemasukan">
+                                      <input type="hidden" name="bulan" value="{{$report['bulan']}}">
+                                      <input type="hidden" name="tahun" value="{{$report['tahun']}}">
+                                      <button type="submit" style="color:white; margin-top:0" class=" btn btn-info">
+                                        <i class="fa fa-print"></i>&nbsp; Cetak
+                                      </button>
                                       <a data-toggle="modal" href="#modalAdd" @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
+                                  </form>
+                                      
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -80,15 +90,16 @@ SPP | Pemasukan
                                 <tbody>
                                 @foreach($datas as $data)
                                   @php
-                                    $temp = strtotime($data->created_at);
+                                    $temp = strtotime($data->updated_at);
                                     $tanggal = date('j - M - Y', $temp);
+                                    $url = asset('nota')."/".$data -> foto;
                                   @endphp
                                     <tr>
                                         <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{ $tanggal }}</td>
                                         <td class="avatar text-center">
-                                          <img class="rounded-circle" style="width: 100px; height: 100px;" src="nota/{{ $data -> foto }}" alt="">  
+                                          <img class="rounded-circle" style="width: 100px; height: 100px;" src="{{ $url }}" alt="">  
                                         </td>
                                         <td>{{$data->title}}</td>
                                         <td>{{$data->description}}</td>

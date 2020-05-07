@@ -84,6 +84,7 @@ Route::resource('rekap', 'RekapController');
  * Route resource untuk Pembayaran
  */
 Route::resource('income', 'IncomeController');
+Route::post('income/filter', 'IncomeController@filter')->name('income.filter');
 
 /**
  * Route Login
@@ -96,7 +97,7 @@ Route::get('/change', 'HomeController@edit')->name('password.edit');
 Route::post('/change', 'HomeController@update')->name('password.ubah');
 
 Route::get('export','RekapController@index')->name('pdf');
-Route::get('export/{id}','RekapController@print')->name('pdf.print');
+Route::post('export','RekapController@print')->name('pdf.print');
 Route::get('export_kwitansi','RekapController@listdata')->name('pdf.print.kwitansi');
 Route::get('export/bulanan/{nama}/{id}','RekapController@rekapBulanan')->name('pdf.print.rekap.bulanan');
 Route::post('export/siswa/','RekapController@rekapSiswa')->name('pdf.print.rekap.siswa');

@@ -28,7 +28,9 @@ class IncomeController extends Controller
                 ->groupBy('tahun')
                 ->orderBy('tahun')
                 ->get();
-        return view('pemasukan.index', compact('datas','no','bulan','tahun'));
+        $report['bulan'] = "";
+        $report['tahun'] = "";
+        return view('pemasukan.index', compact('datas','no','bulan','tahun', 'report'));
     }
 
     /**
@@ -49,8 +51,8 @@ class IncomeController extends Controller
      */
     public function store(Request $request)
     {
+        $req = $request->all();
         try {
-            $req = $request->all();
             $sql_date = $this->convertDateToSQLDate($request->tanggal);
             $req['tanggal'] = $sql_date;
             $uuid = Uuid::uuid1();
@@ -65,7 +67,7 @@ class IncomeController extends Controller
             
             Income::create([
                 'id' => null,
-                'created_at' => $req['tanggal'],
+                'updated_at' => $req['tanggal'],
                 'title' => $req['title'],
                 'description' => $req['description'],
                 'sumber' => $req['sumber' ],
@@ -81,7 +83,7 @@ class IncomeController extends Controller
                 'debit' => $req['nominal'],
                 'description' => $desc,
                 'kredit' => 0,
-                'created_at' =>$req['tanggal'],
+                'updated_at' =>$req['tanggal'],
             ]);
           return redirect()
               ->route('income.index')
@@ -92,6 +94,44 @@ class IncomeController extends Controller
               ->route('income.create')
               ->with('success', 'Data pengeluaran gagal disimpan!');
         }
+    }
+
+    public function filter(Request $request)
+    {
+        
+        if(isset($request->bulan) && isset($request->tahun)){
+            $datas = Income::orderBy('id', 'desc')
+                    ->whereMonth('updated_at','=',$request->bulan)
+                    ->whereYear('updated_at','=',$request->year)
+                    ->get();
+        }
+        elseif(isset($request->tahun)){
+            $datas = Income::orderBy('id', 'desc')
+                    ->whereYear('updated_at','=',$request->year)
+                    ->get();
+        }
+        elseif(isset($request->bulan)){
+            $datas = Income::orderBy('id', 'desc')
+                    ->whereMonth('updated_at','=',$request->bulan)
+                    ->get();
+        }else{
+            return redirect()
+                    ->route('income.index')
+                    ->with('error','Pilihan data kosong');
+        }
+
+        $no=1;
+        $bulan = Income::selectRaw('MONTH(updated_at) AS bulan')
+                ->groupBy('bulan')
+                ->orderBy('bulan')
+                ->get();
+        $tahun = Income::selectRaw('YEAR(updated_at) AS tahun')
+                ->groupBy('tahun')
+                ->orderBy('tahun')
+                ->get();
+        $report['bulan'] = $request->bulan;
+        $report['tahun'] = $request->tahun;
+        return view('pemasukan.index', compact('datas','no','bulan','tahun', 'report'));
     }
 
     /**
@@ -129,6 +169,8 @@ class IncomeController extends Controller
             $req = $request->all();
             $sql_date = $this->convertDateToSQLDate($request->tanggal);
             $req['tanggal'] = $sql_date;
+            // echo '<pre>';
+            // var_dump($req);die;
             $data = Income::findOrFail($id);
             if ($request->file('foto')!='') {
                 $file = $request->file('foto');
@@ -142,7 +184,7 @@ class IncomeController extends Controller
             $data->description = $req['description'];
             $data->sumber = $req['sumber'];
             $data->nominal = $req['nominal'];
-            $data->created_at = $req['tanggal'];
+            $data->updated_at = $req['tanggal'];
             $data->save();
 
             $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
@@ -152,7 +194,7 @@ class IncomeController extends Controller
             ->update([
                 'debit' => $req['nominal'],
                 'description' => $desc,
-                'created_at' => $req['tanggal']
+                'updated_at' => $req['tanggal']
             ]);
 
           return redirect()
