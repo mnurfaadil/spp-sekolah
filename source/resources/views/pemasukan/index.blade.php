@@ -76,7 +76,6 @@ SPP | Pemasukan
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id">No</th>
                                         <th data-field="tanggal">Tanggal</th>
                                         <th data-field="foto">Foto</th>
@@ -95,7 +94,6 @@ SPP | Pemasukan
                                     $url = asset('nota')."/".$data->foto;
                                   @endphp
                                     <tr>
-                                        <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{ $tanggal }}</td>
                                         <td class="avatar text-center">
