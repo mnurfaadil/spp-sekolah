@@ -30,7 +30,7 @@ class FinancingCategoryController extends Controller
     public function index()
     {
         $datas = FinancingCategory::orderBy('created_at','desc')
-            ->orderBy('id','desc')
+            ->orderBy('updated_at','desc')
             ->get();
         $no = 1;
         return view('master.financingcategory.index', compact('datas', 'no'));
@@ -220,7 +220,7 @@ class FinancingCategoryController extends Controller
         DB::statement(DB::raw('set @row:=0'));
         return FinancingCategoryReset::select(DB::raw('@row:=@row+1 as rowNumber, format(besaran,0) as besaran'), 'jenis','created_at')
                                     ->where('financing_category_id',$id)
-                                    ->orderBy('id','desc')
+                                    ->orderBy('updated_at','desc')
                                     ->get();
     }
 

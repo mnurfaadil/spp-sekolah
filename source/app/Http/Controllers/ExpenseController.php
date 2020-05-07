@@ -23,7 +23,7 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        $datas = Expense::orderBy('id', 'desc')->get();
+        $datas = Expense::orderBy('updated_at', 'desc')->get();
         $no=1;
         return view('pengeluaran.index', compact('datas','no'));
     }
