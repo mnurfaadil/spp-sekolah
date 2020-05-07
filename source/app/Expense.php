@@ -20,6 +20,7 @@ class Expense extends Model
         "sumber",
         "foto",
         "nominal",
+        "created_at",
     ];
 
     public function pencatatan()

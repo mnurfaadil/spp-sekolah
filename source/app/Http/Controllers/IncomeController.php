@@ -43,6 +43,8 @@ class IncomeController extends Controller
     {
         try {
             $req = $request->all();
+            $sql_date = $this->convertDateToSQLDate($request->tanggal);
+            $req['tanggal'] = $sql_date;
             $uuid = Uuid::uuid1();
             // menyimpan data file yang diupload ke variabel $file
             $file = $request->file('foto');
@@ -55,6 +57,7 @@ class IncomeController extends Controller
             
             Income::create([
                 'id' => null,
+                'created_at' => $req['tanggal'],
                 'title' => $req['title'],
                 'description' => $req['description'],
                 'sumber' => $req['sumber' ],
@@ -70,6 +73,7 @@ class IncomeController extends Controller
                 'debit' => $req['nominal'],
                 'description' => $desc,
                 'kredit' => 0,
+                'created_at' =>$req['tanggal'],
             ]);
           return redirect()
               ->route('income.index')
@@ -115,6 +119,8 @@ class IncomeController extends Controller
     {   
         try {
             $req = $request->all();
+            $sql_date = $this->convertDateToSQLDate($request->tanggal);
+            $req['tanggal'] = $sql_date;
             $data = Income::findOrFail($id);
             if ($request->file('foto')!='') {
                 $file = $request->file('foto');
@@ -128,12 +134,18 @@ class IncomeController extends Controller
             $data->description = $req['description'];
             $data->sumber = $req['sumber'];
             $data->nominal = $req['nominal'];
-            
+            $data->created_at = $req['tanggal'];
             $data->save();
 
-            $jur = DB::table('Pencatatans')
-            ->where('Income_id', $id)
-            ->update(['debit' => $req['nominal'] ]);
+            $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
+
+            $jur = DB::table('pencatatans')
+            ->where('income_id', $id)
+            ->update([
+                'debit' => $req['nominal'],
+                'description' => $desc,
+                'created_at' => $req['tanggal']
+            ]);
 
           return redirect()
               ->route('income.index')
@@ -156,8 +168,8 @@ class IncomeController extends Controller
     {
         try {
             Income::findOrFail($id)->delete();
-            DB::table('Pencatatans')
-            ->where('Income_id', $id)
+            DB::table('pencatatans')
+            ->where('income_id', $id)
             ->delete();
             return redirect()
                 ->route('income.index')
@@ -168,5 +180,10 @@ class IncomeController extends Controller
                 ->route('income.index')
                 ->with('error', 'Data pemasukan gagal dihapus!');
           }
+    }
+    public function convertDateToSQLDate($date)
+    {
+        $temp = explode("/",$date);
+        return $temp[2]."-".$temp[0]."-".$temp[1];
     }
 }
