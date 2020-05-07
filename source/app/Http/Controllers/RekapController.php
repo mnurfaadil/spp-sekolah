@@ -63,25 +63,26 @@ class RekapController extends Controller
             if(isset($request->bulan) && isset($request->tahun)){
                 $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
-                        ->whereMonth('incomes.created_at','=',$request->bulan)
-                        ->whereYear('incomes.created_at','=',$request->year)
+                        ->whereMonth('incomes.created_at',$request->bulan)
+                        ->whereYear('incomes.created_at',$request->tahun)
                         ->where('debit','<>','0')->get();
+                        echo "disini";
             }
             elseif(isset($request->tahun)){   
                 $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
-                        ->whereYear('incomes.created_at','=',$request->year)
+                        ->whereYear('incomes.created_at',$request->tahun)
                         ->where('debit','<>','0')->get();
             }
             elseif(isset($request->bulan)){
                 $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
-                        ->whereMonth('incomes.created_at','=',$request->bulan)
+                        ->whereMonth('incomes.created_at',$request->bulan)
                         ->where('debit','<>','0')->get();
             }else{
                 $datas = Pencatatan::where('debit','<>','0')
-                        ->orderBy('id', 'desc')
-                        ->where('debit','<>','0')->get();
+                        ->orderBy('pencatatans.updated_at', 'desc')
+                        ->get();
             }
             $title = "Laporan Pemasukan";
             $pdf = PDF::loadView('export.pemasukan',compact('tanggal','user','rincian','datas','no','title'));
@@ -94,7 +95,7 @@ class RekapController extends Controller
             if ($request->bulan == '' && $request->tahun!='') {
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
                     ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
-                    ->whereYear('expenses.expenses.updated_at',$request->tahun)
+                    ->whereYear('expenses.updated_at',$request->tahun)
                     ->where('pencatatans.kredit','<>','0')
                     ->get();
             }elseif ($request->bulan != '' && $request->tahun=='') {
