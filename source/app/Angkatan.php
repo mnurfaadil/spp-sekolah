@@ -17,6 +17,7 @@ class Angkatan extends Model
     protected $fillable = [
         "angkatan",
         "tahun",
+        "status",
     ];
     
     /**
@@ -24,6 +25,16 @@ class Angkatan extends Model
      */
     public function students()
     {
-        return $this->hasMany('App\Student', 'angkatan_id');
+        return $this->hasMany('App\Student');
+    }
+
+    public function periode_pembayaran()
+    {
+        return $this->hasMany('App\PaymentPeriode');
+    }
+
+    public function category()
+    {
+        return $this->hasMany('App\FinancingCategory');
     }
 }

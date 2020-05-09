@@ -43,18 +43,17 @@ SPP | Kategori Pembayaran
                                 data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id"><div style="text-align: center">No</div></th>
                                         <th data-field="name"><div style="text-align: center">Deskripsi</div></th>
                                         <th data-field="besaran"><div style="text-align: center">Besaran (Rp.)</div></th>
                                         <th data-field="jenis"><div style="text-align: center">Jenis Pembiayaan</div></th>
+                                        <th data-field="jurusan"><div style="text-align: center">Peruntukan</div></th>
                                         <th data-field="action"><div style="text-align: center">Action</div></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($datas as $data)
                                     <tr>
-                                        <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{$data->nama}}</td>
                                         <td>
@@ -66,15 +65,35 @@ SPP | Kategori Pembayaran
                                             <div style="text-align: center">{{$data->jenis}}</div>
                                         </td>
                                         <td>
-                                        <div style="text-align: center">
-                                            @if($data->jenis=='Bayar per Bulan')
-                                            <a href="{{route('financing.periode',$data)}}" class="btn btn-success" title="Periode"><i class="fa fa-history"> Periode</i></a>
+                                            <div style="text-align: center">
+                                            @if(isset($data->major))
+                                            <span class="label-warning label-3 label" style="font-size:10pt;color:black">{{$data->major->nama}}</span>
+                                            @else
+                                            <span class="label-purple label-6 label" style="font-size:10pt;">Semua Jurusan</span>
                                             @endif
+                                            @if(isset($data->angkatan))
+                                            <span class="label-success label-3 label" style="font-size:10pt;color:black">Angkatan ke - {{$data->angkatan->angkatan}} ({{$data->angkatan->tahun}})</span>
+                                            @else
+                                            <span class="label-danger label-1 label" style="font-size:10pt">Semua Angkatan</span>
+                                            @endif
+                                            </div>
+                                        </td>
+                                        <td>
+                                        <div style="text-align: center">
                                             @if($data->history->count()>1)
                                             <a href="#" class="btn btn-info"
                                                 onclick="history('{{$data->nama}}','{{ number_format($data->besaran, 0, ",", ".")}}', '{{$data->jenis}}','{{ url('financing/history',$data->id) }}')"
                                                 title="History"><i class="fa fa-history"> History</i></a>
                                             @endif
+
+                                            @if($data->angkatan_id==0 && $data->major_id==0)
+                                            <a href="{{route('periode.all',$data)}}" class="btn btn-success" title="Atur nominal biaya"><i class="fa fa-gear"> Setting</i></a>
+                                            @elseif($data->angkatan_id==0)
+                                            <a href="{{route('periode.angkatan.setting',$data)}}" class="btn btn-success" title="Atur nominal biaya"><i class="fa fa-gear"> Setting</i></a>
+                                            @elseif($data->major_id==0)
+                                            <a href="{{route('periode.jurusan.setting',$data)}}" class="btn btn-success" title="Atur nominal biaya"><i class="fa fa-gear"> Setting</i></a>
+                                            @endif
+
                                             <a href="#" class="btn btn-warning"
                                                 onclick="editConfirm( '{{$data->id}}', '{{$data->nama}}', '{{$data->besaran}}', '{{$data->jenis}}')"
                                                 title="Edit"><i class="fa fa-edit"> Edit</i></a>
@@ -108,12 +127,42 @@ SPP | Kategori Pembayaran
                 <h5 class="modal-title" id="modalAddLabel">Tambah Kategori Pembiayaan</h5>
             </div>
             <div class="modal-body">
+                <select name="" id="select-register">
+                    <option value="">-- Pilih Pembiayaan --</option>
+                    <option value="0">Sekali</option>
+                    <option value="1">Per Bulan</option>
+                    <option value="2">Khusus</option>
+                </select>
+                <div id="register-kategori">
+
+                </div>
                 <form action="{{ route('financing.store') }}" role="form" method="post">
                     {{csrf_field()}}
                     <div class="form-group">
                         <label class="control-label col-md-2">Kategori</label>
                         <input name='nama' placeholder="Masukan ketegori pembiayaan" type='text' class='form-control'
                             required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Peruntukan</label>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="jurusan"  required>
+                                <option value="">-- Pilih Jurusan --</option>
+                                <option value="all">Semua Jurusan</option>
+                                @foreach($majors as $major)
+                                    <option value="{{$major->id}}">{{$major->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="angkatan"  required>
+                                <option value="">-- Pilih Angkatan --</option>
+                                <option value="all">Semua Angkatan</option>
+                                @foreach($angkatans as $angkatan)
+                                    <option value="{{$angkatan->id}}">Kelas {{$angkatan->status}} - Angkatan {{$angkatan->angkatan}} - ({{$angkatan->tahun}})   </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4">Besaran Nominal (Rp.)</label>
@@ -133,7 +182,8 @@ SPP | Kategori Pembayaran
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="i-checks pull-left">
                                     <label>
-                                            <input type="radio" value="Bayar per Bulan" name="jenis"> <i></i> Bayar per Bulan </label>
+                                        <input type="radio" value="Bayar per Bulan" name="jenis"> <i></i> Bayar per Bulan 
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -167,6 +217,27 @@ SPP | Kategori Pembayaran
                         <label class="control-label col-md-2">Kategori</label>
                         <input name='nama' placeholder="Masukan ketegori pembiayaan" type='text' class='form-control'
                             id="nama" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Peruntukan</label>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="jurusan" id="edit-jurusan" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="all">Semua Jurusan</option>
+                                @foreach($majors as $major)
+                                    <option value="{{$major->id}}">{{$major->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="angkatan" id="edit-angkatan" required>
+                                <option value="">-- Pilih Angkatan --</option>
+                                <option value="all">Semua Angkatan</option>
+                                @foreach($angkatans as $angkatan)
+                                    <option value="{{$angkatan->id}}">Kelas {{$angkatan->status}} - Angkatan {{$angkatan->angkatan}} - ({{$angkatan->tahun}})</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4">Besaran Nominal (Rp.)</label>
@@ -280,9 +351,10 @@ SPP | Kategori Pembayaran
 @push('scripts')
 
 <script>
-    function editConfirm(id, nama, besaran, jenis) {
+    function editConfirm(id, nama, besaran, jenis, jurusan) {
         $('#nama').attr('value', nama);
         $('#besaran').attr('value', besaran);
+        $('#edit-jurusan').attr('value', besaran);
         $('#editForm').attr('action', "{{ url('financing') }}/" + id);
         $('#modalUpdate').modal();
     }
@@ -332,29 +404,42 @@ SPP | Kategori Pembayaran
 <script>
 function history(nama, besaran, jenis='', link = "/"){
 
-$('#kategori_history_modal').html(nama);
-$('#besaran_history_modal').html(besaran);
-$('#jenis_history_modal').html(jenis);
-$.ajax({
-    type: "GET",
-    dataType: "json",
-    url: link,
-    success: function (response) {
-        $.each(response, function(i, item) {
-            var $tr = $('<tr>').append(
-                $('<td>').text(item.rowNumber),
-                $('<td>').text(item.created_at),
-                $('<td>').text('Rp. '+item.besaran),
-                $('<td>').text(item.jenis)
-            ).appendTo('#table_history');
-        });
-    },
-    error: function (error) {
-        alert(error);
+    $('#kategori_history_modal').html(nama);
+    $('#besaran_history_modal').html(besaran);
+    $('#jenis_history_modal').html(jenis);
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: link,
+        success: function (response) {
+            $.each(response, function(i, item) {
+                var $tr = $('<tr>').append(
+                    $('<td>').text(item.rowNumber),
+                    $('<td>').text(item.created_at),
+                    $('<td>').text('Rp. '+item.besaran),
+                    $('<td>').text(item.jenis)
+                ).appendTo('#table_history');
+            });
+        },
+        error: function (error) {
+            alert(error);
+        }
+    });
+    $('#modalHistory').modal();
+}
+$('#select-register').on('change',function(){
+    var selection = $('#select-register').val();
+    if(selection=="0"){
+        $('#register-kategori').load('{{url('')}}/financing/ajax/form/'+selection);
+    }else if(selection=="1"){
+        $('#register-kategori').append('<h3>Sekali</h3>');
+    }else if(selection=="2"){
+        $('#register-kategori').append('<h3>Khusus</h3>');
+    }else{
+        $('#register-kategori').html('');
     }
 });
-$('#modalHistory').modal();
-}</script>
+</script>
 @endpush
 
 @push('breadcrumb-left')

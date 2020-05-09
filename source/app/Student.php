@@ -37,7 +37,7 @@ class Student extends Model
 
     public function angkatans()
     {
-        return $this->belongsTo('App\Angkatan');
+        return $this->belongsTo('App\Angkatan','angkatan_id');
     }
 
     /**

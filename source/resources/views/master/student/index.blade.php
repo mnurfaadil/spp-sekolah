@@ -89,7 +89,7 @@ SPP | Siswa
                                         <th data-field="angkatan"><div style="text-align:center;">Angkatan</div></th>
                                         <th data-field="alamat"><div style="text-align:center;">Alamat</div></th>
                                         <th data-field="phone"><div style="text-align:center;">Kontak</div></th>
-                                        <th data-field="action"><div style="text-align:center;">Action</div></th>
+                                        <th data-field="action"><div style="text-align:center; padding-left: 100px; padding-right:100px;">Action</div></th>
                                     </tr>
                                 </thead>
                                 <tbody>

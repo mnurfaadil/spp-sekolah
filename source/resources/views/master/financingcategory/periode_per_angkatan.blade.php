@@ -23,18 +23,18 @@ SPP | Kategori Pembayaran
                             @csrf
                             <input type="hidden" name="id" value="{{ $category[0]->id}}">
                             <div class="form-group">
-                                <label class="control-label">Jurusan</label>
+                                <label class="control-label">Angkatan</label>
                                 <div class="input-group">
-                                    <span class="input-group-addon"><strong><i class="fa fa-mortar-board"></i></strong></span>
+                                    <span class="input-group-addon"><strong><i class="fa fa-bookmark"></i></strong></span>
                                     <input type="hidden" name="jurusan" value="{{ $category[0]->major->id}}">
-                                    <input type="text" class="form-control" name="jurusan_show" value="{{ $category[0]->major->nama}}" readonly required>
+                                    <input type="text" class="form-control" name="jurusan_show" value="Dirubah jadi angkatan" readonly required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label">Angkatan</label>
+                                <label class="control-label">Jurusan</label>
                                 <div class="chosen-select-single mg-b-20">
                                     <select class="form-control" name="angkatan"  required>
-                                        <option value="">-- Pilih Angkatan --</option>
+                                        <option value="">-- Pilih Jurusan --</option>
                                         @foreach($angkatans as $angkatan)
                                             <option value="{{ $angkatan->id }}">Angkatan {{ $angkatan->angkatan }} ( {{ $angkatan->tahun }} )</option>
                                         @endforeach
@@ -84,19 +84,19 @@ SPP | Kategori Pembayaran
                             <input type="hidden" name="id" value="{{ $category[0]->id}}">
                             <input type="hidden" name="id_periode" value="">
                             <div class="form-group">
-                                <label class="control-label">Jurusan</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><strong><i class="fa fa-mortar-board"></i></strong></span>
-                                    <input type="hidden" name="jurusan" value="{{ $category[0]->major->id}}">
-                                    <input type="text" class="form-control" name="jurusan_show" value="{{ $category[0]->major->nama}}" readonly required>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <label class="control-label">Angkatan</label>
                                 <input type="hidden" name="angkatan">
                                 <div class="input-group">
                                     <span class="input-group-addon"><strong><i class="fa fa-bookmark"></i></strong></span>
                                     <input type="text" name="angkatan_show" id="edit-angkatan" class="form-control" value="" readonly required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Jurusan</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><strong><i class="fa fa-mortar-board"></i></strong></span>
+                                    <input type="hidden" name="jurusan" value="{{ $category[0]->major->id}}">
+                                    <input type="text" class="form-control" name="jurusan_show" value="{{ $category[0]->major->nama}}" readonly required>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -167,7 +167,7 @@ SPP | Kategori Pembayaran
                                             <tr>
                                                 <th data-field="id">No</th>
                                                 <th data-field="date" data-editable="false">Terakhir Update</th>
-                                                <th data-field="angkatan" data-editable="false">Angkatan</th>
+                                                <th data-field="jurusan" data-editable="false">Jurusan</th>
                                                 <th data-field="nominal" data-editable="false">Nominal</th>
                                                 <th data-field="action" data-editable="false">Action</th>
                                             </tr>
@@ -181,7 +181,7 @@ SPP | Kategori Pembayaran
                                             <tr>
                                                 <td>{{ $no++ }}</td>
                                                 <td>{{ $periode->updated_at }}</td>
-                                                <td>{{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})</td>
+                                                <td>{{ $periode->major->nama }} {{ $periode->major_id }} {{ $periode->angkatan_id }}</td>
                                                 <td>
                                                     <div style="text-align:right">
                                                     {{ $periode->nominal }}

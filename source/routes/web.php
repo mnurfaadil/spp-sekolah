@@ -42,6 +42,15 @@ Route::resource('user', 'UserController');
 Route::resource('financing', 'FinancingCategoryController');
 Route::get('financing/history/{id}', 'FinancingCategoryController@history');
 Route::get('financing/ajax/periode/{id}', 'FinancingCategoryController@periode_ajax');
+Route::get('financing/ajax/form/{id}', 'FinancingCategoryController@showForm');
+Route::get('periode/{id}','PeriodeController@periode');
+Route::get('periode/all/{category}','PeriodeController@all')->name('periode.all');
+Route::get('periode/all/{category}/{jurusan}','PeriodeController@showAll')->name('periode.all.setting');
+Route::put('periode/all/{category}/{jurusan}','PeriodeController@showAllUpdate')->name('periode.all.setting.update');
+Route::get('periode/jurusan/{category}','PeriodeController@showJurusan')->name('periode.jurusan.setting');
+Route::put('periode/jurusan/{category}','PeriodeController@showJurusanUpdate')->name('periode.jurusan.setting.update');
+Route::get('periode/angkatan/{category}','PeriodeController@showAngkatan')->name('periode.angkatan.setting');
+Route::put('periode/angkatan/{category}','PeriodeController@showAngkatanUpdate')->name('periode.angkatan.setting.update');
 
 /**
  * Route Periode Pembayaran

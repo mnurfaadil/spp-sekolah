@@ -17,7 +17,9 @@ class FinancingCategory extends Model
     protected $fillable = [
         "nama",
         "besaran",
-        "jenis"
+        "jenis",
+        "major_id",
+        "angkatan_id",
     ];
 
     /**
@@ -44,5 +46,15 @@ class FinancingCategory extends Model
     public function pembayaran()
     {
         return $this->hasMany('App\Payment');
+    }
+
+    public function major()
+    {
+        return $this->belongsTo('App\Major', 'major_id');
+    }
+
+    public function angkatan()
+    {
+        return $this->belongsTo('App\Angkatan', 'angkatan_id');
     }
 }

@@ -25,4 +25,17 @@ class Major extends Model
     {
         return $this->hasMany('App\Student', 'major_id');
     }
+ 
+    /**
+     * Relasi One to Many
+     */
+    public function periode()
+    {
+        return $this->hasMany('App\PaymentPeriode');
+    }
+
+    public function category()
+    {
+        return $this->hasMany('App\FinancingCategory');
+    }
 }

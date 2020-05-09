@@ -19,6 +19,8 @@ class PaymentPeriode extends Model
         "bulan", 
         "tahun", 
         "nominal",
+        "major_id",
+        "angkatan_id",
     ];
 
     public function financingCategory()
@@ -31,5 +33,13 @@ class PaymentPeriode extends Model
         return $this->hasMany('App\PaymentPeriodeDetail');
     }
 
-    
+    public function major()
+    {
+        return $this->belongsTo('App\Major', "major_id");
+    }
+
+    public function angkatan()
+    {
+        return $this->belongsTo('App\Angkatan', "angkatan_id");
+    }    
 }

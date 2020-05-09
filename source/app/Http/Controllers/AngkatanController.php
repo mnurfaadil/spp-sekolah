@@ -54,6 +54,7 @@ class AngkatanController extends Controller
                 'id' => null,
                 'angkatan' => $req['angkatan'],
                 'tahun' => $req['tahun'],
+                'status' => $req['status'],
               ]);
           return redirect()
               ->route('angkatan.index')
@@ -107,6 +108,7 @@ class AngkatanController extends Controller
           $angkatan = Angkatan::findOrFail($id);
           $angkatan->angkatan = $req['angkatan2'];
           $angkatan->tahun = $req['tahun2'];
+          $angkatan->status = $req['status'];
           $angkatan->save();
 
           return redirect()

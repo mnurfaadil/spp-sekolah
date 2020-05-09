@@ -5,66 +5,6 @@ SPP | Kategori Pembayaran
 @endsection
 
 @section('content')
-
-<div id="add-form">
-<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
-
-    <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
-        <div class="panel-body custom-panel-jw">
-            <h3><a href="">Setting Nominal {{ $category[0]->nama}}</a></h3>
-            <p class="all-pro-ad">Tambah biaya per angkatan disini</p>
-            <hr>
-
-            <div class="sparkline16-graph">
-                <div class="date-picker-inner">
-
-                    <div class="basic-login-inner">
-                        <form action="{{route('periode.store')}}" method="post">
-                            @csrf
-                            <input type="hidden" name="id" value="{{ $category[0]->id}}">
-                            <div class="form-group">
-                                <label class="control-label">Jurusan</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><strong><i class="fa fa-mortar-board"></i></strong></span>
-                                    <input type="hidden" name="jurusan" value="{{ $category[0]->major->id}}">
-                                    <input type="text" class="form-control" name="jurusan_show" value="{{ $category[0]->major->nama}}" readonly required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label">Angkatan</label>
-                                <div class="chosen-select-single mg-b-20">
-                                    <select class="form-control" name="angkatan"  required>
-                                        <option value="">-- Pilih Angkatan --</option>
-                                        @foreach($angkatans as $angkatan)
-                                            <option value="{{ $angkatan->id }}">Angkatan {{ $angkatan->angkatan }} ( {{ $angkatan->tahun }} )</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" >Nominal</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><strong>Rp.</strong></span>
-                                    <input type="number" min="0" class="form-control" name="nominal" value="{{ $category[0]->besaran}}" required>
-                                </div>
-                            </div>
-                            <div class="login-btn-inner">
-                                <div class="inline-remember-me">
-                                    <button class="btn btn-sm btn-primary pull-right login-submit-cs"
-                                        type="submit" onclick="javascript:verify()">Submit</button>
-                                    <label>
-                                </div>
-                            </div>
-                        </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <div id="edit-form">
 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
 
@@ -81,35 +21,35 @@ SPP | Kategori Pembayaran
                         <form action="" method="post">
                         @method('PUT')
                             @csrf
-                            <input type="hidden" name="id" value="{{ $category[0]->id}}">
-                            <input type="hidden" name="id_periode" value="">
-                            <div class="form-group">
-                                <label class="control-label">Jurusan</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><strong><i class="fa fa-mortar-board"></i></strong></span>
-                                    <input type="hidden" name="jurusan" value="{{ $category[0]->major->id}}">
-                                    <input type="text" class="form-control" name="jurusan_show" value="{{ $category[0]->major->nama}}" readonly required>
-                                </div>
-                            </div>
+                            <input type="hidden" name="id" value="{{ $periodes[0]->id}}">
+                            <input type="hidden" name="kategori" value="{{ $periodes[0]->financing_category_id}}">
+                            <input type="hidden" name="jurusan" value="{{ $periodes[0]->major_id}}">
                             <div class="form-group">
                                 <label class="control-label">Angkatan</label>
                                 <input type="hidden" name="angkatan">
                                 <div class="input-group">
                                     <span class="input-group-addon"><strong><i class="fa fa-bookmark"></i></strong></span>
-                                    <input type="text" name="angkatan_show" id="edit-angkatan" class="form-control" value="" readonly required>
+                                    <input type="text" name="angkatan_show" id="edit-angkatan" class="form-control" value="Kelas {{ $periodes[0]->angkatan->status}} - Angkatan {{ $periodes[0]->angkatan->angkatan}} ({{ $periodes[0]->angkatan->tahun}})" readonly required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Jurusan</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><strong><i class="fa fa-mortar-board"></i></strong></span>
+                                    <input type="text" class="form-control" name="jurusan_show" value="{{ $periodes[0]->major->nama}}" readonly required>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Nominal</label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><strong>Rp.</strong></span>
-                                    <input type="number" min="0" class="form-control" name="nominal" value="{{ $category[0]->besaran}}" id="edit_nominal" required>
+                                    <input type="number" min="0" class="form-control" name="nominal" value="{{ $periodes[0]->nominal}}" id="edit_nominal" required>
                                 </div>
                             </div>
                             <div class="login-btn-inner">
                                 <div class="inline-remember-me">
                                     <button class="btn btn-sm btn-primary pull-right login-submit-cs"
-                                        type="submit">Submit</button>
+                                        type="submit">Ubah</button>
                                     <label>
                                 </div>
                             </div>
@@ -136,14 +76,10 @@ SPP | Kategori Pembayaran
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="main-sparkline13-hd">
-                                                <h3>Nominal Pembayaran</h3>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div style="float:right">
-                                                <button class="btn btn-success" onclick="addConfirm()">
-                                                    <i class="fa fa-plus" ></i> Tambah
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -152,11 +88,7 @@ SPP | Kategori Pembayaran
                             <div class="sparkline13-graph">
                                 <div class="datatable-dashv1-list custom-datatable-overright">
                                     <div id="toolbar">
-                                        <select class="form-control dt-tb">
-                                            <option value="">Export Basic</option>
-                                            <option value="all">Export All</option>
-                                            <option value="selected">Export Selected</option>
-                                        </select>
+                                    <h3>Nominal Pembayaran</h3>
                                     </div>
                                     <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                         data-show-columns="true" data-show-pagination-switch="true"
@@ -167,7 +99,7 @@ SPP | Kategori Pembayaran
                                             <tr>
                                                 <th data-field="id">No</th>
                                                 <th data-field="date" data-editable="false">Terakhir Update</th>
-                                                <th data-field="angkatan" data-editable="false">Angkatan</th>
+                                                <th data-field="jurusan" data-editable="false">Jurusan</th>
                                                 <th data-field="nominal" data-editable="false">Nominal</th>
                                                 <th data-field="action" data-editable="false">Action</th>
                                             </tr>
@@ -181,7 +113,7 @@ SPP | Kategori Pembayaran
                                             <tr>
                                                 <td>{{ $no++ }}</td>
                                                 <td>{{ $periode->updated_at }}</td>
-                                                <td>{{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})</td>
+                                                <td>{{ $periode->major->nama }}</td>
                                                 <td>
                                                     <div style="text-align:right">
                                                     {{ $periode->nominal }}
@@ -198,11 +130,6 @@ SPP | Kategori Pembayaran
                                                     title="Edit periode {{$category[0]->nama}}" style="color:white" 
                                                     onclick="editConfirm({{$periode}},'{{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})');">
                                                       <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-danger editable"
-                                                        title="Hapus periode {{$category[0]->nama}}" style="color:white" 
-                                                        onclick="event.preventDefault();destroy('{{ route('periode.destroy',[$periode,$category[0]->id]) }}');">
-                                                        <i class="fa fa-trash"></i>
                                                     </button>
                                                 </div>
                                                 @endif
@@ -292,35 +219,12 @@ SPP | Kategori Pembayaran
             }
         });
     }
-    $(document).ready(function(){
-        $('#add-form').show();
-        $('#edit-form').hide();
-    });
     function editConfirm(periode, name) {
         console.log(periode);
-        var calendar = "0"+periode.bulan+"/01/"+periode.tahun;
-        $('#add-form').hide();
-        $('#edit-form').show();
-        $('#edit_calendar').attr('value', calendar);
+        $('input[type=hidden][name=id]').val(periode.id);
+        $('input[name=jurusan_show]').val(periode.major.nama);
         $('#edit_nominal').attr('value', periode.nominal);
-        $('#edit-form').attr('action', "{{ url('financing/periode') }}/" + periode.id);
-        $('#edit-angkatan').val(name);
-        $('input[type=hidden][name=id_periode]').val(periode.id);
-        $('input[type=hidden][name=angkatan]').val(periode.angkatan_id);
         $('#edit_nominal').focus();
-    }
-
-    function verify(){
-        let angkatan = $('select[name=angkatan]').val();
-        console.log(angkatan);
-    }
-
-    function addConfirm() {
-        $('#add-form').show();
-        $('.input[name=calendar]').attr('value','');
-        $('.input[name=nominal]').attr('value','');
-        $('.input[name=nominal]').focus();
-        $('#edit-form').hide();
     }
 </script>
 
@@ -339,8 +243,8 @@ SPP | Kategori Pembayaran
         <ol class="breadcrumb" style="margin-bottom:0">
             <li class="breadcrumb-item"><a href="{{ url('/')}}">Home</a></li>
             <li class="breadcrumb-item"><a href="{{url('/financing')}}">Pembiayaan</a></li>
-            <li class="breadcrumb-item"><a href="">{{ $category[0]->nama}}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Periode</li>
+            <li class="breadcrumb-item active">{{ $category[0]->nama }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Setting</li>
         </ol>
     </nav>
 </div>
