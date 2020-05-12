@@ -202,6 +202,10 @@ SPP | Siswa
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label class="control-label col-md-2">Simpanan<kode>*</kode></label>
+                                    <input name='simpanan' placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0" required>
+                                </div>
+                                <div class="form-group">
                                     <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
                                     <input name='phone' placeholder="Masukan No Telpon" type='text' class='form-control'
                                         required>
@@ -299,18 +303,22 @@ SPP | Siswa
                                 </div>
                             </div>
                             <div class="form-group">
-                                    <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
-                                    <div class="chosen-select-single mg-b-20">
-                                        <select class="chosen-select" name="angkatan" id="angkatan_edit" disabled readonly>
-                                        <option value="">-- Pilih Angkatan --</option>
-                                        @if(isset($angkatan))
-                                            @foreach($angkatan as $d)
-                                            <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
-                                            @endforeach
-                                        @endif
-                                        </select>
-                                    </div>
+                                <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
+                                <div class="chosen-select-single mg-b-20">
+                                    <select class="chosen-select" name="angkatan" id="angkatan_edit" disabled readonly>
+                                    <option value="">-- Pilih Angkatan --</option>
+                                    @if(isset($angkatan))
+                                        @foreach($angkatan as $d)
+                                        <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
+                                        @endforeach
+                                    @endif
+                                    </select>
                                 </div>
+                            </div>  
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Simpanan<kode>*</kode></label>
+                                <input name='simpanan' placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0" required>
+                            </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
                                 <input name='phone' id='phone' placeholder="Masukan No Telpon" type='number'
@@ -418,6 +426,10 @@ SPP | Siswa
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label col-md-2">Simpanan<kode>*</kode></label>
+                                <input name='simpanan' placeholder="Masukan Simpanan" type='number' id="simpanan3" class='form-control' value="0" min="0" id="simpanan_edit" readonly>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
                                 <input name='phone' id='phone3' placeholder="Masukan No Telpon" type='number'
                                     class='form-control' disabled>
@@ -517,7 +529,7 @@ SPP | Siswa
 
                 $('#jenis_kelamin_edit').val(data.jenis_kelamin);
                 $('#jenis_kelamin_edit_chosen .chosen-single span').html((data.jenis_kelamin == 'L') ? 'Laki - Laki' : 'Perempuan');
-
+                $('#simpanan').val(data.simpanan);
                 $('#major_id_edit').val(data.major.id).change();
                 $('#major_id_edit_chosen .chosen-single span').html(data.major.nama);
                 $('#angkatan_edit').val(data.angkatans.id);
@@ -538,6 +550,7 @@ SPP | Siswa
                 $('#phone3').attr('value', data.phone);
                 $('#alamat3').html(data.alamat);
 
+                $('#simpanan3').val(data.simpanan);
                 $('#jenis_kelamin_edit3').val(data.jenis_kelamin);
                 $('#jenis_kelamin_edit3_chosen .chosen-single span').html((data.jenis_kelamin == 'L') ? 'Laki - Laki' :
                     'Perempuan');

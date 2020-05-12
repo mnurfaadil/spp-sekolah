@@ -123,7 +123,7 @@ class SimpananController extends Controller
                 'angkatan_id' => $req['angkatan'],
                 'email' => $req['email'],
                 'alamat' => $req['alamat'],
-                'tgl_masuk' => $date,
+                'tgl_masuk' => $date, 
                 'kelas' => $req['kelas'],
                 ]);
             $id = DB::getPdo()->lastInsertId();

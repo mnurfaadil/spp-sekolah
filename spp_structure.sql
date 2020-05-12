@@ -1,6 +1,6 @@
 /*
 SQLyog Enterprise v13.1.1 (32 bit)
-MySQL - 10.4.10-MariaDB : Database - u5982481_laravel_spp2
+MySQL - 10.4.10-MariaDB : Database - u5982481_laravel_spp_3
 *********************************************************************
 */
 
@@ -24,7 +24,32 @@ CREATE TABLE `angkatans` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `status` enum('X','XI','XII','ALUMNI') COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `angkatans` */
+
+insert  into `angkatans`(`id`,`angkatan`,`tahun`,`created_at`,`updated_at`,`status`) values 
+(1,4,2017,'2020-05-10 22:40:26','2020-05-10 22:40:26','XII'),
+(2,5,2018,'2020-05-10 22:40:38','2020-05-10 22:40:38','XI'),
+(3,6,2019,'2020-05-10 22:51:26','2020-05-10 22:51:26','X'),
+(4,3,2016,'2020-05-11 19:17:20','2020-05-11 19:17:20','ALUMNI');
+
+/*Table structure for table `cicilans` */
+
+DROP TABLE IF EXISTS `cicilans`;
+
+CREATE TABLE `cicilans` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `payment_detail_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `tgl_dibayar` date DEFAULT NULL,
+  `nominal` bigint(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `cicilans` */
 
 /*Table structure for table `expenses` */
 
@@ -36,11 +61,14 @@ CREATE TABLE `expenses` (
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `sumber` enum('Sekolah','Yayasan') COLLATE utf8mb4_unicode_ci NOT NULL,
   `foto` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipe` enum('img','pdf') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nominal` bigint(20) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `expenses` */
 
 /*Table structure for table `failed_jobs` */
 
@@ -56,6 +84,8 @@ CREATE TABLE `failed_jobs` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+/*Data for the table `failed_jobs` */
+
 /*Table structure for table `financing_categories` */
 
 DROP TABLE IF EXISTS `financing_categories`;
@@ -63,14 +93,13 @@ DROP TABLE IF EXISTS `financing_categories`;
 CREATE TABLE `financing_categories` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `besaran` int(11) NOT NULL,
   `jenis` enum('Bayar per Bulan','Sekali Bayar','Khusus') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `angkatan_id` int(11) NOT NULL,
-  `major_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `financing_categories` */
 
 /*Table structure for table `financing_category_resets` */
 
@@ -84,7 +113,26 @@ CREATE TABLE `financing_category_resets` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `financing_category_resets` */
+
+/*Table structure for table `financing_periodes` */
+
+DROP TABLE IF EXISTS `financing_periodes`;
+
+CREATE TABLE `financing_periodes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `financing_category_id` int(11) NOT NULL,
+  `angkatan_id` int(11) NOT NULL,
+  `major_id` int(11) NOT NULL,
+  `nominal` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `financing_periodes` */
 
 /*Table structure for table `incomes` */
 
@@ -92,15 +140,20 @@ DROP TABLE IF EXISTS `incomes`;
 
 CREATE TABLE `incomes` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `payment_detail_id` int(11) DEFAULT NULL,
+  `cicilan_id` int(11) DEFAULT NULL,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sumber` enum('Sekolah','Yayasan') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sumber` enum('Sekolah','Yayasan','Siswa') COLLATE utf8mb4_unicode_ci NOT NULL,
   `foto` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipe` enum('img','pdf') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nominal` bigint(20) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `incomes` */
 
 /*Table structure for table `majors` */
 
@@ -109,10 +162,18 @@ DROP TABLE IF EXISTS `majors`;
 CREATE TABLE `majors` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `inisial` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `majors` */
+
+insert  into `majors`(`id`,`nama`,`inisial`,`created_at`,`updated_at`) values 
+(1,'Administrasi Perkantoran','AP','2020-05-10 22:31:31','2020-05-10 22:31:31'),
+(2,'Manajemen Multimedia','MM','2020-05-10 22:31:44','2020-05-10 22:31:44'),
+(3,'Keperawatan','KP','2020-05-10 22:31:55','2020-05-10 22:31:55');
 
 /*Table structure for table `migrations` */
 
@@ -123,7 +184,9 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `migrations` */
 
 /*Table structure for table `password_resets` */
 
@@ -136,54 +199,27 @@ CREATE TABLE `password_resets` (
   KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+/*Data for the table `password_resets` */
+
 /*Table structure for table `payment_details` */
 
 DROP TABLE IF EXISTS `payment_details`;
 
 CREATE TABLE `payment_details` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `tgl_dibayar` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `payment_id` int(11) NOT NULL,
+  `payment_periode_id` int(11) unsigned DEFAULT NULL,
   `user_id` int(11) NOT NULL,
-  `nominal` int(11) NOT NULL,
+  `tgl_dibayar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bulan` date DEFAULT NULL,
+  `nominal` int(11) DEFAULT NULL,
   `status` enum('Lunas','Nunggak','Waiting') COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-/*Table structure for table `payment_periode_details` */
-
-DROP TABLE IF EXISTS `payment_periode_details`;
-
-CREATE TABLE `payment_periode_details` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `payment_periode_id` int(11) NOT NULL,
-  `payment_id` int(11) NOT NULL,
-  `bulan` date NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `status` enum('Lunas','Nunggak','Waiting') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1549 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-/*Table structure for table `payment_periodes` */
-
-DROP TABLE IF EXISTS `payment_periodes`;
-
-CREATE TABLE `payment_periodes` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `financing_category_id` int(11) NOT NULL,
-  `angkatan_id` int(11) NOT NULL,
-  `major_id` int(11) NOT NULL,
-  `bulan` int(11) NOT NULL,
-  `tahun` year(4) NOT NULL,
-  `nominal` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*Data for the table `payment_details` */
 
 /*Table structure for table `payments` */
 
@@ -195,10 +231,13 @@ CREATE TABLE `payments` (
   `financing_category_id` int(11) NOT NULL,
   `persentase` double(8,2) NOT NULL,
   `jenis_pembayaran` enum('Tunai','Cicilan','Waiting','Nunggak','Lunas') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `keterangan` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=227 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `payments` */
 
 /*Table structure for table `pencatatans` */
 
@@ -206,15 +245,17 @@ DROP TABLE IF EXISTS `pencatatans`;
 
 CREATE TABLE `pencatatans` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `income_id` bigint(20) NOT NULL,
   `expense_id` bigint(20) NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `debit` bigint(20) NOT NULL,
   `kredit` bigint(20) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `pencatatans` */
 
 /*Table structure for table `students` */
 
@@ -232,10 +273,24 @@ CREATE TABLE `students` (
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `alamat` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tgl_masuk` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `simpanan` int(10) unsigned DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `students` */
+
+insert  into `students`(`id`,`nis`,`nama`,`jenis_kelamin`,`kelas`,`major_id`,`phone`,`angkatan_id`,`email`,`alamat`,`tgl_masuk`,`simpanan`,`created_at`,`updated_at`) values 
+(1,'201701001','ADIS NURHAYATI','P','XII',1,'0888888888',1,'siswa@baabulkamil.com','JATINANGOR','2017-07-01',460,'2020-05-10 23:09:03','2020-05-12 21:06:51'),
+(2,'201702001','ADAM PRIMADANA','L','XII',2,'0888888888',1,'siswa@baabulkamil.com','JATINANGOR','2017-07-01',5,'2020-05-10 23:11:05','2020-05-12 04:33:20'),
+(3,'201703001','ALISA SITI NUR S','P','XII',3,'0888888888',1,'siswa@baabulkamil.com','JATINANGOR','2017-07-01',4,'2020-05-10 23:12:04','2020-05-12 04:29:06'),
+(4,'201801001','INDAH WULANDARI','P','XI',1,'0888888888',2,'siswa@baabulkamil.com','JATINANGOR','07/01/2018',80,'2020-05-10 23:13:38','2020-05-12 11:35:14'),
+(5,'201803001','ELSA NURHAYATI','P','XI',3,'0888888888',2,'siswa@baabulkamil.com','JATINANGOR','2018-07-01',80,'2020-05-10 23:14:36','2020-05-12 14:49:12'),
+(6,'201802001','AINI OKTAVIANI','P','XI',2,'0888888888',2,'siswa@baabulkamil.com','JATINANGOR','2018-07-01',50,'2020-05-10 23:18:52','2020-05-12 14:50:10'),
+(7,'201901001','ALIA DEPIYANTI','P','X',1,'0888888888',3,'siswa@baabulkamil.com','JATINANGOR','2019-07-01',23,'2020-05-10 23:20:32','2020-05-12 04:17:58'),
+(8,'201903001','AULIA ANISA','P','X',3,'0888888888',3,'siswa@baabulkamil.com','JATINANGOR','2019-07-01',0,'2020-05-10 23:22:02','2020-05-10 23:22:02'),
+(9,'201902001','AGUSTINA SITI SOLEHAH','P','X',2,'0888888888',3,'siswa@baabulkamil.com','JATINANGOR','2019-07-01',0,'2020-05-10 23:23:39','2020-05-10 23:23:39');
 
 /*Table structure for table `users` */
 
@@ -254,7 +309,38 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `users` */
+
+insert  into `users`(`id`,`name`,`username`,`email`,`email_verified_at`,`password`,`role`,`remember_token`,`created_at`,`updated_at`) values 
+(3,'Eka Raya Permata S.Sos','','eka2@support.com',NULL,'$2y$10$5/gBVkbi3iA6G/8wcTMP7ev7cZi6AKxy4OQskWVMzUyogaVCr/4XK','Sekolah',NULL,NULL,'2020-05-11 02:07:54');
+
+/* Trigger structure for table `cicilans` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `cicilan_delete` */$$
+
+/*!50003 CREATE */ /*!50003 TRIGGER `cicilan_delete` AFTER DELETE ON `cicilans` FOR EACH ROW BEGIN
+	delete from incomes where cicilan_id = old.id;
+    END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `expenses` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `expense_delete` */$$
+
+/*!50003 CREATE */ /*!50003 TRIGGER `expense_delete` AFTER DELETE ON `expenses` FOR EACH ROW BEGIN
+	delete from pencatatans where expense_id = old.id;
+    END */$$
+
+
+DELIMITER ;
 
 /* Trigger structure for table `financing_categories` */
 
@@ -265,8 +351,48 @@ DELIMITER $$
 /*!50003 CREATE */ /*!50003 TRIGGER `financing_categories_delete` AFTER DELETE ON `financing_categories` FOR EACH ROW BEGIN
 DELETE FROM financing_category_resets WHERE financing_category_resets.financing_category_id = old.id;
 DELETE FROM payments WHERE payments.financing_category_id= old.id;
-DELETE FROM payment_periodes where payment_periodes.financing_category_id = old.id; 
+DELETE FROM financing_periodes where financing_periodes.financing_category_id = old.id; 
 END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `financing_periodes` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `financing_periode_delete` */$$
+
+/*!50003 CREATE */ /*!50003 TRIGGER `financing_periode_delete` AFTER DELETE ON `financing_periodes` FOR EACH ROW BEGIN
+	delete from payment_details where `payment_periode_id`=old.id;
+    END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `incomes` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `income_delete` */$$
+
+/*!50003 CREATE */ /*!50003 TRIGGER `income_delete` AFTER DELETE ON `incomes` FOR EACH ROW BEGIN
+	delete from pencatatans where income_id = old.id;
+    END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `payment_details` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `payment_detail_delete` */$$
+
+/*!50003 CREATE */ /*!50003 TRIGGER `payment_detail_delete` AFTER DELETE ON `payment_details` FOR EACH ROW BEGIN
+	delete from cicilans where `payment_detail_id`=old.id;
+	delete from income where payment_detail_id = old.id;
+    END */$$
 
 
 DELIMITER ;
@@ -279,8 +405,33 @@ DELIMITER $$
 
 /*!50003 CREATE */ /*!50003 TRIGGER `payments_delete` AFTER DELETE ON `payments` FOR EACH ROW BEGIN
 DELETE FROM payment_details WHERE payment_details.payment_id = old.id;
-DELETE FROM payment_periode_details WHERE payment_periode_details.payment_id = old.id;
 END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `payments` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `payment_delete` */$$
+
+/*!50003 CREATE */ /*!50003 TRIGGER `payment_delete` AFTER DELETE ON `payments` FOR EACH ROW BEGIN
+	delete from payment_details where `payment_id`=old.id;
+    END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `students` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `student_delete` */$$
+
+/*!50003 CREATE */ /*!50003 TRIGGER `student_delete` AFTER DELETE ON `students` FOR EACH ROW BEGIN
+	delete from payments where student_id = old.id;
+    END */$$
 
 
 DELIMITER ;
@@ -293,7 +444,7 @@ DELIMITER $$
 /*!50003 CREATE FUNCTION `getAkumulasiPerBulan`(`id` INT) RETURNS int(11)
 BEGIN
     declare v int;
-    SELECT SUM(pd.`nominal`) into v FROM payment_periode_details ppd
+    SELECT SUM(pd.`nominal`) into v FROM payment_details ppd
 JOIN payment_periodes pd ON ppd.`payment_periode_id`=pd.id
 WHERE payment_id=id;
 return v;
@@ -384,7 +535,7 @@ DELIMITER $$
 /*!50003 CREATE FUNCTION `getCountBulananTidakTerbayar`(`id` INT) RETURNS int(11)
 BEGIN
 	declare v int;
-	SELECT COUNT(*) into v FROM payment_periode_details ppd WHERE STATUS="Nunggak" AND payment_id=id;
+	SELECT COUNT(*) into v FROM payment_details ppd WHERE STATUS="Nunggak" AND payment_id=id;
 	return v;
     END */$$
 DELIMITER ;
@@ -426,7 +577,7 @@ DELIMITER $$
 /*!50003 CREATE FUNCTION `getCountNunggak`(`pay_id` INT) RETURNS int(11)
 BEGIN
     DECLARE v INT;
-    SELECT COUNT(STATUS) into v FROM payment_periode_details
+    SELECT COUNT(STATUS) into v FROM payment_details
 WHERE STATUS = "Nunggak" AND payment_id=pay_id;
 RETURN v;
     END */$$
@@ -440,7 +591,7 @@ DELIMITER $$
 /*!50003 CREATE FUNCTION `getCountNunggakPeriodeUseKategori`(`id` INT) RETURNS int(11)
 BEGIN
     declare v int;
-	SELECT COUNT(STATUS) INTO v FROM payment_periode_details ppd
+	SELECT COUNT(STATUS) INTO v FROM payment_details ppd
     JOIN payments p ON p.id = ppd.payment_id
     join financing_categories fc on fc.id = p.financing_category_id
 WHERE ppd.status = "Nunggak" AND fc.id=id;
@@ -456,7 +607,7 @@ DELIMITER $$
 /*!50003 CREATE FUNCTION `getCountWaiting`(`pay_id` INT) RETURNS int(11)
 BEGIN
     declare v int;
-    SELECT COUNT(STATUS) into v FROM payment_periode_details
+    SELECT COUNT(STATUS) into v FROM payment_details
 WHERE STATUS = "Waiting" AND payment_id=pay_id;
 return v;
     END */$$
@@ -484,15 +635,9 @@ DELIMITER $$
 
 /*!50003 CREATE FUNCTION `getJumlahNunggak`() RETURNS int(11)
 BEGIN
-    declare v,s int;
-	SELECT COUNT(STATUS) into v FROM payment_periode_details
-WHERE STATUS = "Nunggak";
-SELECT COUNT(*) into s FROM  payments p 
-WHERE p.`jenis_pembayaran`="Nunggak"
-AND p.id NOT IN (
-	SELECT payment_id FROM payment_periode_details GROUP BY payment_id
-);
-	set v = v + s;
+    declare v int;
+	SELECT COUNT(*) into v FROM payment_details 
+WHERE payment_details.status="Nunggak";
 	return v;
     END */$$
 DELIMITER ;
@@ -611,7 +756,7 @@ DELIMITER $$
 BEGIN
 	declare v int;
 	SELECT SUM(nominal) into v FROM payment_periodes pp
-JOIN payment_periode_details ppd ON ppd.`payment_periode_id`=pp.`id`
+JOIN payment_details ppd ON ppd.`payment_periode_id`=pp.`id`
 WHERE STATUS = "Lunas" and ppd.`payment_id`=id_pay;
 	return v;
 return @v;
@@ -759,76 +904,6 @@ DROP TABLE IF EXISTS `rekap_view`;
  `tunggakan` decimal(33,0) 
 )*/;
 
-/*Table structure for table `tunggakan_sekali_report_view` */
-
-DROP TABLE IF EXISTS `tunggakan_sekali_report_view`;
-
-/*!50001 DROP VIEW IF EXISTS `tunggakan_sekali_report_view` */;
-/*!50001 DROP TABLE IF EXISTS `tunggakan_sekali_report_view` */;
-
-/*!50001 CREATE TABLE  `tunggakan_sekali_report_view`(
- `nama` varchar(255) ,
- `kelas` enum('X','XI','XII') ,
- `jurusan` varchar(255) ,
- `akumulasi` int(11) ,
- `terbayar` decimal(32,0) ,
- `metode` varchar(7) 
-)*/;
-
-/*Table structure for table `view_detail_once` */
-
-DROP TABLE IF EXISTS `view_detail_once`;
-
-/*!50001 DROP VIEW IF EXISTS `view_detail_once` */;
-/*!50001 DROP TABLE IF EXISTS `view_detail_once` */;
-
-/*!50001 CREATE TABLE  `view_detail_once`(
- `id` bigint(20) unsigned ,
- `nis` varchar(15) ,
- `nama` varchar(255) ,
- `jenis_kelamin` enum('L','P') ,
- `kelas` enum('X','XI','XII') ,
- `major_id` int(11) ,
- `phone` varchar(14) ,
- `email` varchar(255) ,
- `tgl_masuk` varchar(255) ,
- `created_at` timestamp ,
- `updated_at` timestamp ,
- `akumulasi` int(11) ,
- `financing_nama` varchar(255) ,
- `terbayar` int(11) ,
- `financing_id` bigint(20) unsigned ,
- `payment_id` bigint(20) unsigned ,
- `jenis_pembayaran` enum('Tunai','Cicilan','Waiting','Nunggak','Lunas') 
-)*/;
-
-/*Table structure for table `view_detail_once_2` */
-
-DROP TABLE IF EXISTS `view_detail_once_2`;
-
-/*!50001 DROP VIEW IF EXISTS `view_detail_once_2` */;
-/*!50001 DROP TABLE IF EXISTS `view_detail_once_2` */;
-
-/*!50001 CREATE TABLE  `view_detail_once_2`(
- `id` bigint(20) unsigned ,
- `nis` varchar(15) ,
- `nama` varchar(255) ,
- `jenis_kelamin` enum('L','P') ,
- `kelas` enum('X','XI','XII') ,
- `major_id` int(11) ,
- `phone` varchar(14) ,
- `email` varchar(255) ,
- `tgl_masuk` varchar(255) ,
- `created_at` timestamp ,
- `updated_at` timestamp ,
- `akumulasi` int(11) ,
- `financing_nama` varchar(255) ,
- `terbayar` int(11) ,
- `financing_id` bigint(20) unsigned ,
- `payment_id` bigint(20) unsigned ,
- `jenis_pembayaran` enum('Tunai','Cicilan','Waiting','Nunggak','Lunas') 
-)*/;
-
 /*View structure for view dashboard_view */
 
 /*!50001 DROP TABLE IF EXISTS `dashboard_view` */;
@@ -855,28 +930,7 @@ DROP TABLE IF EXISTS `view_detail_once_2`;
 /*!50001 DROP TABLE IF EXISTS `rekap_view` */;
 /*!50001 DROP VIEW IF EXISTS `rekap_view` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `rekap_view` AS select sum(`pencatatans`.`debit`) - sum(`pencatatans`.`kredit`) AS `saldo`,sum(`pencatatans`.`debit`) AS `pemasukan`,sum(`pencatatans`.`kredit`) AS `pengeluaran`,(select sum(`fc`.`besaran`) + (select sum(`payment_details`.`nominal`) from `payment_details` where `payment_details`.`status` = 'Nunggak') from ((`payment_periode_details` `ppd` join `payment_periodes` `pp` on(`pp`.`id` = `ppd`.`payment_periode_id`)) join `financing_categories` `fc` on(`fc`.`id` = `pp`.`financing_category_id`)) where `ppd`.`status` = 'Nunggak') AS `tunggakan` from `pencatatans` */;
-
-/*View structure for view tunggakan_sekali_report_view */
-
-/*!50001 DROP TABLE IF EXISTS `tunggakan_sekali_report_view` */;
-/*!50001 DROP VIEW IF EXISTS `tunggakan_sekali_report_view` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `tunggakan_sekali_report_view` AS select `s`.`nama` AS `nama`,`s`.`kelas` AS `kelas`,`m`.`nama` AS `jurusan`,`fc`.`besaran` AS `akumulasi`,(select sum(`pd2`.`nominal`) from `payment_details` `pd2` where `pd2`.`id` = `pd`.`id`) AS `terbayar`,(select `p2`.`jenis_pembayaran` from `payments` `p2` where `p2`.`id` = `p`.`id`) AS `metode` from ((((`students` `s` join `majors` `m` on(`m`.`id` = `s`.`major_id`)) join `payments` `p` on(`p`.`student_id` = `s`.`id`)) join `financing_categories` `fc` on(`fc`.`id` = `p`.`financing_category_id`)) join `payment_details` `pd` on(`pd`.`payment_id` = `p`.`id`)) */;
-
-/*View structure for view view_detail_once */
-
-/*!50001 DROP TABLE IF EXISTS `view_detail_once` */;
-/*!50001 DROP VIEW IF EXISTS `view_detail_once` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `view_detail_once` AS select `s`.`id` AS `id`,`s`.`nis` AS `nis`,`s`.`nama` AS `nama`,`s`.`jenis_kelamin` AS `jenis_kelamin`,`s`.`kelas` AS `kelas`,`s`.`major_id` AS `major_id`,`s`.`phone` AS `phone`,`s`.`email` AS `email`,`s`.`tgl_masuk` AS `tgl_masuk`,`s`.`created_at` AS `created_at`,`s`.`updated_at` AS `updated_at`,`fc`.`besaran` AS `akumulasi`,`fc`.`nama` AS `financing_nama`,`paid_once`(`p`.`id`) AS `terbayar`,`fc`.`id` AS `financing_id`,`p`.`id` AS `payment_id`,`p`.`jenis_pembayaran` AS `jenis_pembayaran` from (((`students` `s` left join `payments` `p` on(`s`.`id` = `p`.`student_id`)) left join `financing_categories` `fc` on(`fc`.`id` = `p`.`financing_category_id`)) left join `payment_details` `pd` on(`pd`.`payment_id` = `p`.`id`)) group by `s`.`id` */;
-
-/*View structure for view view_detail_once_2 */
-
-/*!50001 DROP TABLE IF EXISTS `view_detail_once_2` */;
-/*!50001 DROP VIEW IF EXISTS `view_detail_once_2` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `view_detail_once_2` AS select `s`.`id` AS `id`,`s`.`nis` AS `nis`,`s`.`nama` AS `nama`,`s`.`jenis_kelamin` AS `jenis_kelamin`,`s`.`kelas` AS `kelas`,`s`.`major_id` AS `major_id`,`s`.`phone` AS `phone`,`s`.`email` AS `email`,`s`.`tgl_masuk` AS `tgl_masuk`,`s`.`created_at` AS `created_at`,`s`.`updated_at` AS `updated_at`,`fc`.`besaran` AS `akumulasi`,`fc`.`nama` AS `financing_nama`,`paid_once`(`p`.`id`) AS `terbayar`,`fc`.`id` AS `financing_id`,`p`.`id` AS `payment_id`,`p`.`jenis_pembayaran` AS `jenis_pembayaran` from (((`students` `s` left join `payments` `p` on(`s`.`id` = `p`.`student_id`)) left join `financing_categories` `fc` on(`fc`.`id` = `p`.`financing_category_id`)) left join `payment_details` `pd` on(`pd`.`payment_id` = `p`.`id`)) group by `s`.`id` */;
+/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `rekap_view` AS select sum(`pencatatans`.`debit`) - sum(`pencatatans`.`kredit`) AS `saldo`,sum(`pencatatans`.`debit`) AS `pemasukan`,sum(`pencatatans`.`kredit`) AS `pengeluaran`,(select sum(`pp`.`nominal`) + (select sum(`payment_details`.`nominal`) from `payment_details` where `payment_details`.`status` = 'Nunggak') from ((`payment_details` `ppd` join `financing_periodes` `pp` on(`pp`.`id` = `ppd`.`payment_periode_id`)) join `financing_categories` `fc` on(`fc`.`id` = `pp`.`financing_category_id`)) where `ppd`.`status` = 'Nunggak') AS `tunggakan` from `pencatatans` */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
