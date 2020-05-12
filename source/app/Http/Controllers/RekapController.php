@@ -66,26 +66,33 @@ class RekapController extends Controller
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
                         ->whereMonth('incomes.created_at',$request->bulan)
                         ->whereYear('incomes.created_at',$request->tahun)
-                        ->where('sumber','<>','Siswa')
-                        ->where('debit','<>','0')->get();
+                        ->where([
+                            ['debit','<>','0'],
+                            ['sumber','<>','Siswa']
+                        ])->get();
             }
             elseif(isset($request->tahun)){   
                 $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
                         ->whereYear('incomes.created_at',$request->tahun)
-                        ->where('sumber','<>','Siswa')
-                        ->where('debit','<>','0')->get();
+                        ->where([
+                            ['debit','<>','0'],
+                            ['sumber','<>','Siswa']
+                        ])->get();
             }
             elseif(isset($request->bulan)){
                 $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
                         ->whereMonth('incomes.created_at',$request->bulan)
-                        ->where('sumber','<>','Siswa')
-                        ->where('debit','<>','0')->get();
+                        ->where([
+                            ['debit','<>','0'],
+                            ['sumber','<>','Siswa']
+                        ])->get();
             }else{
-                $datas = Pencatatan::where('debit','<>','0')
-                        ->orderBy('pencatatans.updated_at', 'desc')
-                        ->where('sumber','<>','Siswa')
+                $datas = Pencatatan::where([
+                            ['debit','<>','0'],
+                            ['sumber','<>','Siswa']
+                        ])->orderBy('pencatatans.updated_at', 'desc')
                         ->get();
             }
             $title = "Laporan Pemasukan";
@@ -100,7 +107,6 @@ class RekapController extends Controller
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
                     ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
                     ->whereYear('expenses.created_at',$request->tahun)
-                    ->where('sumber','<>','Siswa')
                     ->where('pencatatans.kredit','<>','0')
                     ->get();
             }elseif ($request->bulan != '' && $request->tahun=='') {
@@ -108,22 +114,20 @@ class RekapController extends Controller
                     ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
                     ->whereMonth('expenses.created_at',$request->bulan)
                     ->where('pencatatans.kredit','<>','0')
-                    ->where('sumber','<>','Siswa')
                     ->get();
             }elseif ($request->bulan == '' && $request->tahun=='') {
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
                     ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
                     ->where('pencatatans.kredit','<>','0')
-                    ->where('sumber','<>','Siswa')
                     ->get();
             }else{
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
                 ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
                     ->whereMonth('expenses.created_at',$request->bulan)
                     ->whereYear('expenses.created_at',$request->tahun)
-                    ->where('pencatatans.kredit','<>','0')
-                    ->where('sumber','<>','Siswa')
-                    ->get();
+                    ->where([
+                        ['pencatatans.kredit','<>','0'],
+                    ])->get();
             }
             $pdf = PDF::loadView('export.pengeluaran',compact('tanggal','user','rincian','datas','no','title'));
             $pdf->setPaper('A4', 'potrait');
