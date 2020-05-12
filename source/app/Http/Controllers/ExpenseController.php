@@ -68,8 +68,11 @@ class ExpenseController extends Controller
 
             $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
     
-            // isi dengan nama folder tempat kemana file diupload
-            $tujuan_upload = 'source/public/nota/';
+            // isi dengan nama folder tempat kemana file diupload$tujuan_upload = 'nota';
+            $tujuan_upload = 'nota';
+            if($tipe=="pdf"){
+                $tujuan_upload = 'source/public/nota/';
+            }
             $file->move($tujuan_upload,$uuid.$nama_file);
             
             Expense::create([
@@ -177,6 +180,9 @@ class ExpenseController extends Controller
                 $file = $request->file('foto');
                 $nama_file = time()."_".$file->getClientOriginalName();
                 $tujuan_upload = 'nota';
+                if($tipe=="pdf"){
+                    $tujuan_upload = 'source/public/nota/';
+                }
                 $file->move($tujuan_upload,$nama_file);
                 $data->foto = $nama_file;
                 $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
@@ -219,7 +225,9 @@ class ExpenseController extends Controller
     public function destroy($id)
     {
         try {
-            Expense::findOrFail($id)->delete();
+            $data = Expense::findOrFail($id);
+
+            $data->delete();
             DB::table('pencatatans')
             ->where('expense_id', $id)
             ->delete();
@@ -236,7 +244,6 @@ class ExpenseController extends Controller
 
     public function download($path)
     {
-        // $pathToFile = public_path()."//nota//".$path;
         $pathToFile = public_path()."/nota/".$path;
         return response()->download($pathToFile);
     }

@@ -68,6 +68,9 @@ class IncomeController extends Controller
 
             // isi dengan nama folder tempat kemana file diupload
             $tujuan_upload = 'nota';
+            if($tipe=="pdf"){
+                $tujuan_upload = 'source/public/nota/';
+            }
             $file->move($tujuan_upload,$uuid.$nama_file);
             
             Income::create([
@@ -179,9 +182,12 @@ class IncomeController extends Controller
             if ($request->file('foto')!='') {
                 $file = $request->file('foto');
                 $nama_file = time()."_".$file->getClientOriginalName();
-                $tujuan_upload = 'nota';
-                $file->move($tujuan_upload,$nama_file);
                 $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
+                $tujuan_upload = 'nota';
+                if($tipe=="pdf"){
+                    $tujuan_upload = 'source/public/nota/';
+                }
+                $file->move($tujuan_upload,$nama_file);
                 $data->tipe = $tipe;
                 $data->foto = $nama_file;
                 
