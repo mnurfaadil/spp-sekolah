@@ -43,7 +43,7 @@ SPP | Pengeluaran
                             </div>
                             <div class="col-md-6">
                               <div style="float:right;">
-                                <form action="{{route('pdf.print')}}" target="_blank" role="form" method="post">
+                                <form action="{{route('pdf.print','pengeluaran')}}" target="_blank" role="form" method="post">
                                   @csrf
                                   <input type="hidden" name='bulan' value='{{$bln1}}'>
                                   <input type="hidden" name='id' value='pengeluaran'>
