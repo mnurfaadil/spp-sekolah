@@ -15,7 +15,7 @@ class Payment extends Model
      * Kolom yang dapat di isi
      */
     protected $fillable = [
-        "student_id",
+        "student_id", 
         "financing_category_id", 
         "jenis_pembayaran", 
         "persentase",
@@ -24,14 +24,9 @@ class Payment extends Model
     /**
      * Relasi One to Many
      */
-    public function paymentDetail()
+    public function detail()
     {
         return $this->hasMany('App\PaymentDetail');
-    }
-
-    public function paymentPeriode()
-    {
-        return $this->hasMany('App\PaymentPeriodeDetail');
     }
 
     /**
@@ -40,6 +35,11 @@ class Payment extends Model
     public function user()
     {
         return $this->belongsToMany('App\User');
+    }
+
+    public function periode()
+    {
+        return $this->belongsToMany('App\PaymentPeriode','payment_details','payment_id','payment_periode_id');
     }
  
     public function student()

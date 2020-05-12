@@ -60,11 +60,6 @@ SPP | Pengeluaran
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
@@ -85,12 +80,17 @@ SPP | Pengeluaran
                                   @php
                                     $temp = strtotime($data->updated_at);
                                     $tanggal = date('j - M - Y', $temp);
+                                    $url = asset('nota')."/".$data->foto;
                                   @endphp
                                     <tr>
                                         <td>{{$no++}}</td>
                                         <td>{{ $tanggal }}</td>
                                         <td class="avatar text-center">
-                                          <img class="rounded-circle" style="width: 100px; height: 100px;" src="nota/{{ $data -> foto }}" alt="">  
+                                        @if($data->tipe=="img")
+                                          <img class="rounded-circle" style="width: 100px; height: 100px;" src="{{ $url }}" alt="">
+                                          @else
+                                          <a href="{{ route('expense.download',$data->foto) }}" title="Download file" style="margin:0;color:blue"><i class="fa fa-download"></i> Download</a>
+                                          @endif
                                         </td>
                                         <td>{{$data->title}}</td>
                                         <td>{{$data->description}}</td>
@@ -132,7 +132,7 @@ SPP | Pengeluaran
         <form action="{{ route('expense.store') }}" role="form" method="post" enctype="multipart/form-data">
           {{csrf_field()}}
           <div class="form-group">
-              <label class="control-label col-md-6">Tanggal<kode>*</kode> format (bulan/tanggal/tahun)</label>
+              <label class="control-label col-md-6">Tanggal<kode>*</kode></label>
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group data-custon-pick" id="data_3">
@@ -140,6 +140,7 @@ SPP | Pengeluaran
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                               <input type="text" name='tanggal' id='tanggal' class="form-control" placeholder="Tanggal Pengeluaran" autocomplete="off" required>
                           </div>
+                          <span class="help-block">bulan/tanggal/tahun</span>
                       </div>
                   </div>
               </div>
@@ -175,7 +176,7 @@ SPP | Pengeluaran
                             <label class="icon-right" for="prepend-big-btn"><i class="fa fa-download"></i></label>
                             <div class="file-button">
                                 Browse
-                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn').value = this.value;" accept="image/*,.pdf">
                             </div>
                             <input type="text" id="prepend-big-btn" placeholder="no file selected">
                         </div>
@@ -212,7 +213,7 @@ SPP | Pengeluaran
         @method('PUT')
           {{csrf_field()}}
           <div class="form-group">
-              <label class="control-label col-md-6">Tanggal<kode>*</kode> format (bulan/tanggal/tahun)</label>
+              <label class="control-label col-md-6">Tanggal<kode>*</kode></label>
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group data-custon-pick" id="data_3">
@@ -220,6 +221,7 @@ SPP | Pengeluaran
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                               <input type="text" name='tanggal' id='tanggal_edit' class="form-control" placeholder="Tanggal Pengeluaran"  autocomplete="off" required>
                           </div>
+                          <span class="help-block">bulan/tanggal/tahun</span>
                       </div>
                   </div>
               </div>
@@ -255,7 +257,7 @@ SPP | Pengeluaran
                             <label class="icon-right" for="prepend-big-btn"><i class="fa fa-download"></i></label>
                             <div class="file-button">
                                 Browse
-                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn2').value = this.value;">
+                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn2').value = this.value;" accept="image/*,.pdf">
                             </div>
                             <input type="text" id="prepend-big-btn2" placeholder="no file selected">
                         </div>

@@ -30,11 +30,6 @@ SPP | Kategori Pembayaran
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                 data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
@@ -43,40 +38,64 @@ SPP | Kategori Pembayaran
                                 data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id"><div style="text-align: center">No</div></th>
                                         <th data-field="name"><div style="text-align: center">Deskripsi</div></th>
-                                        <th data-field="besaran"><div style="text-align: center">Besaran (Rp.)</div></th>
+                                        <th data-field="besaran"><div style="text-align: center">Besaran Terkecil (Rp.)</div></th>
                                         <th data-field="jenis"><div style="text-align: center">Jenis Pembiayaan</div></th>
+                                        <th data-field="jurusan"><div style="text-align: center">Peruntukan</div></th>
                                         <th data-field="action"><div style="text-align: center">Action</div></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($datas as $data)
+                                    @php
+                                    $nominal = $data->periode->min('nominal');
+                                    $count_jurusan = $data->periode->groupBy('major_id')->count();
+                                    $count_angkatan = $data->periode->groupBy('angkatan_id')->count();
+                                    @endphp
                                     <tr>
-                                        <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{$data->nama}}</td>
                                         <td>
                                             <div style="text-align: right">
-                                            {{number_format($data->besaran, 0, ",", ".")}}
+                                            {{number_format($nominal, 0, ",", ".")}}
                                             </div>
                                         </td>
                                         <td>
                                             <div style="text-align: center">{{$data->jenis}}</div>
                                         </td>
                                         <td>
-                                        <div style="text-align: center">
-                                            @if($data->jenis=='Bayar per Bulan')
-                                            <a href="{{route('financing.periode',$data)}}" class="btn btn-success" title="Periode"><i class="fa fa-history"> Periode</i></a>
+                                            <div style="text-align: center">
+                                            @if($count_jurusan < 2)
+                                            <span class="label-warning label-3 label" style="font-size:10pt;color:black">{{$data->periode[0]->major->nama}}</span>
+                                            @else
+                                            <span class="label-purple label-6 label" style="font-size:10pt;">Semua Jurusan</span>
                                             @endif
+                                            @if($count_angkatan < 2)
+                                            <span class="label-success label-3 label" style="font-size:10pt;color:black">Angkatan ke - {{$data->periode[0]->angkatan->angkatan}} ({{$data->periode[0]->angkatan->tahun}})</span>
+                                            @else
+                                            <span class="label-danger label-1 label" style="font-size:10pt">Semua Angkatan</span>
+                                            @endif
+                                            </div>
+                                        </td>
+                                        <td>
+                                        <div style="text-align: center">
                                             @if($data->history->count()>1)
                                             <a href="#" class="btn btn-info"
-                                                onclick="history('{{$data->nama}}','{{ number_format($data->besaran, 0, ",", ".")}}', '{{$data->jenis}}','{{ url('financing/history',$data->id) }}')"
+                                                onclick="history('{{$data->nama}}','{{ number_format($nominal, 0, ",", ".")}}', '{{$data->jenis}}','{{ url('financing/history',$data->id) }}')"
                                                 title="History"><i class="fa fa-history"> History</i></a>
                                             @endif
+
+                                            @if($count_angkatan > 1 && $count_jurusan > 1)
+                                            <a href="{{route('periode.all',$data)}}" class="btn btn-success" title="Atur nominal biaya"><i class="fa fa-gear"> Setting</i></a>
+                                            @elseif($count_angkatan > 1)
+                                            <a href="{{route('periode.angkatan.setting',$data)}}" class="btn btn-success" title="Atur nominal biaya"><i class="fa fa-gear"> Setting</i></a>
+                                            @elseif($count_jurusan > 1)
+                                            <a href="{{route('periode.jurusan.setting',$data)}}" class="btn btn-success" title="Atur nominal biaya"><i class="fa fa-gear"> Setting</i></a>
+                                            @endif
+
                                             <a href="#" class="btn btn-warning"
-                                                onclick="editConfirm( '{{$data->id}}', '{{$data->nama}}', '{{$data->besaran}}', '{{$data->jenis}}')"
+                                                onclick="editConfirm({{$data}}, '{{$nominal}}', {{$count_jurusan}}, {{$count_angkatan}})"
                                                 title="Edit"><i class="fa fa-edit"> Edit</i></a>
                                             <a href="{{ route('financing.destroy',$data) }}" class="btn btn-danger"
                                                 onclick="event.preventDefault();destroy('{{ route('financing.destroy',$data) }}');"
@@ -116,6 +135,27 @@ SPP | Kategori Pembayaran
                             required>
                     </div>
                     <div class="form-group">
+                        <label class="control-label">Peruntukan</label>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="jurusan"  required>
+                                <option value="">-- Pilih Jurusan --</option>
+                                <option value="all">Semua Jurusan</option>
+                                @foreach($majors as $major)
+                                    <option value="{{$major->id}}">{{$major->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="angkatan"  required>
+                                <option value="">-- Pilih Angkatan --</option>
+                                <option value="all">Semua Angkatan</option>
+                                @foreach($angkatans as $angkatan)
+                                    <option value="{{$angkatan->id}}">Kelas {{$angkatan->status}} - Angkatan {{$angkatan->angkatan}} - ({{$angkatan->tahun}})   </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label col-md-4">Besaran Nominal (Rp.)</label>
                         <input name='besaran' placeholder="Masukan nominal pembayaran" type='number' min="0"
                             class='form-control' required>
@@ -133,16 +173,21 @@ SPP | Kategori Pembayaran
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="i-checks pull-left">
                                     <label>
-                                            <input type="radio" value="Bayar per Bulan" name="jenis"> <i></i> Bayar per Bulan </label>
+                                        <input type="radio" value="Bayar per Bulan" name="jenis"> <i></i> Bayar per Bulan 
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
             </div>
+            <hr>
+            <p style="font-weight:bold;color:black;margin-left:15px">Mohon diperhatikan !</p>
+            <p style="font-weight:bold;color:black;margin-left:15px"> <span style="color:red;"> Kolom peruntukan dan jenis pembiayaan hanya dapat di atur disini </span></p>
+            <p style="font-weight:bold;color:black;margin-left:15px">Isilah dengan seksama</p>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" tabindex="-1">Close</button>
                 <button type='submit' class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
-                </form>
+            </form>
             </div>
         </div>
     </div>
@@ -166,34 +211,41 @@ SPP | Kategori Pembayaran
                     <div class="form-group">
                         <label class="control-label col-md-2">Kategori</label>
                         <input name='nama' placeholder="Masukan ketegori pembiayaan" type='text' class='form-control'
-                            id="nama" required>
+                            id="edit-nama" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Peruntukan</label>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="jurusan" id="edit-jurusan" required disabled>
+                                <option value="">-- Pilih Jurusan --</option>
+                                <option value="all">Semua Jurusan</option>
+                                @foreach($majors as $major)
+                                    <option value="{{$major->id}}">{{$major->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="angkatan" id="edit-angkatan" required disabled>
+                                <option value="">-- Pilih Angkatan --</option>
+                                <option value="all">Semua Angkatan</option>
+                                @foreach($angkatans as $angkatan)
+                                    <option value="{{$angkatan->id}}">Kelas {{$angkatan->status}} - Angkatan {{$angkatan->angkatan}} - ({{$angkatan->tahun}})</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4">Besaran Nominal (Rp.)</label>
-                        <input name='besaran' placeholder="Masukan nominal pembayaran" type='number' min="0"
-                            class='form-control' id="besaran" required>
+                        <input name='besaran_old' type='hidden' min="0" class='form-control' id="edit-besaran-hidden" required>
+                        <input name='besaran' placeholder="Masukan nominal pembayaran" type='number' min="0" class='form-control' id="edit-besaran" required>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4">Jenis Pembiayaan</label>
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="i-checks pull-left">
-                                    <label style=""><input type="radio" checked value="Sekali Bayar" name="jenis" id="jenis_sekali_edit"> <i></i>  Sekali Bayar</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="i-checks pull-left">
-                                    <label>
-                                            <input type="radio" value="Bayar per Bulan" name="jenis" id="jenis_per_bulan_edit"> <i></i> Bayar per Bulan </label>
-                                </div>
-                            </div>
-                        </div>
+                        <input name="edit_jenis" type="text" disabled id="edit-jenis"  class='form-control' required>
                     </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" tabindex="-1">Close</button>
                 <button type='submit' class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
                 </form>
             </div>
@@ -280,10 +332,15 @@ SPP | Kategori Pembayaran
 @push('scripts')
 
 <script>
-    function editConfirm(id, nama, besaran, jenis) {
-        $('#nama').attr('value', nama);
-        $('#besaran').attr('value', besaran);
-        $('#editForm').attr('action', "{{ url('financing') }}/" + id);
+    function editConfirm(data, besaran, jurusan, angkatan) {
+        console.log(data);
+        $('#edit-nama').val(data.nama);
+        $('#edit-jurusan').val((jurusan > 1) ? "all" : data.periode[0].major.id);
+        $('#edit-angkatan').val((angkatan > 1) ? "all" : data.periode[0].angkatan.id);
+        $('#edit-besaran-hidden').attr('value', besaran);
+        $('#edit-besaran').attr('value', besaran);
+        $('#edit-jenis').attr('value', data.jenis);
+        $('#editForm').attr('action', "{{ url('financing') }}/" + data.id);
         $('#modalUpdate').modal();
     }
 
@@ -332,29 +389,30 @@ SPP | Kategori Pembayaran
 <script>
 function history(nama, besaran, jenis='', link = "/"){
 
-$('#kategori_history_modal').html(nama);
-$('#besaran_history_modal').html(besaran);
-$('#jenis_history_modal').html(jenis);
-$.ajax({
-    type: "GET",
-    dataType: "json",
-    url: link,
-    success: function (response) {
-        $.each(response, function(i, item) {
-            var $tr = $('<tr>').append(
-                $('<td>').text(item.rowNumber),
-                $('<td>').text(item.created_at),
-                $('<td>').text('Rp. '+item.besaran),
-                $('<td>').text(item.jenis)
-            ).appendTo('#table_history');
-        });
-    },
-    error: function (error) {
-        alert(error);
-    }
-});
-$('#modalHistory').modal();
-}</script>
+    $('#kategori_history_modal').html(nama);
+    $('#besaran_history_modal').html(besaran);
+    $('#jenis_history_modal').html(jenis);
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: link,
+        success: function (response) {
+            $.each(response, function(i, item) {
+                var $tr = $('<tr>').append(
+                    $('<td>').text(item.rowNumber),
+                    $('<td>').text(item.created_at),
+                    $('<td>').text('Rp. '+item.besaran),
+                    $('<td>').text(item.jenis)
+                ).appendTo('#table_history');
+            });
+        },
+        error: function (error) {
+            alert(error);
+        }
+    });
+    $('#modalHistory').modal();
+}
+</script>
 @endpush
 
 @push('breadcrumb-left')

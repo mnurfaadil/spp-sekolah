@@ -26,96 +26,50 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $angkatan = Angkatan::all();
-        // $students = Student::all();
+        $angkatan = Angkatan::where('status','<>','ALUMNI')->get();
+        $students = Student::orderBy('updated_at','desc')->get();
         $no=1;
         $fil = '';
         $fil2 = '';
         $kls = '';
-        $jml = Major::count();
         $majors = Major::all();
+        $jml = $majors->count();
 
-        $students = DB::table('students')
-            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-            ->select('students.*','angkatans.*','majors.nama as nama_major')
-            ->orderBy('students.updated_at','desc')
-            ->get();
         return view('master.student.index', compact('students','no','jml','majors','fil','kls','angkatan','fil2'));
     }
 
     public function filter(Request $request)
     {
+        $master = Student::all();
+        $request->kelas = $request->kelas == "all" ? "" : $request->kelas;
+        $request->jurusan = $request->jurusan == "all" ? "" : $request->jurusan;
+        $request->angkatan = $request->angkatan == "all" ? "" : $request->angkatan;
+
         if($request->kelas=='' && $request->jurusan!='' && $request->angkatan==''){
-            $students = DB::table('students')
-            ->where('major_id',$request->jurusan)
-            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-            ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
-            ->orderBy('students.nama','asc')->get();
+            $students = $master->where('major_id', $request->jurusan)->sortBy('kelas');
         }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan=='') {
-            $students = DB::table('students')
-            ->where('kelas',$request->kelas)
-            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-            ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
-            ->orderBy('students.nama','asc')->get();
+            $students = $master->where('kelas', $request->kelas)->sortBy('kelas');
         }elseif ($request->jurusan=='' && $request->kelas=='' && $request->angkatan!='') {
-            $students = DB::table('students')
-            ->where('angkatan_id',$request->angkatan)
-            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-            ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-            ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
-            ->orderBy('students.nama','asc')->get();
+            $students = $master->where('angkatan_id', $request->angkatan)->sortBy('kelas');
         }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan=='') {
-            $students = 
-            DB::table('students')
-                ->where('kelas',$request->kelas)
-                ->where('major_id',$request->jurusan)
-                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
-                ->orderBy('students.nama','asc')
-                ->get();
+            $students = $master->where('kelas', $request->kelas)
+                        ->where('major_id', $request->jurusan)
+                        ->sortBy('kelas');
         }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan!='') {
-            $students = 
-            DB::table('students')
-                ->where('angkatan_id',$request->angkatan)
-                ->where('kelas',$request->kelas)
-                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
-                ->orderBy('students.nama','asc')
-                ->get();
+            $students = $master->where('kelas', $request->kelas)
+                        ->where('angkatan_id', $request->angkatan)
+                        ->sortBy('kelas');
         }elseif ($request->jurusan!='' && $request->kelas=='' && $request->angkatan!='') {
-            $students = 
-            DB::table('students')
-                ->where('angkatan_id',$request->angkatan)
-                ->where('major_id',$request->jurusan)
-                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
-                ->orderBy('students.nama','asc')
-                ->get();
+            $students = $master->where('major_id', $request->jurusan)
+                        ->where('angkatan_id', $request->angkatan)
+                        ->sortBy('kelas');
         }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan!='') {
-            $students =
-            DB::table('students')
-                ->where('angkatan_id',$request->angkatan)
-                ->where('major_id',$request->jurusan)
-                ->where('kelas',$request->kelas)
-                ->selectRaw('students.*, angkatans.*, majors.nama as nama_major')
-                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-                ->orderBy('students.nama','asc')
-                ->get();
+            $students = $master->where('kelas', $request->kelas)
+                        ->where('angkatan_id', $request->angkatan)
+                        ->where('major_id', $request->jurusan)
+                        ->sortBy('kelas');
         }else{
-            $students = 
-                DB::table('students')
-                ->select('students.*','angkatans.*','majors.nama as nama_major')
-                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-                ->join('majors', 'majors.id', '=', 'students.angkatan_id')
-                ->orderBy('students.id','desc')
-                ->get();
+            $students = $master->sortBy('kelas');
         }
         $no=1;
         $kls=$request->kelas;
@@ -147,20 +101,14 @@ class StudentController extends Controller
     {
         try {
             $req = $request->all();
-            
-            // echo '<pre>';
-            $n = explode(" ",now());
-            $n = strtotime($n[0]);
 
-            $l = strtotime($this->convertDateToSQLDate($req['tgl_masuk']));
+            $date = $this->convertDateToSQLDate($req['tgl_masuk']);
         
             if (strlen($req['phone'])>14) {
                 return redirect()
                 ->route('students.index')
                 ->with('error', 'Inputan tidak valid!');
             }
-            $date = explode("/",$req['tgl_masuk']);
-            $date = $date[2].'-'.$date[0].'-'.$date[1];
             Student::create([
                 'id' => null,
                 'nis' => $req['nis'],
@@ -172,6 +120,7 @@ class StudentController extends Controller
                 'email' => $req['email'],
                 'alamat' => $req['alamat'],
                 'tgl_masuk' => $date,
+                'kelas' => $req['kelas'],
                 ]);
             $id = DB::getPdo()->lastInsertId();
             $categories = FinancingCategory::all();
@@ -259,7 +208,6 @@ class StudentController extends Controller
             $student->major_id = $req['major_id'];
             $student->kelas = $req['kelas'];
             $student->phone = $req['phone'];
-            $student->angkatan_id = $req['angkatan'];
             $student->email = $req['email'];
             $student->alamat = $req['alamat'];
             $student->tgl_masuk = $req['tgl_masuk'];

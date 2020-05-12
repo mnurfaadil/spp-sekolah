@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <title>Rincian</title>
     <style>
+    .text-atas tr td{
+      font-size: 10pt;
+    }
 .page_break { page-break-before: always; },
 .garis_dua{ 
   border: 0;
@@ -33,7 +36,7 @@
         <table width='100%'>
           <tr>
             <td width='50%'>
-              <table>
+              <table class="text-atas">
                 <tr>
                   <td>DICETAK</td>
                   <td>&nbsp;</td>
@@ -52,7 +55,7 @@
               </table>
             </td>
             <td width='50%'>
-            <table>
+            <table class="text-atas">
                 <tr>
                   <td>NIS</td>
                   <td>:</td>

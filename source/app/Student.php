@@ -21,10 +21,11 @@ class Student extends Model
         "kelas",
         "major_id",
         "phone",
-        "alamat",
-        "email",
         "angkatan_id",
+        "email",
+        "alamat",
         "tgl_masuk",
+        "simpanan",
     ];
 
     /**
@@ -32,12 +33,12 @@ class Student extends Model
      */
     public function major()
     {
-        return $this->belongsTo('App\Major');
+        return $this->belongsTo('App\Major','major_id');
     }
 
     public function angkatans()
     {
-        return $this->belongsTo('App\Angkatan');
+        return $this->belongsTo('App\Angkatan','angkatan_id');
     }
 
     /**
@@ -48,13 +49,8 @@ class Student extends Model
         return $this->hasMany('App\Payment');
     }
 
-    public function periode()
+    public function category()
     {
-        return $this->hasMany('App\PaymentPeriodeStudent');
-    }
-
-    public function pembayaran()
-    {
-        return $this->hasMany('App\Payment');
+        return $this->belongsToMany('App\FinancingCategory');
     }
 }

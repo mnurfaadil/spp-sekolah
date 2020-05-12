@@ -16,6 +16,7 @@ class Major extends Model
      */
     protected $fillable = [
         "nama",
+        "inisial",
     ];
     
     /**
@@ -23,6 +24,19 @@ class Major extends Model
      */
     public function students()
     {
-        return $this->hasMany('App\Student', 'major_id');
+        return $this->hasMany('App\Student');
+    }
+ 
+    /**
+     * Relasi One to Many
+     */
+    public function periode()
+    {
+        return $this->hasMany('App\PaymentPeriode');
+    }
+
+    public function category()
+    {
+        return $this->hasMany('App\FinancingCategory');
     }
 }

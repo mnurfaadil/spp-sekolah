@@ -19,17 +19,17 @@ SPP | Siswa
                                         <form action="{{route('students.filter')}}" role="form" method="post">
                                         @csrf
                                             <div style="float:left; display:flex; flex-direction:row; max-height:55">
-                                            <select class="form-control" name="kelas">
+                                            <select class="form-control" name="kelas" required>
                                                 <option value="">-- Pilih Kelas -- </option>
-                                                <option value="">Semua</option>
+                                                <option value="all">Semua</option>
                                                 <option @if("X"==$kls) selected @endif value="X">X</option>
                                                 <option @if("XI"==$kls) selected @endif value="XI">XI</option>
                                                 <option @if("XII"==$kls) selected @endif value="XII">XII</option>
                                                 </select>
 
-                                                <select style="margin-left:5px;" class="form-control" name="jurusan">
+                                                <select style="margin-left:5px;" class="form-control" name="jurusan" required>
                                                 <option value="">-- Pilih Jurusan --</option>
-                                                <option value="">Semua</option>
+                                                <option value="all">Semua</option>
                                                     @if(isset($majors))
                                                         @foreach($majors as $d)
                                                         <option @if($fil==$d->id) selected @endif value="{{$d->id}}">{{$d->nama}}</option>
@@ -37,9 +37,9 @@ SPP | Siswa
                                                     @endif
                                                 </select>
 
-                                                <select style="margin-left:5px;" class="form-control" name="angkatan">
+                                                <select style="margin-left:5px;" class="form-control" name="angkatan" required>
                                                 <option value="">-- Pilih Angkatan --</option>
-                                                <option value="">Semua</option>
+                                                <option value="all">Semua</option>
                                                     @if(isset($angkatan))
                                                         @foreach($angkatan as $d)
                                                         <option @if($fil2==$d->id) selected @endif value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
@@ -58,7 +58,7 @@ SPP | Siswa
                                                 <input type="hidden" name='akt' value="{{$fil2}}">
                                                 <input type="hidden" name='kls' value="{{$kls}}">
                                                 <button type='submit' class="btn btn-info" style="color:white; margin-top:0"><i class="fa fa-print"></i>&nbsp; Cetak</button>
-                                            <a @php echo $jml < 1 ? 'onclick="peringatan()"':'data-toggle="modal" href="#modalAdd"' @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
+                                            <a @php echo $jml < 1 ? 'onclick="peringatanJurusan()"': $angkatan->count() <1 ? 'onclick="peringatanAngkatan()"' : 'data-toggle="modal" href="#modalAdd"' @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
                                             </form>
                                         </div>
                                     </div>
@@ -79,7 +79,6 @@ SPP | Siswa
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id"><div style="text-align:center;">No</div></th>
                                         <th data-field="nis"><div style="text-align:center;">NIS</div></th>
                                         <th data-field="name"><div style="text-align:center;">Nama</div></th>
@@ -89,30 +88,29 @@ SPP | Siswa
                                         <th data-field="angkatan"><div style="text-align:center;">Angkatan</div></th>
                                         <th data-field="alamat"><div style="text-align:center;">Alamat</div></th>
                                         <th data-field="phone"><div style="text-align:center;">Kontak</div></th>
-                                        <th data-field="action"><div style="text-align:center;">Action</div></th>
+                                        <th data-field="action"><div style="text-align:center; padding-left: 100px; padding-right:100px;">Action</div></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @if(isset($students))
                                 @foreach($students as $data)
                                     <tr>
-                                        <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{$data->nis}}</td>
                                         <td>{{$data->nama}}</td>
                                         <td><div style="text-align:center;">{{$data->jenis_kelamin}}</div></td>
                                         <td><div style="text-align:center;">{{$data->kelas}}</div></td>
-                                        <td><div style="text-align:center;">{{$data->nama_major}}</div></td>
-                                        <td><div style="text-align:center;">{{$data->angkatan}} ({{$data->tahun}})</div></td>
+                                        <td><div style="text-align:center;">{{$data->major->nama}}</div></td>
+                                        <td><div style="text-align:center;">{{$data->angkatans->angkatan}} ({{$data->angkatans->tahun}})</div></td>
                                         <td><div style="text-align:center;">{{$data->alamat}}</div></td>
                                         <td><div style="text-align:center;">{{$data->phone}}</div></td>
                                         <td>
                                         <div style="text-align:center;">
-                                          <a href="#" class="btn btn-info" onclick="detailConfirm( '{{$data->id}}','{{$data->nis}}','{{$data->nama_major}}','{{$data->jenis_kelamin}}','{{$data->kelas}}','{{$data->major_id}}', '{{$data->nama}}','{{$data->phone}}','{{$data->email}}','{{$data->tgl_masuk}}','{{$data->alamat}}','{{$data->angkatan_id}}','{{$data->angkatan}}', '{{$data->tahun}}')"title="Detail">
+                                          <a href="#" class="btn btn-info" onclick="detailConfirm({{$data}})"title="Detail">
                                             <i class="fa fa-eye"> Detail</i>
                                           </a>
                                         <a href="#" class="btn btn-warning"
-                                            onclick="editConfirm( '{{$data->id}}','{{$data->nis}}','{{$data->nama_major}}','{{$data->jenis_kelamin}}','{{$data->kelas}}','{{$data->major_id}}', '{{$data->nama}}','{{$data->phone}}','{{$data->email}}','{{$data->tgl_masuk}}','{{$data->alamat}}','{{$data->angkatan_id}}','{{$data->angkatan}}', '{{$data->tahun}}')"
+                                            onclick="editConfirm({{$data}})"
                                             title="Edit"><i class="fa fa-edit"> Edit</i></a>
                                         <a href="{{ route('students.destroy',$data->id) }}" class="btn btn-danger"
                                             onclick="event.preventDefault();destroy('{{ route('students.destroy',$data->id) }}');"
@@ -171,6 +169,7 @@ SPP | Siswa
                                     <label class="control-label col-md-2">Jurusan<kode>*</kode></label>
                                     <div class="chosen-select-single mg-b-20">
                                         <select class="chosen-select" name="major_id" id="major_id_add" required>
+                                        <option value="">-- Pilih Jurusan --</option>
                                         @if(isset($majors))
                                             @foreach($majors as $d)
                                             <option value="{{$d->id}}">{{$d->nama}}</option>
@@ -193,6 +192,7 @@ SPP | Siswa
                                     <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
                                     <div class="chosen-select-single mg-b-20">
                                         <select class="chosen-select" name="angkatan" id="angkatan_add" required>
+                                        <option value="">-- Pilih Angkatan --</option>
                                         @if(isset($angkatan))
                                             @foreach($angkatan as $d)
                                             <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
@@ -277,8 +277,9 @@ SPP | Siswa
                             <div class="form-group">
                                 <label class="control-label col-md-2">Jurusan<kode>*</kode></label>
                                 <div class="chosen-select-single mg-b-20">
-                                    <select class="chosen-select" tabindex="-1" name="major_id" id="major_id_edit"
+                                    <select class="chosen-select" name="major_id" id="major_id_edit"
                                         required>
+                                        <option value="">-- Pilih Jurusan --</option>
                                         @if(isset($majors))
                                         @foreach($majors as $d)
                                         <option value="{{$d->id}}">{{$d->nama}}</option>
@@ -300,7 +301,8 @@ SPP | Siswa
                             <div class="form-group">
                                     <label class="control-label col-md-2">Angkatan<kode>*</kode></label>
                                     <div class="chosen-select-single mg-b-20">
-                                        <select class="chosen-select" name="angkatan" id="angkatan_edit" readonly>
+                                        <select class="chosen-select" name="angkatan" id="angkatan_edit" disabled readonly>
+                                        <option value="">-- Pilih Angkatan --</option>
                                         @if(isset($angkatan))
                                             @foreach($angkatan as $d)
                                             <option value="{{$d->id}}">{{$d->angkatan}} - {{$d->tahun}}</option>
@@ -330,8 +332,7 @@ SPP | Siswa
                                         <div class="form-group data-custon-pick" id="data_3">
                                             <div class="input-group date">
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                <input type="text" name='tgl_masuk' id='tgl_masuk' class="form-control"
-                                                    readonly>
+                                                <input type="text" name='tgl_masuk' id='tgl_masuk' class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
@@ -384,7 +385,7 @@ SPP | Siswa
                             <div class="form-group">
                                 <label class="control-label col-md-2">Jurusan<kode>*</kode></label>
                                 <div class="chosen-select-single mg-b-20">
-                                    <select class="chosen-select" tabindex="-1" name="major_id" id="major_id_edit3"
+                                    <select class="chosen-select" name="major_id" id="major_id_edit3"
                                         disabled>
                                         @if(isset($majors))
                                         @foreach($majors as $d)
@@ -423,7 +424,7 @@ SPP | Siswa
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">Alamat<kode>*</kode></label>
-                                <textarea name='alamat' id="alamat" placeholder=" Masukan alamat siswa" disabled></textarea>
+                                <textarea name='alamat' id="alamat3" placeholder=" Masukan alamat siswa" disabled></textarea>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">Email</label>
@@ -491,8 +492,12 @@ SPP | Siswa
         @push('scripts')
 
         <script>
-            function peringatan() {
+            function peringatanJurusan() {
                 swal('Gagal!', 'Sekolah belum mempunyai jurusan. Silahkan diisi terlebih dahulu', 'error')
+            }
+
+            function peringatanAngkatan() {
+                swal('Gagal!', 'Sekolah belum mempunyai angkatan. Silahkan diisi terlebih dahulu', 'error')
             }
 
             function show_selected() {
@@ -502,51 +507,49 @@ SPP | Siswa
                 document.getElementById('display').innerHTML = value;
             }
 
-            function editConfirm(id, nis, nama, jenis_kelamin, kelas, major_id, major, phone, email, tgl_masuk, alamat, angkatan_id, angkatan,tahun) {
-                $('#nis').attr('value', nis);
-                $('#nama').attr('value', major);
-                $('#tgl_masuk').attr('value', tgl_masuk);
-                $('#email').attr('value', email);
-                $('#phone').attr('value', phone);
-                $('#alamat').html(alamat);
+            function editConfirm(data) {
+                $('#nis').attr('value', data.nis);
+                $('#nama').attr('value', data.nama);
+                $('#tgl_masuk').attr('value', data.tgl_masuk);
+                $('#email').attr('value', data.email);
+                $('#phone').attr('value', data.phone);
+                $('#alamat').html(data.alamat);
 
-                $('#jenis_kelamin_edit').val(jenis_kelamin);
-                $('#jenis_kelamin_edit_chosen .chosen-single span').html((jenis_kelamin == 'L') ? 'Laki - Laki' :
-                    'Perempuan');
+                $('#jenis_kelamin_edit').val(data.jenis_kelamin);
+                $('#jenis_kelamin_edit_chosen .chosen-single span').html((data.jenis_kelamin == 'L') ? 'Laki - Laki' : 'Perempuan');
 
-                $('#major_id_edit').val(major_id);
-                $('#major_id_edit_chosen .chosen-single span').html(nama);
-                
-                $('#angkatan_edit').val(angkatan_id);
-                $('#angkatan_edit_chosen .chosen-single span').html(angkatan+' - '+tahun );
+                $('#major_id_edit').val(data.major.id).change();
+                $('#major_id_edit_chosen .chosen-single span').html(data.major.nama);
+                $('#angkatan_edit').val(data.angkatans.id);
+                $('#angkatan_edit_chosen .chosen-single span').html(data.angkatans.angkatan+' - '+data.angkatans.tahun );
 
-                $('#kelas_edit').val(kelas);
-                $('#kelas_edit_chosen .chosen-single span').html(kelas);
+                $('#kelas_edit').val(data.kelas);
+                $('#kelas_edit_chosen .chosen-single span').html(data.kelas);
 
-                $('#editSiswa').attr('action', "{{ url('students') }}/" + id)
+                $('#editSiswa').attr('action', "{{ url('students') }}/" + data.id)
                 $('#modalUpdate').modal();
             }
             
-            function detailConfirm(id, nis, nama, jenis_kelamin, kelas, major_id, major, phone, email, tgl_masuk, alamat, angkatan_id, angkatan,tahun) {
-                $('#nis3').attr('value', nis);
-                $('#nama3').attr('value', nama);
-                $('#tgl_masuk3').attr('value', tgl_masuk);
-                $('#email3').attr('value', email);
-                $('#phone3').attr('value', phone);
-                $('#alamat3').html(alamat);
+            function detailConfirm(data) {
+                $('#nis3').attr('value', data.nis);
+                $('#nama3').attr('value', data.nama);
+                $('#tgl_masuk3').attr('value', data.tgl_masuk);
+                $('#email3').attr('value', data.email);
+                $('#phone3').attr('value', data.phone);
+                $('#alamat3').html(data.alamat);
 
-                $('#jenis_kelamin_edit3').val(jenis_kelamin);
-                $('#jenis_kelamin_edit3_chosen .chosen-single span').html((jenis_kelamin == 'L') ? 'Laki - Laki' :
+                $('#jenis_kelamin_edit3').val(data.jenis_kelamin);
+                $('#jenis_kelamin_edit3_chosen .chosen-single span').html((data.jenis_kelamin == 'L') ? 'Laki - Laki' :
                     'Perempuan');
 
-                $('#major_id_edit3').val(major_id);
-                $('#major_id_edit3_chosen .chosen-single span').html(major);
+                $('#major_id_edit3').val(data.major.id);
+                $('#major_id_edit3_chosen .chosen-single span').html(data.major.nama);
                 
-                $('#angkatan_edit3').val(angkatan_id);
-                $('#angkatan_edit3_chosen .chosen-single span').html(angkatan+' - '+tahun );
+                $('#angkatan_edit3').val(data.angkatans.id);
+                $('#angkatan_edit3_chosen .chosen-single span').html(data.angkatans.angkatan+' - '+data.angkatans.tahun );
 
-                $('#kelas_edit3').val(kelas);
-                $('#kelas_edit3_chosen .chosen-single span').html(kelas);
+                $('#kelas_edit3').val(data.kelas);
+                $('#kelas_edit3_chosen .chosen-single span').html(data.kelas);
 
                 $('#modalDetail').modal();
             }

@@ -28,10 +28,21 @@ SPP | Angkatan
                             </div>
                             <div class="form-group">
                                 <label>Tahun Angkatan</label>
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="number" class="form-control" name="tahun2"
-                                        placeholder="Masukan Tahun Angkatan" required>
+                                <div class="input-mark-inner mg-b-22">
+                                    <input type="text" class="form-control" name="tahun2" data-mask="9999" placeholder="Masukan tahun angkatan" required>
+                                    <span class="help-block">yyyy</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Status</label>
+                                <div class="chosen-select-single mg-b-20">
+                                    <select class="form-control" name="status" id="edit-status" required>
+                                        <option value="">-- Pilih Status --</option>
+                                        <option value="X">Kelas X</option>
+                                        <option value="XI">Kelas XI</option>
+                                        <option value="XII">Kelas XII</option>
+                                        <option value="ALUMNI">Alumni</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="login-btn-inner">
@@ -64,16 +75,27 @@ SPP | Angkatan
                                 <label>Angkatan</label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-mortar-board"></i></span>
-                                    <input type="number" class="form-control" name="angkatan"
-                                        placeholder="Masukan angkatan" required>
+                                    <input type="number" class="form-control" name="angkatan" min="1"
+                                        placeholder="Masukan angkatan" autofocus required>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Tahun Angkatan</label>
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="number" class="form-control" name="tahun"
-                                        placeholder="Masukan Tahun Angkatan" required>
+                                <div class="input-mark-inner mg-b-22">
+                                    <input type="text" class="form-control" name="tahun" data-mask="9999" placeholder="Masukan tahun angkatan" required>
+                                    <span class="help-block">yyyy</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Status</label>
+                                <div class="chosen-select-single mg-b-20">
+                                    <select class="form-control" name="status"  required>
+                                        <option value="">-- Pilih Status --</option>
+                                        <option value="X">Kelas X</option>
+                                        <option value="XI">Kelas XI</option>
+                                        <option value="XII">Kelas XII</option>
+                                        <option value="ALUMNI">Alumni</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="login-btn-inner">
@@ -132,11 +154,12 @@ SPP | Angkatan
                                         data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                         <thead>
                                             <tr>
-                                                <th data-field="state" data-checkbox="true"></th>
                                                 <th data-field="id">No</th>
+                                                <th data-field="update" data-editable="false">Terakhir Update</th>
                                                 <th data-field="angkatan" data-editable="false">Angkatan</th>
                                                 <th data-field="tahun" data-editable="false">Tahun Angkatan</th>
-                                                <th data-field="action" data-editable="false">
+                                                <th data-field="status" data-editable="false">Status</th>
+                                                <th data-field="action" data-editable="false" >
                                                     <div style="text-align:center;">Action</div>
                                                 </th>
                                             </tr>
@@ -144,14 +167,21 @@ SPP | Angkatan
                                         <tbody>
                                             @foreach($angkatan as $data)
                                             <tr>
-                                                <td></td>
                                                 <td>{{$no++}}</td>
+                                                <td>{{$data->updated_at}}</td>
                                                 <td>{{$data->angkatan}}</td>
                                                 <td>{{$data->tahun}}</td>
                                                 <td>
+                                                    @if($data->status!="ALUMNI")
+                                                    Kelas {{$data->status}}
+                                                    @else
+                                                    {{$data->status}}
+                                                    @endif
+                                                </td>
+                                                <td>
                                                     <div style="text-align:center;">
                                                         <a href="#" class="btn btn-warning"
-                                                            onclick="editConfirm( '{{$data->id}}', '{{$data->angkatan}}','{{$data->tahun}}')"
+                                                            onclick="editConfirm( '{{$data->id}}', '{{$data->angkatan}}','{{$data->tahun}}','{{$data->status}}')"
                                                             title="Edit" style="margin-top:0;"><i
                                                                 class="fa fa-edit"></i></a>
                                                     </div>
@@ -191,12 +221,13 @@ SPP | Angkatan
         $('#add-form').show();
         $('#edit-form').hide();
     });
-    function editConfirm(id, nama,tahun) {
+    function editConfirm(id, nama,tahun,status) {
         $('#add-form').hide();
         $('#edit-form').show();
         $('input[name=id]').attr('value', id);
         $('input[name=angkatan2]').attr('value', nama);
         $('input[name=tahun2]').attr('value', tahun);
+        $('#edit-status').val(status);
         $('#form-angkatan').attr('action', "{{ url('angkatan') }}/" + id);
         $('input[name=angkatan]').focus();
     }
@@ -227,6 +258,10 @@ SPP | Angkatan
 <script src="{{ asset('assets/js/editable/bootstrap-datetimepicker.js') }}"></script>
 <script src="{{ asset('assets/js/editable/bootstrap-editable.js') }}"></script>
 <script src="{{ asset('assets/js/editable/xediable-active.js') }}"></script>
+
+    <!-- input-mask JS
+		============================================ -->
+<script src="{{ asset('assets/js/input-mask/jasny-bootstrap.min.js') }}"></script>
 @endpush
 
 @push('breadcrumb-left')

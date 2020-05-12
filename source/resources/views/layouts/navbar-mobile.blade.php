@@ -39,6 +39,12 @@
                 </a>
             </li>
             <li>
+                <a title="Simpanan" class="" href="{{ url('simpanan') }}" aria-expanded="false">
+                    <span class="fa fa-id-badge sub-icon-mg" aria-hidden="true"></span>
+                    <span class="mini-click-non ">Simpanan</span>
+                </a>
+            </li>
+            <li>
                 <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false">
                     <span class="fa fa-files-o sub-icon-mg" aria-hidden="true"></span>
                     <span class="mini-click-non ">Rekap</span>

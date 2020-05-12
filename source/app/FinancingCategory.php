@@ -17,7 +17,7 @@ class FinancingCategory extends Model
     protected $fillable = [
         "nama",
         "besaran",
-        "jenis"
+        "jenis",
     ];
 
     /**
@@ -33,7 +33,7 @@ class FinancingCategory extends Model
      */
     public function history()
     {
-        return $this->hasMany('App\FinancingCategoryReset', 'financing_category_id');
+        return $this->hasMany('App\FinancingCategoryReset');
     }
 
     public function periode()
@@ -41,8 +41,13 @@ class FinancingCategory extends Model
         return $this->hasMany('App\PaymentPeriode');
     }
 
-    public function pembayaran()
+    public function payment()
     {
         return $this->hasMany('App\Payment');
+    }
+    
+    public function pembayaran()
+    {
+        return $this->belongsToMany('App\Student', 'payments', 'financing_category_id', 'student_id')->withPivot('id','persentase', 'jenis_pembayaran','keterangan','updated_at');
     }
 }

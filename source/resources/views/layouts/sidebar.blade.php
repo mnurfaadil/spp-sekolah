@@ -53,6 +53,16 @@
                         </a>
                     </li>
                     <li>
+                        @if(Request::is('simpanan'))
+                        <a title="Simpanan" class="" href="{{ url('simpanan') }}" aria-expanded="false" style="background-color:#891414;color:white">
+                        @else
+                        <a title="Simpanan" class="" href="{{ url('simpanan') }}" aria-expanded="false" style="color:#891414;">
+                        @endif
+                            <span class="fa fa-archive sub-icon-mg" aria-hidden="true"></span>
+                            <span class="mini-click-non ">Simpanan</span>
+                        </a>
+                    </li>
+                    <li>
                         @if(Request::is('rekap'))
                         <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="background-color:#eb3b5a;color:white">
                         @else
@@ -73,7 +83,6 @@
                         </a>
                     </li>
                     <li>
-                        
                         @if(Request::is('students'))
                         <a class="has-arrow" title="Data Master" href="#" aria-expanded="false" style="background-color:black;color:white">
                         @elseif(Request::is('majors'))

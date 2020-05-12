@@ -95,11 +95,6 @@ SPP | Cicilan Pembayaran
                             <div class="sparkline13-graph">
                                 <div class="datatable-dashv1-list custom-datatable-overright">
                                     <div id="toolbar">
-                                        <select class="form-control dt-tb">
-                                            <option value="">Export Basic</option>
-                                            <option value="all">Export All</option>
-                                            <option value="selected">Export Selected</option>
-                                        </select>
                                     </div>
                                     <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                         data-show-columns="true" data-show-pagination-switch="true"
@@ -108,7 +103,6 @@ SPP | Cicilan Pembayaran
                                         data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                         <thead>
                                             <tr>
-                                                <th data-field="state" data-checkbox="true"></th>
                                                 <th data-field="id">
                                                     <div style="text-align: center">
                                                     No
@@ -145,7 +139,6 @@ SPP | Cicilan Pembayaran
                                             $total+=intval($data->nominal);
                                             @endphp
                                             <tr>
-                                                <td></td>
                                                 <td>
                                                     <div style="text-align: center">
                                                     {{$no++}}

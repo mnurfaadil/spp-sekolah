@@ -20,10 +20,18 @@ SPP | Jurusan
 
                             <div class="form-group">
                                 <label>Nama Jurusan</label>
-                                <div class="input-group date">
+                                <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-mortar-board"></i></span>
                                     <input type="text" class="form-control" name="jurusan"
                                         placeholder="Masukan Nama Jurusan">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Nama Alias</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-anchor"></i></span>
+                                    <input type="text" class="form-control" name="alias"
+                                        placeholder="Masukan Nama Alias">
                                 </div>
                             </div>
                             <div class="login-btn-inner">
@@ -60,6 +68,15 @@ SPP | Jurusan
                                     <span class="input-group-addon"><i class="fa fa-mortar-board"></i></span>
                                     <input type="text" class="form-control" name="jurusan" id="a"
                                         placeholder="Masukan Nama Jurusan">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Nama Alias</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-anchor"></i></span>
+                                    <input type="text" class="form-control" name="alias"
+                                        placeholder="Masukan Nama Alias">
                                 </div>
                             </div>
                             <div class="login-btn-inner">
@@ -105,11 +122,6 @@ SPP | Jurusan
                             <div class="sparkline13-graph">
                                 <div class="datatable-dashv1-list custom-datatable-overright">
                                     <div id="toolbar">
-                                        <select class="form-control dt-tb">
-                                            <option value="">Export Basic</option>
-                                            <option value="all">Export All</option>
-                                            <option value="selected">Export Selected</option>
-                                        </select>
                                     </div>
                                     <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                         data-show-columns="true" data-show-pagination-switch="true"
@@ -118,9 +130,9 @@ SPP | Jurusan
                                         data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                         <thead>
                                             <tr>
-                                                <th data-field="state" data-checkbox="true"></th>
                                                 <th data-field="id">No</th>
-                                                <th data-field="bulan" data-editable="false">Nama Jurusan</th>
+                                                <th data-field="jurusan" data-editable="false">Nama Jurusan</th>
+                                                <th data-field="alias" data-editable="false">Nama Alias</th>
                                                 <th data-field="action" data-editable="false">
                                                     <div style="text-align:center;">Action</div>
                                                 </th>
@@ -129,13 +141,13 @@ SPP | Jurusan
                                         <tbody>
                                             @foreach($majors as $data)
                                             <tr>
-                                                <td></td>
                                                 <td>{{$no++}}</td>
                                                 <td>{{$data->nama}}</td>
+                                                <td>{{$data->inisial}}</td>
                                                 <td>
                                                     <div style="text-align:center;">
                                                         <a href="#" class="btn btn-warning"
-                                                            onclick="editConfirm( '{{$data->id}}', '{{$data->nama}}')"
+                                                            onclick="editConfirm({{$data}})"
                                                             title="Edit" style="margin-top:0;"><i
                                                                 class="fa fa-edit"></i></a>
                                                         <a href="{{ route('majors.destroy',$data) }}"
@@ -187,12 +199,13 @@ SPP | Jurusan
     });
     
 
-    function editConfirm(id, nama) {
+    function editConfirm(data) {
         $('#add-form').hide();
         $('#edit-form').show();
-        $('input[name=id]').attr('value', id);
-        $('input[name=jurusan]').attr('value', nama);
-        $('#form-jurusan').attr('action', "{{ url('majors') }}/" + id);
+        $('input[name=id]').attr('value', data.id);
+        $('input[name=jurusan]').attr('value', data.nama);
+        $('input[name=alias]').attr('value', data.inisial);
+        $('#form-jurusan').attr('action', "{{ url('majors') }}/" + data.id);
         $('input[name=jurusan]').focus();
     }
 

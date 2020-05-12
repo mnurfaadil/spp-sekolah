@@ -38,6 +38,7 @@
     .table1, th, td {
         padding: 8px 14px;
         text-align: center;
+        font-size: 10pt;
     }
     
     .table1 tr:hover {
@@ -46,6 +47,12 @@
     
     .table1 tr:nth-child(even) {
         background-color: #f2f2f2;
+    }
+    .table-content tr td{
+      font-size: 10pt;
+    }
+    .row-content td{
+      font-size: 10pt;
     }
     </style>
   </head>

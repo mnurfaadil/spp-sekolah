@@ -10,6 +10,9 @@
   border: 0;
   border-top: 5px double #8c8c8c;
 }
+.text-atas td{
+  font-size: 10pt;
+}
 </style>
   </head>
   <body>
@@ -34,17 +37,17 @@
           <tr>
             <td width='50%'>
               <table>
-                <tr>
-                  <td>DICETAK</td>
+                <tr class="text-atas">
+                  <td >DICETAK</td>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
                 </tr>  
-                <tr>
+                <tr class="text-atas">
                   <td>TANGGAL</td>
                   <td>:</td>
                   <td>{{$data['tanggal']}}</td>
                 </tr>  
-                <tr>
+                <tr class="text-atas">
                   <td>WAKTU</td>
                   <td>:</td>
                   <td>{{$data['waktu']}}</td>
@@ -53,17 +56,17 @@
             </td>
             <td width='50%'>
             <table>
-                <tr>
+                <tr class="text-atas">
                   <td>NIS</td>
                   <td>:</td>
                   <td>{{$siswa['nis']}}</td>
                 </tr>  
-                <tr>
+                <tr class="text-atas">
                   <td>NAMA</td>
                   <td>:</td>
                   <td>{{$siswa['nama']}}</td>
                 </tr>  
-                <tr>
+                <tr class="text-atas">
                   <td>KELAS</td>
                   <td>:</td>
                   <td>{{$siswa['kelas']}} - {{$siswa['major']->nama}}</td>
@@ -97,7 +100,7 @@
           
           @foreach($datas as $k)
           @php
-            $d = "Pembayaran cicilan ke {$no} untuk {$k->payment->category->nama}";
+            $d = "Pembayaran cicilan ke {$no} untuk {$data['kategori']}";
             $total += $k->nominal;
           @endphp
           <tr>

@@ -10,6 +10,8 @@ use App\PaymentDetail;
 use App\PaymentPeriode;
 use App\PaymentPeriodeDetail;
 use App\Student;
+use App\Angkatan;
+use App\Major;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -29,11 +31,13 @@ class FinancingCategoryController extends Controller
      */
     public function index()
     {
-        $datas = FinancingCategory::orderBy('created_at','desc')
-            ->orderBy('updated_at','desc')
+        $datas = FinancingCategory::orderBy('updated_at','desc')
             ->get();
+        $majors = Major::all();
+        $angkatans = Angkatan::where('status','<>','ALUMNI')
+                    ->orderBy('status')->get();
         $no = 1;
-        return view('master.financingcategory.index', compact('datas', 'no'));
+        return view('master.financingcategory.index', compact('datas', 'no', 'majors','angkatans'));
     }
 
     /**
@@ -54,60 +58,324 @@ class FinancingCategoryController extends Controller
      */
     public function store(Request $request)
     {
-
-
-        $this->validate($request,[
+        $this->validate($request, [
             'nama' => 'required',
             'besaran' => 'required',
-            'jenis' => 'required'
+            'jenis' => 'required',
+            'jurusan' => 'required',
+            'angkatan' => 'required'
         ]);
+        
+        $is_perbulan = FinancingCategory::where('jenis','Bayar per Bulan')->count();
+
+        if($request->jenis=="Bayar per Bulan" && $is_perbulan > 0){
+            return redirect()
+                ->route('financing.index')
+                ->with('error', 'Jenis pembayaran per bulan hanya bisa satu');
+        }
+
+        $req = $request->all();
+        
+        $angkatan = Angkatan::all();
+        $jurusan = Major::all();
+        $murid = Student::all();
+
+        $filter_angkatan = $angkatan->where('status','<>','ALUMNI');
+    
+        if($req['jurusan']=="all"){
+            $req['jurusan']=0;
+        }
+        if($req['angkatan']=="all"){
+            $req['angkatan']=0;
+        }
 
         try {
-            $req = $request->all();
+
             $create = FinancingCategory::create([
                 'id' => null,
                 'nama' => $req['nama'],
-                'besaran' => $req['besaran'],
                 'jenis' => $req['jenis'],
             ]);
+
             $id = DB::getPdo()->lastInsertId();
-            $students = Student::all();
-            for ($i=0; $i < $students->count(); $i++) { 
-                Payment::create([
-                    'financing_category_id' => $id,
-                    'student_id' => $students[$i]->id,
-                    'jenis_pembayaran' => "Waiting",
-                    ]);
-            }
-            //untuk history perubahan harga
+
             FinancingCategoryReset::create([
                 'id' => null,
                 'financing_category_id' => $id,
                 'besaran' => $req['besaran'],
                 'jenis' => $req['jenis'],
-                ]);
-            $date = $this->convertToDateArrayFromDateTime($create->created_at);
-            if($req['jenis']=="Bayar per Bulan"){
-                $periode = PaymentPeriode::create([
-                    "financing_category_id" => $id,
-                    "bulan" => $date[1], 
-                    "tahun" => $date[0], 
-                    "nominal" => $create->besaran,
-                ]);
-                $payments = Payment::where('financing_category_id', $id)->get();
-                $status = "Waiting";
-                for ($i=0; $i < $payments->count() ; $i++) { 
+            ]);
+
+            if($req['jurusan']==0 && $req['angkatan']==0){
+
+                foreach ($jurusan as $jurusan_obj) {
+                    foreach ($filter_angkatan as $angkatan_obj) {
+                        PaymentPeriode::create([
+                            'id' => null,
+                            'financing_category_id' => $id,
+                            'angkatan_id' => $angkatan_obj->id,
+                            'major_id' => $jurusan_obj->id,
+                            'nominal' => $req['besaran'],
+                        ]);
+                    }
+                }
+
+                foreach ($murid as $murid_obj) { 
+                    Payment::create([
+                        'id' => null,
+                        'student_id' => $murid_obj->id,
+                        'financing_category_id' => $id,
+                        'persentase' => 0,
+                        'jenis_pembayaran' => "Waiting",
+                    ]);
+                }
+                
+                if($req['jenis'] == "Bayar per Bulan"){   
+                    $payment = Payment::all();
+
+                    $filter_payment = $payment->where('financing_category_id',$id);
+ 
+                    foreach ($filter_angkatan as $obj) {
+                        foreach ($obj->students as $murid_obj) {
+                            $periode_input = PaymentPeriode::where([
+                                ['financing_category_id','=',$id],
+                                ['angkatan_id','=',$murid_obj->angkatans->id],
+                                ['major_id','=',$murid_obj->major->id],
+                            ])->first();
+                            
+                            $payment_input = Payment::where('student_id',$murid_obj->id)
+                                            ->where('financing_category_id', $id)->first();
+                            
+                            $periode_id = $periode_input['id'];
+                            $payment_id = $payment_input['id'];
+                            $start_loop = 0;
+
+                            // if($murid_obj->angkatans->status == "XI"){
+                            //     $start_loop = 12;
+                            // }elseif($murid_obj->angkatans->status == "XII"){
+                            //     $start_loop = 24;
+                            // }
+
+                            $thn = intval($murid_obj->angkatans->tahun);
+                            $tgl_hitung = "{$thn}-07-01";
+                            $time = strtotime($tgl_hitung);
+                            
+                            for ($j=$start_loop, $count=0; $j < 36; $j++) {
+                                $inc = "+{$j} month"; 
+                                $final = date("Y-m-d", strtotime($inc, $time));
+                                $status = "Waiting";
+                                PaymentPeriodeDetail::create([
+                                    'id' => null,
+                                    'payment_id' => $payment_id,
+                                    'payment_periode_id' => $periode_id,
+                                    'bulan' => $final,
+                                    'user_id' => 0,
+                                    'status' => $status,
+                                ]);
+                                if($j%12==0){
+                                    $count++;
+                                }
+                            }
+                        }
+                    }
+                }else{
+                    $payment = Payment::all();
+
+                    $filter_payment = $payment->where('financing_category_id',$id);
+ 
+                    foreach ($filter_angkatan as $obj) {
+                        foreach ($obj->students as $murid_obj) {
+                            $periode_input = PaymentPeriode::where([
+                                ['financing_category_id','=',$id],
+                                ['angkatan_id','=',$murid_obj->angkatans->id],
+                                ['major_id','=',$murid_obj->major->id],
+                            ])->first();
+                            
+                            $payment_input = Payment::where('student_id',$murid_obj->id)
+                                            ->where('financing_category_id', $id)->first();
+                            
+                            $periode_id = $periode_input['id'];
+                            $payment_id = $payment_input['id'];
+                            
+                            $status = "Waiting";
+                            PaymentPeriodeDetail::create([
+                                'id' => null,
+                                'payment_id' => $payment_id,
+                                'payment_periode_id' => $periode_id,
+                                'bulan' => "",
+                                'user_id' => 0,
+                                'status' => $status,
+                            ]);
+                        }
+                    }
+                }
+            
+            }elseif($req['jurusan']==0){
+                
+                foreach ($jurusan as $jurusan_obj) {
+                    PaymentPeriode::create([
+                        'id' => null,
+                        'financing_category_id' => $id,
+                        'angkatan_id' => $req['angkatan'],
+                        'major_id' => $jurusan_obj->id,
+                        'bulan' => 0,
+                        'tahun' => 0,
+                        'nominal' => $req['besaran'],
+                    ]);
+                }
+
+                $filter_murid = $murid->where('angkatan_id', $req['angkatan']);
+
+                foreach ($filter_murid as $murid_obj) { 
+                    Payment::create([
+                        'id' => null,
+                        'student_id' => $murid_obj->id,
+                        'financing_category_id' => $id,
+                        'persentase' => 0,
+                        'jenis_pembayaran' => "Waiting",
+                    ]);
+                }
+
+                $payment = Payment::all();
+
+                $filter_payment = $payment->where('financing_category_id',$id);
+
+                foreach ($filter_murid as $murid_obj) {
+                    $periode_input = PaymentPeriode::where([
+                        ['financing_category_id','=',$id],
+                        ['angkatan_id','=',$murid_obj->angkatans->id],
+                        ['major_id','=',$murid_obj->major->id],
+                    ])->first();
+                    
+                    $payment_input = Payment::where('student_id',$murid_obj->id)
+                                    ->where('financing_category_id', $id)->first();
+                    
+                    $periode_id = $periode_input['id'];
+                    $payment_id = $payment_input['id'];
+                    
+                    $status = "Waiting";
                     PaymentPeriodeDetail::create([
-                        'payment_periode_id' => $periode->id,
-                        'payment_id' => $payments[$i]->id,
+                        'id' => null,
+                        'payment_id' => $payment_id,
+                        'payment_periode_id' => $periode_id,
+                        'bulan' => "",
+                        'user_id' => 0,
+                        'status' => $status,
+                    ]);
+                }
+
+
+            }elseif($req['angkatan']==0){
+
+                $is_angkatan = [];
+
+                foreach ($filter_angkatan as $angkatan_obj) {
+                    PaymentPeriode::create([
+                        'id' => null,
+                        'financing_category_id' => $id,
+                        'angkatan_id' => $angkatan_obj->id,
+                        'major_id' => $req['jurusan'],
+                        'bulan' => 0,
+                        'tahun' => 0,
+                        'nominal' => $req['besaran'],
+                    ]);
+                    $is_angkatan[] = $angkatan_obj->id;
+                }
+                
+                $filter_murid = $murid->where('major_id', $req['jurusan'])->whereIn('angkatan_id', $is_angkatan);
+
+                foreach ($filter_murid as $murid_obj) {
+                    Payment::create([
+                        'id' => null,
+                        'student_id' => $murid_obj->id,
+                        'financing_category_id' => $id,
+                        'persentase' => 0,
+                        'jenis_pembayaran' => "Waiting",
+                    ]);
+                }
+
+                $payment = Payment::all();
+
+                $filter_payment = $payment->where('financing_category_id',$id);
+
+                foreach ($filter_murid as $murid_obj) {
+                    $periode_input = PaymentPeriode::where([
+                        ['financing_category_id','=',$id],
+                        ['angkatan_id','=',$murid_obj->angkatans->id],
+                        ['major_id','=',$murid_obj->major->id],
+                    ])->first();
+                    
+                    $payment_input = Payment::where('student_id',$murid_obj->id)
+                                    ->where('financing_category_id', $id)->first();
+                    
+                    $periode_id = $periode_input['id'];
+                    $payment_id = $payment_input['id'];
+                    
+                    $status = "Waiting";
+                    PaymentPeriodeDetail::create([
+                        'id' => null,
+                        'payment_id' => $payment_id,
+                        'payment_periode_id' => $periode_id,
+                        'bulan' => "",
+                        'user_id' => 0,
+                        'status' => $status,
+                    ]);
+                }
+
+            }else{
+                $filter_murid = $murid->where('major_id', $req['jurusan'])->where('angkatan_id', $req['angkatan']);
+
+                foreach ($filter_murid as $murid_obj) {
+                    Payment::create([
+                        'id' => null,
+                        'student_id' => $murid_obj->id,
+                        'financing_category_id' => $id,
+                        'persentase' => 0,
+                        'jenis_pembayaran' => "Waiting",
+                    ]);
+                }
+                PaymentPeriode::create([
+                    'id' => null,
+                    'financing_category_id' => $id,
+                    'angkatan_id' => $req['angkatan'],
+                    'major_id' => $req['jurusan'],
+                    'bulan' => 0,
+                    'tahun' => 0,
+                    'nominal' => $req['besaran'],
+                ]);
+
+                $payment = Payment::all();
+
+                $filter_payment = $payment->where('financing_category_id',$id);
+
+               foreach ($filter_murid as $murid_obj) {
+                    $periode_input = PaymentPeriode::where([
+                        ['financing_category_id','=',$id],
+                        ['angkatan_id','=',$murid_obj->angkatans->id],
+                        ['major_id','=',$murid_obj->major->id],
+                    ])->first();
+                    
+                    $payment_input = Payment::where('student_id',$murid_obj->id)
+                                    ->where('financing_category_id', $id)->first();
+                    
+                    $periode_id = $periode_input['id'];
+                    $payment_id = $payment_input['id'];
+                    
+                    $status = "Waiting";
+                    PaymentPeriodeDetail::create([
+                        'id' => null,
+                        'payment_id' => $payment_id,
+                        'payment_periode_id' => $periode_id,
+                        'bulan' => "",
                         'user_id' => 0,
                         'status' => $status,
                     ]);
                 }
             }
+            
             return redirect()
                 ->route('financing.index')
-                ->with('success', 'Data jurusan berhasil disimpan!');
+                ->with('success', 'Data berhasil disimpan!');
 
         }catch(Exception $e){
         return redirect()
@@ -151,22 +419,27 @@ class FinancingCategoryController extends Controller
         $this->validate($request,[
             'nama' => 'required',
             'besaran' => 'required',
-            'jenis' => 'required'
         ]);
 
         try {
           $req = $request->all();
+          
           $data = FinancingCategory::findOrFail($id);
+          
           $data->nama = $req['nama'];
-          $data->besaran = $req['besaran'];
-          $data->jenis = $req['jenis'];
+          
+          $periodes = $data->periode->where('nominal', $req['besaran_old']);
+          foreach ($periodes as $periode) {
+              $periode->nominal = $req['besaran'];
+              $periode->save();
+          }
           $data->save();
           FinancingCategoryReset::create([
             'id' => null,
             'financing_category_id' => $id,
             'besaran' => $req['besaran'],
-            'jenis' => $req['jenis'],
-            ]);
+            'jenis' => $req['edit_jenis'],
+        ]);
 
           return redirect()
               ->route('financing.index')
@@ -235,14 +508,17 @@ class FinancingCategoryController extends Controller
         $prev = $prev['_previous']['url'];
 
         $category = FinancingCategory::where('id',$id)->get();
-        
+        $id_angkatan = PaymentPeriode::select('angkatan_id')
+                        ->where('financing_category_id', $id)
+                        ->where('major_id', $category[0]->major->id)->get();
         DB::statement(DB::raw('set @row:=0'));
         $periodes = PaymentPeriode::select(DB::raw('@row:=@row+1 as rowNumber'),'payment_periodes.*')
-                                    ->where('financing_category_id',$id)
-                                    ->orderBy('bulan','ASC')
-                                    ->orderBy('tahun','ASC')
+                                    ->where('financing_category_id', $id)
+                                    ->where('major_id', $category[0]->major->id)
+                                    ->orderBy('updated_at','desc')
                                     ->get();
-        return view('master.financingcategory.periode',compact('periodes','category','prev'));
+        $angkatans = Angkatan::whereNotIn('id',$id_angkatan)->get();
+        return view('master.financingcategory.periode',compact('periodes','category','prev','angkatans'));
     }
 
     /**
@@ -253,22 +529,20 @@ class FinancingCategoryController extends Controller
         $bulan = ["Desember","Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November"];
         $d =$req->all();
         try {
-            $temp = $this->convertToArrayDateValue($d['calendar']);
-            $fixBulan = $bulan[(intval($temp[0])%12)];
             $cek = PaymentPeriode::where([
-                ['bulan','=', $temp[0]],
-                ['tahun','=',$temp[2]],
                 ['financing_category_id','=',$d['id']],
+                ['angkatan_id','=',$d['angkatan']],
+                ['major_id','=',$d['jurusan']],
             ])->get()->count();
             if($cek==0){
                 PaymentPeriode::create([
                     'id' => null,
                     'financing_category_id' => $d['id'], 
-                    'bulan' => $temp[0],
-                    'tahun' => $temp[2],
-                    'nominal' => $d['nominal'],
+                    'nominal' => $d['nominal'], 
+                    'angkatan_id' => $d['angkatan'], 
+                    'major_id' => $d['jurusan'],
                 ]);
-                $id = DB::getPdo()->lastInsertId();
+                $id = DB::getPdo()->lastInsertId(); 
                 $payment = Payment::where('financing_category_id',$d['id'])->get();
                 $status = "Waiting";
                 for ($i=0; $i < $payment->count(); $i++) { 
@@ -301,11 +575,7 @@ class FinancingCategoryController extends Controller
         $bulan = ["Desember","Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November"];
         $d =$req->all();
         try {
-            $temp = $this->convertToArrayDateValue($d['calendar']);
-            $fixBulan = $bulan[(intval($temp[0])%12)];
-            $cek = PaymentPeriode::findOrFail($id);
-            $cek->bulan = $temp[0];
-            $cek->tahun = $temp[2];
+            $cek = PaymentPeriode::findOrFail($d['id_periode']);
             $cek->nominal = $d['nominal'];
             $cek->save();
             $fin = FinancingCategory::findOrFail($d['id']);
@@ -347,7 +617,12 @@ class FinancingCategoryController extends Controller
                     ->with('success','Periode Pembayaran gagal dihapus!');
       }
         
-    } 
+    }
+    
+    public function showForm($id = "0")
+    {
+        return view('master.financingcategory.ajax.form_perbulan');
+    }
 
     /**
      * 

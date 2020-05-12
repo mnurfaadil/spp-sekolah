@@ -9,15 +9,18 @@ class PaymentPeriodeDetail extends Model
      /**
      * Nama table yang digunakan
      */
-    protected $table = 'payment_periode_details';
+    protected $table = 'payment_details';
 
     /**
      * Kolom yang dapat di isi
      */
     protected $fillable = [
-        "payment_periode_id",
         "payment_id",
+        "payment_periode_id",
         "user_id",
+        "tgl_dibayar",
+        "bulan",
+        "nominal",
         "status",
     ]; 
 
