@@ -24,22 +24,27 @@ $total = [0,0,0,0];
 @endphp
 @foreach($datas as $data)
 @php
-    $besaran = intval($data->akumulasi);
-    $terbayar = intval(($data->terbayar!=0)?$data->terbayar:0);
+    $detail = intval($data->detail->count());
+    $detail_nunggak = $data->detail->where('jenis_pembayaran','Nunggak')->count();
+    $nominal = intval($data->periode->first()->nominal);
+    $besaran = $detail*$nominal;
+    $terbayar = intval(($data->detail->sum('nominal')!=0)?$data->detail->sum('nominal'):0);
     $sisa = $besaran - $terbayar;
+    $detail_nunggak = $data->detail->where('status','Nunggak')->count();
+
     $total[0] += $besaran;
     $total[1] += $terbayar;
     $total[2] += $sisa;
-    $total[3] += intval($data->bulan_tidak_bayar);
+    $total[3] += intval($detail_nunggak);
 @endphp
-    <tr>
+    <tr class="row-content">
         <td>{{$no++}}</td>
-        <td style="text-align:left;">{{$data->nama}}</td>
-        <td>{{$data->kelas}}&nbsp;-&nbsp;{{$data->jurusan}}</td>
-        <td style="text-align:right">{{number_format($data->akumulasi,0,',','.')}}</td>
-        <td style="text-align:right">{{number_format($data->terbayar,0,',','.')}}</td>
+        <td style="text-align:left;">{{$data->student->nama}}</td>
+        <td>{{$data->student->kelas}}&nbsp;-&nbsp;{{$data->student->major->inisial}}</td>
+        <td style="text-align:right">{{number_format($besaran,0,',','.')}}</td>
+        <td style="text-align:right">{{number_format($terbayar,0,',','.')}}</td>
         <td style="text-align:right">{{number_format($sisa,0,',','.')}}</td>
-        <td>{{$data->bulan_tidak_bayar}} Bulan</td>
+        <td>{{$detail_nunggak}} Bulan</td>
     </tr>
 @endforeach
     <tr class="footer-section">

@@ -5,6 +5,10 @@
     <meta charset="utf-8">
     <title>Rincian</title>
     <style>
+    
+    .text-atas tr td{
+      font-size: 10pt;
+    }
 .page_break { page-break-before: always; },
 .garis_dua{ 
   border: 0;
@@ -33,7 +37,7 @@
         <table width='100%'>
           <tr>
             <td width='50%'>
-              <table>
+              <table class="text-atas">
                 <tr>
                   <td>DICETAK</td>
                   <td>&nbsp;</td>
@@ -52,7 +56,7 @@
               </table>
             </td>
             <td width='50%'>
-            <table>
+            <table class="text-atas">
                 <tr>
                   <td>NIS</td>
                   <td>:</td>
@@ -98,22 +102,19 @@
           
           @foreach($datas as $k)
           @php
-            $cetak = $k->periode;
-            $b = $cetak->bulan;
-            $tahun = $cetak->tahun;
-            $bc = $bulan[$b];
-            $d = "Pembayaran SPP bulan {$bc} tahun {$tahun}";
-            $total += $cetak->nominal;
+            $cetak = $k->bulan;
+            $d = "Pembayaran SPP {$cetak}";
+            $total += intval($k->nominal);
           @endphp
           <tr>
             <td >
             <div style="text-align:center">
-            {{$no}} {{$cetak->bulan}}
+            {{$no}}
             </div>
             </td>
             <td >
               <div style="word-wrap: break-word;">
-              {{$cetak->created_at}}
+              {{$k->tgl_dibayar}}
               </div>
             </td>
             <td >
@@ -123,7 +124,7 @@
             </td>
             <td class="unit">
               <div style="text-align:right">
-              {{number_format($cetak->nominal,0,',','.')}}
+              {{number_format($k->nominal,0,',','.')}}
               </div>
             </td>
           </tr>

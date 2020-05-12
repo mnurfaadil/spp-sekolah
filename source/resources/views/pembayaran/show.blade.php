@@ -64,12 +64,13 @@ SPP | Pembayaran
                                             $besaran = intval($siswa->akumulasi);
                                             $terbayar = intval(($siswa->terbayar!=0)?$siswa->terbayar:0);
                                             $sisa = $besaran - $terbayar;
+                                        
                                         @endphp
                                     <tr>
                                         <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{$siswa->nama}}</td>
-                                        <td>{{$siswa->kelas}} - {{$siswa->jurusan}}</td>
+                                        <td>{{$siswa->kelas}} - {{$siswa->major->nama}}</td>
                                         <td>
                                             <div style="text-align:right">
                                                 {{number_format($siswa->akumulasi,0,',','.')}}

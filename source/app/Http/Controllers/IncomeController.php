@@ -9,6 +9,8 @@ use App\Income;
 use App\Pencatatan;
 use Illuminate\Support\Facades\Session;
 
+use Storage;
+
 class IncomeController extends Controller
 {
     /**
@@ -18,8 +20,7 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        $datas = Income::orderBy('updated_at', 'desc')
-        ->get();
+        $datas = Income::orderBy('updated_at', 'desc')->get();
         $no=1;
         $bulan = Income::selectRaw('MONTH(created_at) AS bulan')
                 ->groupBy('bulan')
@@ -61,7 +62,10 @@ class IncomeController extends Controller
             $file = $request->file('foto');
             
             $nama_file = time()."_".$file->getClientOriginalName();
-    
+            
+            //cek type file
+            $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
+
             // isi dengan nama folder tempat kemana file diupload
             $tujuan_upload = 'nota';
             $file->move($tujuan_upload,$uuid.$nama_file);
@@ -74,6 +78,7 @@ class IncomeController extends Controller
                 'sumber' => $req['sumber' ],
                 'nominal' => $req['nominal'],
                 'foto' => $uuid.$nama_file,
+                'tipe' => $tipe,
             ]);
             $id = DB::getPdo()->lastInsertId();
             $desc = "Pemasukan {$req['title']} dari {$req['sumber']}";
@@ -176,6 +181,8 @@ class IncomeController extends Controller
                 $nama_file = time()."_".$file->getClientOriginalName();
                 $tujuan_upload = 'nota';
                 $file->move($tujuan_upload,$nama_file);
+                $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
+                $data->tipe = $tipe;
                 $data->foto = $nama_file;
                 
               }
@@ -230,6 +237,13 @@ class IncomeController extends Controller
                 ->with('error', 'Data pemasukan gagal dihapus!');
           }
     }
+
+    public function download($path)
+    {
+        $pathToFile = public_path().'\\nota\\'.$path;
+        return response()->download($pathToFile);
+    }
+
     public function convertDateToSQLDate($date)
     {
         $temp = explode("/",$date);

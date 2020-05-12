@@ -34,7 +34,7 @@ class PeriodeController extends Controller
                         ->where('financing_category_id', $id)
                         ->where('major_id', $category[0]->major->id)->get();
         DB::statement(DB::raw('set @row:=0'));
-        $periodes = PaymentPeriode::select(DB::raw('@row:=@row+1 as rowNumber'),'payment_periodes.*')
+        $periodes = PaymentPeriode::select(DB::raw('@row:=@row+1 as rowNumber'),'financing_periodes.*')
                                     ->where('financing_category_id', $id)
                                     ->where('major_id', $category[0]->major->id)
                                     ->orderBy('updated_at','desc')
@@ -53,7 +53,7 @@ class PeriodeController extends Controller
     {
         $category = FinancingCategory::where('id',$kategori)->get();
         $periodes = PaymentPeriode::where('financing_category_id',$kategori)
-                    ->orderBy('payment_periodes.updated_at','desc')
+                    ->orderBy('financing_periodes.updated_at','desc')
                     ->groupBy('major_id')->get();
         return view('master.financingcategory.periode_all',compact('periodes','category'));
     }
@@ -62,7 +62,7 @@ class PeriodeController extends Controller
     {
         $category = FinancingCategory::where('id',$kategori)->get();
         $periodes = PaymentPeriode::where('financing_category_id',$kategori)
-                ->orderBy('payment_periodes.updated_at','desc')
+                ->orderBy('financing_periodes.updated_at','desc')
                 ->where('major_id',$jurusan)->get();
         return view('master.financingcategory.periode_all_setting',compact('periodes','category'));   
     }
@@ -70,6 +70,12 @@ class PeriodeController extends Controller
     public function showAllUpdate(Request $request, $kategori, $jurusan)
     {
         $periode = PaymentPeriode::findOrFail($request->id);
+        $category = FinancingCategory::findOrFail($periode->financing_category_id);
+        $temp = $category->nama;
+        $category->nama = "";
+        $category->save();
+        $category->nama = $temp;
+        $category->save();  
         $periode->nominal = $request->nominal;
         $periode->save();
         return redirect()
@@ -90,7 +96,7 @@ class PeriodeController extends Controller
         $category = FinancingCategory::where('id', $kategori)->get();
         $periodes = PaymentPeriode::where([
                 ['financing_category_id','=',$kategori],
-            ])->orderBy('payment_periodes.updated_at','desc')
+            ])->orderBy('financing_periodes.updated_at','desc')
             ->get();
         return view('master.financingcategory.periode_jurusan_setting',compact('periodes','category'));   
     }
@@ -98,6 +104,12 @@ class PeriodeController extends Controller
     public function showJurusanUpdate(Request $request, $kategori)
     {
         $periode = PaymentPeriode::findOrFail($request->id);
+        $category = FinancingCategory::findOrFail($periode->financing_category_id);
+        $temp = $category->nama;
+        $category->nama = "";
+        $category->save();
+        $category->nama = $temp;
+        $category->save();
         $periode->nominal = $request->nominal;
         $periode->save();
         return redirect()
@@ -118,7 +130,7 @@ class PeriodeController extends Controller
         $category = FinancingCategory::where('id', $kategori)->get();
         $periodes = PaymentPeriode::where([
                 ['financing_category_id','=',$kategori],
-            ])->orderBy('payment_periodes.updated_at','desc')
+            ])->orderBy('financing_periodes.updated_at','desc')
             ->get();
         return view('master.financingcategory.periode_angkatan_setting',compact('periodes','category'));   
     }
@@ -126,6 +138,12 @@ class PeriodeController extends Controller
     public function showAngkatanUpdate(Request $request, $kategori)
     {
         $periode = PaymentPeriode::findOrFail($request->id);
+        $category = FinancingCategory::findOrFail($periode->financing_category_id);
+        $temp = $category->nama;
+        $category->nama = "";
+        $category->save();
+        $category->nama = $temp;
+        $category->save();
         $periode->nominal = $request->nominal;
         $periode->save();
         return redirect()

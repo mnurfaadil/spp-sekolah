@@ -29,7 +29,7 @@ SPP | Angkatan
                             <div class="form-group">
                                 <label>Tahun Angkatan</label>
                                 <div class="input-mark-inner mg-b-22">
-                                    <input type="text" class="form-control" name="tahun2" data-mask="9999" placeholder="Masukan tahun angkatan">
+                                    <input type="text" class="form-control" name="tahun2" data-mask="9999" placeholder="Masukan tahun angkatan" required>
                                     <span class="help-block">yyyy</span>
                                 </div>
                             </div>
@@ -76,13 +76,13 @@ SPP | Angkatan
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-mortar-board"></i></span>
                                     <input type="number" class="form-control" name="angkatan" min="1"
-                                        placeholder="Masukan angkatan" required>
+                                        placeholder="Masukan angkatan" autofocus required>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Tahun Angkatan</label>
                                 <div class="input-mark-inner mg-b-22">
-                                    <input type="text" class="form-control" name="tahun" data-mask="9999" placeholder="Masukan tahun angkatan">
+                                    <input type="text" class="form-control" name="tahun" data-mask="9999" placeholder="Masukan tahun angkatan" required>
                                     <span class="help-block">yyyy</span>
                                 </div>
                             </div>

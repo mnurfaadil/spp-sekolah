@@ -70,7 +70,7 @@ SPP | Kategori Pembayaran
 
     <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
         <div class="panel-body custom-panel-jw">
-            <h3><a href="">Ubah Biaya</a></h3>
+            <h3><a href="">Ubah Biaya {{ $category[0]->nama}}</a></h3>
             <p class="all-pro-ad">Ubah biaya pembayaran disini</p>
             <hr>
 
@@ -152,11 +152,6 @@ SPP | Kategori Pembayaran
                             <div class="sparkline13-graph">
                                 <div class="datatable-dashv1-list custom-datatable-overright">
                                     <div id="toolbar">
-                                        <select class="form-control dt-tb">
-                                            <option value="">Export Basic</option>
-                                            <option value="all">Export All</option>
-                                            <option value="selected">Export Selected</option>
-                                        </select>
                                     </div>
                                     <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                         data-show-columns="true" data-show-pagination-switch="true"

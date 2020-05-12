@@ -14,11 +14,6 @@ SPP | Pembayaran
                     <div class="sparkline13-graph" style="margin-top: 20px">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                 data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
@@ -28,19 +23,20 @@ SPP | Pembayaran
                                 <thead>
                                     <tr>
                                         <div style="text-align: center">
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id"><div style="text-align: center">No</div></th>
                                         <th data-field="name"><div style="text-align: center">Nama</div></th>
                                         <th data-field="jenis"><div style="text-align: center">Jenis Pembiayaan</div></th>
-                                        <th data-field="besaran"><div style="text-align: center">Besaran Default (Rp.)</div></th>
+                                        <th data-field="besaran"><div style="text-align: center">Besaran Terkecil (Rp.)</div></th>
                                         <th data-field="action"><div style="text-align: center">Action</div></th>
                                         </div>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($datas as $data)
+                                    @php
+                                    $nominal = $data->periode->min('nominal');
+                                    @endphp
                                     <tr>
-                                        <td></td>
                                         <td><div style="text-align: center">{{$no++}}</div></td>
                                         <td>{{$data->nama}}&nbsp;
                                         @if($data->tunggakan)
@@ -50,13 +46,13 @@ SPP | Pembayaran
                                         @endif
                                         </td>
                                         <td><div style="text-align: center">{{$data->jenis}}</div></td>
-                                        <td><div style="text-align: right">{{number_format($data->besaran)}}</div></td>
+                                        <td><div style="text-align: right">{{number_format($nominal)}}</div></td>
                                         <td>
                                             <div style="text-align: center;">
                                                 <a href="{{ route('payment.show',$data->id) }}" class="btn btn-success"
                                                 title="Proses pembayaran {{ $data->nama }}" style="color:white"><i class="fa fa-history"> Process</i></a>
                                             </div>
-                                        </td>
+                                        </td> 
                                     </tr>
                                     @endforeach
                                 </tbody>

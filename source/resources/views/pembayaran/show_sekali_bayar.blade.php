@@ -16,16 +16,52 @@ SPP | Pembayaran {{$financing->nama}}
                             <div class="container-sm">
                                 <div class="row">
                                     <div class="col-md-6">
+                                    <form action="{{route('payment.filter')}}" role="form" method="post">
+                                        @csrf
+                                            <input type="hidden" name="id_kategori" value="{{$financing->id}}">
+                                            <div style="float:left; display:flex; flex-direction:row; max-height:55">
+                                            <select class="form-control" name="kelas" required>
+                                                <option value="">-- Pilih Kelas -- </option>
+                                                <option value="all">Semua</option>
+                                                <option @if("X"==$kls) selected @endif value="X">X</option>
+                                                <option @if("XI"==$kls) selected @endif value="XI">XI</option>
+                                                <option @if("XII"==$kls) selected @endif value="XII">XII</option>
+                                                </select>
 
+                                                <select style="margin-left:5px;" class="form-control" name="jurusan" required>
+                                                <option value="">-- Pilih Jurusan --</option>
+                                                <option value="all">Semua</option>
+                                                    @if(isset($majors))
+                                                        @foreach($majors as $d)
+                                                        <option @if($fil==$d->major->id) selected @endif value="{{$d->major->id}}">{{$d->major->nama}}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+
+                                                <select style="margin-left:5px;" class="form-control" name="angkatan" required>
+                                                <option value="">-- Pilih Angkatan --</option>
+                                                <option value="all">Semua</option>
+                                                    @if(isset($angkatan))
+                                                        @foreach($angkatan as $d)
+                                                        <option @if($fil2==$d->angkatan->id) selected @endif value="{{$d->angkatan->id}}">{{$d->angkatan->angkatan}} - {{$d->angkatan->tahun}}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                                <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
+                                            </div>
+                                        </form>
                                     </div>
                                     <div class="col-md-6">
                                         <div style="float:right; margin-right:15px">
-                                            <div class="row">
-                                                <a href="{{route('pdf.print.rekap.sesekali', [$financing->nama,$financing->id])}}"
-                                                    style="float:right;color:black" class=" btn btn-success"
-                                                    target="_blank" title="Cetak rekapitulasi {{$financing->nama}}">
-                                                    <i class="fa fa-print"></i>&nbsp;Cetak</a>
-                                            </div>
+                                        <form target="_blank" action="{{route('pdf.print.rekap.sesekali')}}" role="form" method="post">
+                                                @csrf 
+                                                <input type="hidden" name='id_jur' value="{{$fil}}">
+                                                <input type="hidden" name='akt' value="{{$fil2}}">
+                                                <input type="hidden" name='kls' value="{{$kls}}">
+                                                <input type="hidden" name='nama' value="{{$financing->nama}}">
+                                                <input type="hidden" name='id' value="{{$financing->id}}">
+                                                <button title="Cetak rekapitulasi {{$financing->nama}}" type='submit' class="btn btn-info" style="color:white; margin-top:0"><i class="fa fa-print"></i>&nbsp; Cetak</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -35,11 +71,6 @@ SPP | Pembayaran {{$financing->nama}}
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                 data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
@@ -48,7 +79,6 @@ SPP | Pembayaran {{$financing->nama}}
                                 data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id">No</th>
                                         <th data-field="name">Nama</th>
                                         <th data-field="kelas">Kelas</th>
@@ -67,30 +97,41 @@ SPP | Pembayaran {{$financing->nama}}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($datas as $siswa)
+                                    @foreach($datas as $data)
                                     @php
-                                    $besaran = $siswa->akumulasi;
-                                    $terbayar = intval(($siswa->terbayar!=0)?$siswa->terbayar:0);
-                                    $sisa = $besaran - $terbayar;
+                                    $akumulasi = number_format($data->periode[0]->nominal,0,',','.');
+                                    $piece = $payment_details->where('payment_id', $data->id);
+                                    $terbayar = 0;
+                                    $i = '';
+                                    $j='';
+                                    foreach($piece as $p){
+                                        $i=$p;
+                                    }
+                                    $piece_cicilan = $cicilans->where('payment_detail_id', $i->id);
+                                    foreach($piece_cicilan as $p){
+                                        $terbayar += $p->nominal;
+                                    }
+                                    $besaran = intval($data->periode[0]->nominal);
+                                    $potongan = floor($besaran*$data->persentase/100);
+                                    $sisa = $besaran - $potongan - $terbayar;
                                     @endphp
                                     <tr>
-                                        <td></td>
                                         <td>{{$no++}}</td>
-                                        <td>{{$siswa->nama}}</td>
-                                        <td>{{$siswa->kelas}} - {{$siswa->jurusan}}</td>
+                                        <td>{{$data->student->nama}}</td>
+                                        <td>{{$data->student->kelas}} - {{$data->student->major->inisial}}</td>
                                         <td>
                                             <div style="text-align:right">
-                                                {{number_format($siswa->akumulasi,0,',','.')}}
+                                                {{$akumulasi}}
                                             </div>
                                         </td>
                                         <td>
                                             <div style="text-align:right">
-                                                {{$siswa->persentase}} %
+                                                {{$data->persentase}} %
                                             </div>
                                         </td>
                                         <td>
                                             <div style="text-align:right">
-                                                {{number_format($siswa->potongan,0,',','.')}}
+                                                {{number_format($potongan,0,',','.')}}
                                             </div>
                                         </td>
                                         <td>
@@ -105,22 +146,22 @@ SPP | Pembayaran {{$financing->nama}}
                                         </td>
                                         <td>
                                             <div style="text-align:center">
-                                                @if($siswa->jenis_pembayaran=="Waiting")
+                                                @if($data->jenis_pembayaran=="Waiting")
                                                 <span class="badge"
                                                     style="background-color:yellow;color:black">Waiting</span>
-                                                @else
-                                                {{$siswa->jenis_pembayaran}}
+                                                    @else
+                                                {{$data->jenis_pembayaran}}
                                                 @endif
                                             </div>
                                         </td>
                                         <td>
                                             <div style="text-align:center">
-                                                @if($siswa->jenis_pembayaran=="Waiting")
+                                                @if($data->jenis_pembayaran=="Waiting")
                                                 <span class="badge"
                                                     style="background-color:yellow;color:black">Waiting</span>
-                                                @elseif($siswa->jenis_pembayaran=="Nunggak")
+                                                @elseif($data->jenis_pembayaran=="Nunggak")
                                                 <span class="badge" style="background-color:red">Nunggak</span>
-                                                @elseif($siswa->jenis_pembayaran=="Cicilan" && $sisa!=0)
+                                                @elseif($data->jenis_pembayaran=="Cicilan" && $sisa!=0)
                                                 <span class="badge" style="background-color:yellow;color:black">Belum
                                                     Lunas</span>
                                                 @else
@@ -130,19 +171,18 @@ SPP | Pembayaran {{$financing->nama}}
                                         </td>
                                         <td>
                                             <div style="text-align:center">
-                                                @if($siswa->jenis_pembayaran=="Waiting" ||
-                                                $siswa->jenis_pembayaran=="Nunggak")
+                                                @if($data->jenis_pembayaran=="Waiting" || $data->jenis_pembayaran=="Nunggak")
                                                 <button class="btn btn-warning"
-                                                    onclick="addConfirm({{$siswa->id}},{{$siswa->payment_id}})"
+                                                    onclick="addConfirm({{$data}},'{{$akumulasi}}')"
                                                     title="Pilih Metode Pembayaran" style="color:black;  ">
                                                     <i class="fa fa-info-circle"> Metode</i>
                                                 </button>
-                                                @elseif($siswa->jenis_pembayaran=="Cicilan")
-                                                <a href="{{ route('payment.details.cicilan', [$siswa->financing_id, $siswa->id, $siswa->payment_id]) }}"
+                                                @elseif($data->jenis_pembayaran=="Cicilan")
+                                                <a href="{{ route('payment.details.cicilan', [$financing->id, $data->student->id, $data->id]) }}"
                                                     class="btn btn-primary" title="Cetak Bukti Pembayaran"
                                                     style="color:white;"><i class="fa fa-eye"> Rincian</i></a>
                                                 @else
-                                                <a href="{{ route('pdf.print.sesekali.detail',[$siswa->id,$siswa->detail_id]) }}"
+                                                <a href="{{ route('pdf.print.sesekali.detail',[$data->student->id,$data->detail[1]->id, 'tunai'])}}"
                                                     class=" btn btn-success" target="_blank" title="Cetak kwitansi">
                                                     <i class="fa fa-print"></i>&nbsp;Cetak</a>
                                                 @endif
@@ -193,7 +233,7 @@ SPP | Pembayaran {{$financing->nama}}
                             <div class="col-md-3 col-sm-3">
                                 Nominal Pembayaran
                             </div>
-                            : <strong>Rp. <span>{{number_format($financing->besaran,0,',','.')}}</span></strong>
+                            : <strong>Rp. <span id="nominal_show"></span></strong>
                         </div>
                         <hr>
                         <div class="form-group">
@@ -210,13 +250,29 @@ SPP | Pembayaran {{$financing->nama}}
                                     <option value="Nunggak">Nunggak</option>
                                 </select>
                             </div>
+                            </div>
+                        <div id="tanggal">
+                            <input type="hidden" name="set_simpanan" value="0">
+                            <div class="form-group data-custon-pick" id="data_3">
+                                <label><strong>Tanggal Pembayaran</strong></label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" name="tanggal_bayar" id="tanggal_bayar_add" value="" placeholder="Masukan tanggal pembayaran">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Nominal Pembayaran</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><strong>Rp.</strong></span>
+                                    <input type="number" min="0" class="form-control" name="nominal_bayar" id="nominal_bayar_add" value="" placeholder="Masukan Nominal pembayaran">
+                                </div>
+                            </div>
                         </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 <button class="btn btn-primary" onclick="confirm()"><i class="fa fa-floppy-o"></i> Submit</button>
-                <!-- <button type='submit' class="btn btn-primary"><i class="fa fa-floppy-o"></i> Submit</button> -->
                 </form>
             </div>
         </div>
@@ -261,11 +317,40 @@ SPP | Pembayaran {{$financing->nama}}
         $('.button_add').bind('click');
     }
 
-    function addConfirm(student_id, payment_id) {
-        $('input[name=student_id]').attr('value', student_id);
-        $('input[name=payment_id]').attr('value', payment_id);
+    function addConfirm(data, nominal) {
+        $('input[name=payment_id]').attr('value', data.id);
+        $('input[name=student_id]').attr('value', data.student.id);
+        $('input[name=financing_category_id]').attr('value', data.financing_category_id);
+        $('input[name=nominal]').attr('value', data.periode[0].nominal);
+        $('#nominal_show').html(nominal);
         $('#modalAdd').modal();
     }
+
+    $(document).ready(function(){
+        var cek = $('select[name=metode_pembayaran]').val();
+        if(cek=="Tunai"){
+            $('input[name=tanggal_bayar]').attr('required', true);
+            $('input[name=nominal_bayar]').attr('required', true);
+            $('#tanggal').show();
+        }else{
+            $('input[name=tanggal_bayar]').attr('required', false);
+            $('input[name=nominal_bayar]').attr('required', false);
+            $('#tanggal').hide();
+        }
+    });
+
+    $('select[name=metode_pembayaran]').change(function(){
+        var cek = $('select[name=metode_pembayaran]').val();
+        if(cek=="Tunai"){
+            $('input[name=tanggal_bayar]').attr('required', true);
+            $('input[name=nominal_bayar]').attr('required', true);
+            $('#tanggal').show();
+        }else{
+            $('input[name=tanggal_bayar]').attr('required', false);
+            $('input[name=nominal_bayar]').attr('required', false);
+            $('#tanggal').hide();
+        }
+    });
 
     function confirm() {
         event.preventDefault();
@@ -276,7 +361,39 @@ SPP | Pembayaran {{$financing->nama}}
             buttons: ["Cancel", "Yes!"],
         }).then(function (value) {
             if (value) {
-                document.getElementById('store').submit();
+                var form = $('#store').serializeArray();
+                if(form[10].value==""){
+                    swal("Tanggal pembayaran kosong!");
+                    bind();
+                    return false;
+                }
+                if(form[11].value==""){
+                    swal("Uang pembayaran kosong!");
+                    bind();
+                    return false;
+                }
+                if(parseInt(form[4].value) > parseInt(form[11].value)){
+                    swal("Uang pembayaran kurang!");
+                    bind(); 
+                    return false;
+                }
+                if(parseInt(form[4].value) < parseInt(form[11].value)){
+                    swal({
+                        title : 'Konfirmasi',
+                        text : 'Uang bayar lebih, masuk simpanan siswa ?',
+                        icon : 'warning',
+                        buttons : ['Tidak', 'Ya!'],
+                    }).then(function(value){
+                        if(value){
+                            $('input[name=set_simpanan]').val(1);
+                        }else{
+                            $('input[name=set_simpanan]').val(0);
+                        }
+                        document.getElementById('store').submit();
+                    });
+                }else{
+                    document.getElementById('store').submit();
+                }
             } else {
                 swal("Pembayaran dibatalkan!");
             }
@@ -313,6 +430,10 @@ SPP | Pembayaran {{$financing->nama}}
 ============================================ -->
 <script src="{{ asset('assets/js/chosen/chosen.jquery.js')}}"></script>
 <script src="{{ asset('assets/js/chosen/chosen-active.js')}}"></script>
+<!-- datapicker JS
+		============================================ -->
+<script src="{{asset('assets/js/datapicker/bootstrap-datepicker.js')}}"></script>
+<script src="{{asset('assets/js/datapicker/datepicker-active.js')}}"></script>
 
 <!-- input-mask JS
 ============================================ -->

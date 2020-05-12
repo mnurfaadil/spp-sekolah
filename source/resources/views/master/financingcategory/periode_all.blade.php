@@ -143,7 +143,7 @@ SPP | Kategori Pembayaran
         <ol class="breadcrumb" style="margin-bottom:0">
             <li class="breadcrumb-item"><a href="{{ url('/')}}">Home</a></li>
             <li class="breadcrumb-item"><a href="{{url('/financing')}}">Pembiayaan</a></li>
-            <li class="breadcrumb-item"><a href="">{{ $category[0]->nama}}</a></li>
+            <li class="breadcrumb-item"><a href="#">{{ $category[0]->nama}}</a></li>
             <li class="breadcrumb-item active" aria-current="page">Jurusan</li>
         </ol>
     </nav>

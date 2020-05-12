@@ -45,6 +45,14 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                         value="{{$datas['kelas']}} - {{$datas->major->nama}}"readonly>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label>Angkata</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-bookmark  "></i></span>
+                                    <input type="text" class="form-control" name="angkatan"
+                                        value="Angkatan ke - {{$datas->angkatan}} - {{$datas->tahun_angkatan}}"readonly>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -153,7 +161,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                                 </td>
                                                 <td>
                                                     <div style="text-align: right">
-                                                    {{$bulan[$data->bulan]}} {{$data->tahun}}
+                                                    {{$data->bulan}}
                                                     </div>
                                                 </td>
                                                 <td>

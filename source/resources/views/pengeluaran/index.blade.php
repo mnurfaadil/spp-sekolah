@@ -16,6 +16,30 @@ SPP | Pengeluaran
                         <div class="container-sm">
                             <div class="row">
                                 <div class="col-md-6">
+                                <form action="{{route('income.filter')}}" role="form" method="post">
+                                      @csrf
+                                      <div style="float:left; display:flex; flex-direction:row; max-height:55">
+                                        <select class="form-control" name="bulan">
+                                          <option value="">-- Pilih Bulan -- </option>
+                                          <option value="all">Semua</option>
+                                          @foreach($bulan as $bl)
+                                            @php
+                                              $bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                              $print = $bulan[$bl->bulan];
+                                            @endphp
+                                            <option  value="{{ $bl->bulan }}">{{ $print }}</option>
+                                          @endforeach
+                                        </select>
+                                        <select style="margin-left:5px;" class="form-control" name="tahun">
+                                          <option value="">-- Pilih Tahun  --</option>
+                                          <option value="all">Semua</option>
+                                            @foreach($tahun as $th)
+                                            <option  value="{{ $th->tahun }}">{{ $th->tahun }}</option>
+                                            @endforeach
+                                          </select>
+                                          <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
+                                      </div>
+                                  </form>
                                 </div>
                                 <div class="col-md-6">
                                 <div style="float:right;">
@@ -30,17 +54,11 @@ SPP | Pengeluaran
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id">No</th>
                                         <th data-field="tanggal">Tanggal</th>
                                         <th data-field="foto">Foto</th>
@@ -56,13 +74,17 @@ SPP | Pengeluaran
                                   @php
                                     $temp = strtotime($data->created_at);
                                     $tanggal = date('j - M - Y', $temp);
+                                    $url = asset('nota')."/".$data->foto;
                                   @endphp
                                     <tr>
-                                        <td></td>
                                         <td>{{$no++}}</td>
                                         <td>{{ $tanggal }}</td>
                                         <td class="avatar text-center">
-                                          <img class="rounded-circle" style="width: 100px; height: 100px;" src="nota/{{ $data -> foto }}" alt="">  
+                                        @if($data->tipe=="img")
+                                          <img class="rounded-circle" style="width: 100px; height: 100px;" src="{{ $url }}" alt="">
+                                          @else
+                                          <a href="{{ route('expense.download',$data->foto) }}" title="Download file" style="margin:0;color:blue"><i class="fa fa-download"></i> Download</a>
+                                          @endif
                                         </td>
                                         <td>{{$data->title}}</td>
                                         <td>{{$data->description}}</td>
@@ -104,7 +126,7 @@ SPP | Pengeluaran
         <form action="{{ route('expense.store') }}" role="form" method="post" enctype="multipart/form-data">
           {{csrf_field()}}
           <div class="form-group">
-              <label class="control-label col-md-6">Tanggal<kode>*</kode> format (bulan/tanggal/tahun)</label>
+              <label class="control-label col-md-6">Tanggal<kode>*</kode></label>
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group data-custon-pick" id="data_3">
@@ -112,6 +134,7 @@ SPP | Pengeluaran
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                               <input type="text" name='tanggal' id='tanggal' class="form-control" placeholder="Tanggal Pengeluaran" autocomplete="off" required>
                           </div>
+                          <span class="help-block">bulan/tanggal/tahun</span>
                       </div>
                   </div>
               </div>
@@ -147,7 +170,7 @@ SPP | Pengeluaran
                             <label class="icon-right" for="prepend-big-btn"><i class="fa fa-download"></i></label>
                             <div class="file-button">
                                 Browse
-                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn').value = this.value;" accept="image/*,.pdf">
                             </div>
                             <input type="text" id="prepend-big-btn" placeholder="no file selected">
                         </div>
@@ -184,7 +207,7 @@ SPP | Pengeluaran
         @method('PUT')
           {{csrf_field()}}
           <div class="form-group">
-              <label class="control-label col-md-6">Tanggal<kode>*</kode> format (bulan/tanggal/tahun)</label>
+              <label class="control-label col-md-6">Tanggal<kode>*</kode></label>
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group data-custon-pick" id="data_3">
@@ -192,6 +215,7 @@ SPP | Pengeluaran
                               <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                               <input type="text" name='tanggal' id='tanggal_edit' class="form-control" placeholder="Tanggal Pengeluaran"  autocomplete="off" required>
                           </div>
+                          <span class="help-block">bulan/tanggal/tahun</span>
                       </div>
                   </div>
               </div>
@@ -227,7 +251,7 @@ SPP | Pengeluaran
                             <label class="icon-right" for="prepend-big-btn"><i class="fa fa-download"></i></label>
                             <div class="file-button">
                                 Browse
-                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn2').value = this.value;">
+                                <input type="file" name='foto' onchange="document.getElementById('prepend-big-btn2').value = this.value;" accept="image/*,.pdf">
                             </div>
                             <input type="text" id="prepend-big-btn2" placeholder="no file selected">
                         </div>

@@ -35,7 +35,6 @@ class ExpenseController extends Controller
                 ->get();
         $bln1 = '';
         $thn1 = '';
-
         return view('pengeluaran.index', compact('datas','no','bulan','tahun','bln1','thn1'));
     }
 
@@ -66,6 +65,8 @@ class ExpenseController extends Controller
             $file = $request->file('foto');
             
             $nama_file = time()."_".$file->getClientOriginalName();
+
+            $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
     
             // isi dengan nama folder tempat kemana file diupload
             $tujuan_upload = 'nota';
@@ -79,6 +80,7 @@ class ExpenseController extends Controller
                 'description' => $req['description'],
                 'nominal' => $req['nominal'],
                 'foto' => $uuid.$nama_file,
+                'tipe' => $tipe,
             ]);
             $id = DB::getPdo()->lastInsertId();
             $desc = "Pembelian {$req['title']} oleh {$req['sumber']}";
@@ -177,6 +179,8 @@ class ExpenseController extends Controller
                 $tujuan_upload = 'nota';
                 $file->move($tujuan_upload,$nama_file);
                 $data->foto = $nama_file;
+                $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
+                $data->tipe = $tipe;
             }
             $data->title = $req['title'];
             $data->description = $req['description'];
@@ -229,6 +233,13 @@ class ExpenseController extends Controller
                 ->with('error', 'Data pengeluaran gagal diubah!');
           }
     }
+
+    public function download($path)
+    {
+        $pathToFile = public_path().'\\nota\\'.$path;
+        return response()->download($pathToFile);
+    }
+    
     public function convertDateToSQLDate($date)
     {
         $temp = explode("/",$date);

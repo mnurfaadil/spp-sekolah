@@ -22,7 +22,7 @@ class Angkatan extends Model
     
     /**
      * Relasi One to Many
-     */
+     */ 
     public function students()
     {
         return $this->hasMany('App\Student');
@@ -31,10 +31,5 @@ class Angkatan extends Model
     public function periode_pembayaran()
     {
         return $this->hasMany('App\PaymentPeriode');
-    }
-
-    public function category()
-    {
-        return $this->hasMany('App\FinancingCategory');
     }
 }

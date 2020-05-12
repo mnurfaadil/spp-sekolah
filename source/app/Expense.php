@@ -20,6 +20,7 @@ class Expense extends Model
         "sumber",
         "foto",
         "nominal",
+        "tipe",
         "created_at",
     ];
 

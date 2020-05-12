@@ -45,10 +45,17 @@ class AngkatanController extends Controller
             $req = $request->all();
             $cek = Angkatan::where('angkatan',$req['angkatan'])->count();
             $cek2 = Angkatan::where('tahun',$req['tahun'])->count();
+            $cek3 = Angkatan::where('status',$req['status'])->count();
+            
             if($cek > 0 || $cek2 > 0 ){
                 return redirect()
                     ->route('angkatan.index')
                     ->with('error', 'Angkatan atau tahun angkatan sudah ada!');
+            }
+            if($cek3 > 0 && $req['status']!="ALUMNI"){
+                return redirect()
+                    ->route('angkatan.index')
+                    ->with('error', 'Kelas sudah terisi!');
             }
             Angkatan::create([
                 'id' => null,

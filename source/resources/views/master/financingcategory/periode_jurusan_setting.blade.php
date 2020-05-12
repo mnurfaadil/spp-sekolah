@@ -10,7 +10,7 @@ SPP | Kategori Pembayaran
 
     <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
         <div class="panel-body custom-panel-jw">
-            <h3><a href="">Ubah Biaya</a></h3>
+            <h3><a href="">Ubah Biaya {{ $category[0]->nama}}</a></h3>
             <p class="all-pro-ad">Ubah biaya pembayaran disini</p>
             <hr>
 

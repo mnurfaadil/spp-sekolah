@@ -52,15 +52,16 @@ class MajorController extends Controller
             Major::create([
                 'id' => null,
                 'nama' => $req['jurusan'],
+                'inisial' => $req['alias'],
               ]);
           return redirect()
               ->route('majors.index')
-              ->with('success', 'Data jurursan berhasil disimpan!');
+              ->with('success', 'Data jurusan berhasil disimpan!');
 
         }catch(Exception $e){
           return redirect()
               ->route('majors.create')
-              ->with('error', 'Data jurursan gagal disimpan!');
+              ->with('error', 'Data jurusan gagal disimpan!');
         }
     }
 
@@ -103,6 +104,7 @@ class MajorController extends Controller
           $req = $request->all();
           $major = Major::findOrFail($id);
           $major->nama = $req['jurusan'];
+          $major->inisial = $req['alias'];
           $major->save();
 
           return redirect()

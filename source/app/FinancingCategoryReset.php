@@ -20,8 +20,8 @@ class FinancingCategoryReset extends Model
         "jenis",
     ];
 
-    public function financingCategory()
+    public function category()
     {
-        return $this->belongsTo('App\FinancingCategory');
+        return $this->belongsTo('App\FinancingCategory', 'financing_category_id');
     }
 }
