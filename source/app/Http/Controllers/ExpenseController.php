@@ -69,7 +69,7 @@ class ExpenseController extends Controller
             $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
     
             // isi dengan nama folder tempat kemana file diupload
-            $tujuan_upload = 'nota';
+            $tujuan_upload = 'source/public/nota/';
             $file->move($tujuan_upload,$uuid.$nama_file);
             
             Expense::create([
@@ -237,7 +237,7 @@ class ExpenseController extends Controller
     public function download($path)
     {
         // $pathToFile = public_path()."//nota//".$path;
-        $pathToFile = asset('')."nota/{$path}";
+        $pathToFile = public_path()."/nota/".$path;
         return response()->download($pathToFile);
     }
     

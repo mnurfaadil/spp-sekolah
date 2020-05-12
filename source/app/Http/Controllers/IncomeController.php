@@ -240,7 +240,7 @@ class IncomeController extends Controller
 
     public function download($path)
     {
-        $pathToFile = public_path().'\\nota\\'.$path;
+        $pathToFile = public_path().'/nota/'.$path;
         return response()->download($pathToFile);
     }
 
