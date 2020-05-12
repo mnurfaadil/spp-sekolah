@@ -44,7 +44,7 @@ SPP | Pemasukan
                                 <div class="col-md-6">
                                     <div style="float:right;display:flex;flex-direction:column">
                                       
-                                  <form action="{{route('pdf.print','pemasukan')}}" role="form" method="post" target="_blank">
+                                  <form action="{{route('pdf.print')}}" role="form" method="post" target="_blank">
                                       @csrf
                                       <input type="hidden" name="id" value="pemasukan">
                                       <input type="hidden" name="bulan" value="{{$report['bulan']}}">
@@ -54,7 +54,7 @@ SPP | Pemasukan
                                       </button>
                                       <a data-toggle="modal" href="#modalAdd" @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
                                   </form>
-                                      
+                                       
                                     </div>
                                 </div>
                                 <div class="col-md-6">
