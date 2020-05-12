@@ -237,7 +237,7 @@ class ExpenseController extends Controller
     public function download($path)
     {
         // $pathToFile = public_path()."//nota//".$path;
-        $pathToFile = asset('')."//nota//".$path;
+        $pathToFile = asset('')."/nota/{$path}";
         return response()->download($pathToFile);
     }
     
