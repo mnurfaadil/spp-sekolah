@@ -118,6 +118,7 @@ class StudentController extends Controller
                 'phone' => $req['phone'],
                 'angkatan_id' => $req['angkatan'],
                 'email' => $req['email'],
+                'simpanan' => $req['simpanan'],
                 'alamat' => $req['alamat'],
                 'tgl_masuk' => $date,
                 'kelas' => $req['kelas'],
@@ -161,7 +162,7 @@ class StudentController extends Controller
               ->with('success', 'Data siswa gagal disimpan!');
         }
     }
-
+ 
     /**
      * Display the specified resource.
      *
@@ -210,6 +211,7 @@ class StudentController extends Controller
             $student->phone = $req['phone'];
             $student->email = $req['email'];
             $student->alamat = $req['alamat'];
+            $student->simpanan = $req['simpanan'];
             $student->tgl_masuk = $req['tgl_masuk'];
             $student->save();
 
