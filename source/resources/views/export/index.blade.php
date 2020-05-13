@@ -18,11 +18,15 @@ SPP | Rekap
                             <i class="educate-icon educate-department" style="color:#27ae60"></i>
                         </div>
                         <div class="m-t-xl widget-cl-1">
+                            <form action="{{route('pdf.print')}}" method="post" id="form_pemasukan">
+                                @csrf
+                                <input type="hidden" name="id" value="pemasukan">
                             <h1 class="text-success" style="color:#27ae60">Rp. {{number_format($rekap->pemasukan,0,',','.')}}</h1>
-                            <a class="btn btn-block loginbtn" style="background-color:#27ae60;color:white" href="{{route('pdf.print','pemasukan')}}" target="_blank">
+                            <a class="btn btn-block loginbtn" style="background-color:#27ae60;color:white" href="#" onclick="$('#form_pemasukan').submit()" target="_blank">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
                             </a>
+                            </form>
                         </div>
                     </div>
                 </div>
