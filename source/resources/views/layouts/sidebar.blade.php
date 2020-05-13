@@ -63,7 +63,7 @@
                         </a>
                     </li>
                     <li>
-                        @if(Request::is('rekap'))
+                        @if(Request::is('rekap') || Request::is('export'))
                         <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="background-color:#eb3b5a;color:white">
                         @else
                         <a title="Rekapitulasi" class="" href="{{ route('rekap.index') }}" aria-expanded="false" style="color:#eb3b5a;">

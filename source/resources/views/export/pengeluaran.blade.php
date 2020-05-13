@@ -37,6 +37,9 @@ $total = 0;
             @if($data->tipe=="img")
             <img style="height:70; width:70;" src="{{$url}}" alt="Foto Bukti"/>
             @else
+            {{$url}}
+            <br>
+            {{$data->tipe}}
             &nbsp;
             @endif
         </td>
