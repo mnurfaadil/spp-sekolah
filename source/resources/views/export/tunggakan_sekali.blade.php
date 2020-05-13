@@ -60,7 +60,6 @@ $total = [0,0,0,0];
         <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
         <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[3],0,',','.')}}</th>
         <th>&nbsp;</th>
-        <th>&nbsp;</th>
     </tr>
 </table>
 <small><span style="font-style:italic">Dicetak pada {{now()}}</span></small>
