@@ -362,7 +362,7 @@ SPP | Pembayaran {{$financing->nama}}
         }).then(function (value) {
             if (value) {
                 var metode = $('input[name=metode_pembayaran]').val();
-                if(metode=="Tunai"){
+                if(metode=="Tunai") {
                     var form = $('#store').serializeArray();
                     if(form[10].value==""){
                         swal("Tanggal pembayaran kosong!");
@@ -393,6 +393,7 @@ SPP | Pembayaran {{$financing->nama}}
                             }
                             document.getElementById('store').submit();
                         });
+                    }
                 }else{
                     document.getElementById('store').submit();
                 }
