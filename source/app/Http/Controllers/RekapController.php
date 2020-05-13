@@ -31,7 +31,11 @@ class RekapController extends Controller
      */
     public function index()
     {
-        $categorys = FinancingCategory::all();
+        $categorys = FinancingCategory::join('payments','payments.financing_category_id','=','financing_categories.id')
+                    ->join('payment_details','payment_details.payment_id','=','payments.id')
+                    ->where('payment_details.status','Nunggak')
+                    ->groupBy('financing_categories.id')
+                    ->get();
         $majors = Major::all();
         $rekap = DB::table('rekap_view')->first();
         $sum = 0;
