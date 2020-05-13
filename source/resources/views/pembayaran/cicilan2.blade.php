@@ -104,7 +104,7 @@ SPP | Cicilan Pembayaran
                                         <div class="col-md-6">
                                             <div style="float:right;">
                                             @if(isset($payment_details[0]))
-                                                <a href="{{ route('pdf.print.sesekali',[$datas[0]->id, $payment_details[0]->payment_id]) }}" target="_blank"
+                                                <a href="{{ route('pdf.print.sesekali',[$datas[0]->id, $payment_details[0]->payment_id, $payments->category->id]) }}" target="_blank"
                                                     style="color:white" class=" btn btn-success" title="Cetak kwitansi">
                                                     <i class="fa fa-print"></i>&nbsp; Cetak</a>
                                             @else

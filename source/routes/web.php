@@ -120,7 +120,7 @@ Route::get('export/bulanan/onepage/{nama}/{payment}/{kategori}','RekapController
 Route::get('export/bulanan/detail/{nama}/{payment}','RekapController@kwitansiBulananSatuan')->name('pdf.print.bulanan.detail');
 //untuk jenis pembayaran sekali bayar
 Route::post('export/sesekali/rekap/','RekapController@rekapSesekali')->name('pdf.print.rekap.sesekali');
-Route::get('export/sesekali/onepage/{nama}/{payment}','RekapController@kwitansiSesekali')->name('pdf.print.sesekali');
+Route::get('export/sesekali/onepage/{siswa}/{payment}/{kategory}','RekapController@kwitansiSesekali')->name('pdf.print.sesekali');
 Route::get('export/sesekali/detail/{nama}/{payment}/{stat?}','RekapController@kwitansiSesekaliSatuan')->name('pdf.print.sesekali.detail');
 
 /**

@@ -493,7 +493,7 @@ class RekapController extends Controller
         return $pdf->stream();
     }
 
-    public function kwitansiSesekali($siswa, $payment)
+    public function kwitansiSesekali($siswa, $payment, $category)
     {
         $no = 1;
         $user= Auth::user()->name;
@@ -504,6 +504,11 @@ class RekapController extends Controller
         // ])->get();
         $datas = Cicilan::where('payment_detail_id', $payment)->get();
         $source = Cicilan::where('payment_detail_id', $payment)->first();
+        if($datas->count()<1){
+            return redirect()
+                ->route('payment.details.cicilan',[$category, $siswa, $payment])
+                ->with('error','Belum ada data cicilan');
+        }
         try {
             $data['tanggal'] = $this->getTanggalHariIni();
             $data['waktu'] = $this->getWaktuHariIni();
