@@ -275,7 +275,7 @@ class RekapController extends Controller
         return $pdf->stream();
     }
     
-    public function kwitansiBulanan($siswa, $payment)
+    public function kwitansiBulanan($siswa, $payment, $category)
     {
         $no = 1;
         $user= Auth::user()->name;
@@ -286,6 +286,11 @@ class RekapController extends Controller
         ])->join('financing_periodes','financing_periodes.id','payment_details.payment_periode_id')
         ->orderBy('payment_details.bulan','asc')
         ->get();
+        if($datas->count()<1){
+            return redirect()
+                ->route('payment.monthly.show.detail',[$payment, $siswa, $category])
+                ->with('error','Belum ada data yg lunas');
+        }
         try {
             $data['tanggal'] = $this->getTanggalHariIni();
             $data['waktu'] = $this->getWaktuHariIni();

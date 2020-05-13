@@ -78,7 +78,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                         </div>
                                         <div class="col-md-6"> 
                                             <div style="float:right;">
-                                                <a href="{{ route('pdf.print.bulanan',[$payment_details[0]->payment->student->id,$payment_details[0]->payment->id]) }}"
+                                                <a href="{{ route('pdf.print.bulanan',[$payment_details[0]->payment->student->id,$payment_details[0]->payment->id,$payment_details[0]->payment->category->id]) }}"
                                                     style="color:white; margin-top:0" class=" btn btn-success" target="_blank"><i
                                                         class="fa fa-print"></i>&nbsp; Cetak</a>
                                             </div>
