@@ -34,18 +34,20 @@ class RekapController extends Controller
         $categorys = FinancingCategory::all();
         $majors = Major::all();
         $rekap = DB::table('rekap_view')->first();
+        $sum = 0;
+        
+        $payments = PaymentDetail::where('status','Nunggak')->get();
+
+        $filter = true;
+        foreach ($payments as $k) {
+            $nominal = intval($k->periode->nominal);
+            $terbayar = intval($k->cicilan->sum('nominal'));
+            $potongan  = intval($k->payment->persentase)*$nominal/100;
+            $sisa = $nominal - ($terbayar + $potongan);
+            $sum += $sisa;
+        }
+        $rekap->tunggakan = $sum;
         return view('export.index',compact('categorys','majors','rekap'));
-    }
-
-
-    // public function getTerbilang($nominal)
-    // {
-    //     echo strlen($nominal);
-    // }
-
-    public function FunctionName(Type $var = null)
-    {
-        # code...
     }
 
     public function print(Request $request) 
@@ -226,30 +228,7 @@ class RekapController extends Controller
     public function rekapBulanan($kategori, $id, $filter = null)
     {
         $no = 1;
-        // if(!$filter){
-        // $datas=DB::table('students')
-        //     ->selectRaw('students.*,getNominalTerbayarBulanan(payments.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, getAkumulasiPerBulan(payments.id) AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
-        //     ->leftJoin('majors','majors.id','=','students.major_id')
-        //     ->leftJoin('payments','payments.student_id','=','students.id')
-        //     ->leftJoin('financing_categories','financing_categories.id','=','payments.financing_category_id')
-        //     ->leftJoin('payment_details','payment_details.payment_id','=','payments.id')
-        //     ->where('financing_categories.id',$id)->get();
         $datas = Payment::where('financing_category_id', $id)->get();
-        // echo '<pre>';
-        // var_dump ($id); echo"<hr>";
-        // var_dump($datas);die;
-        // }else{
-        // $datas=DB::table('students')
-        //     ->selectRaw('students.*,getNominalTerbayarBulanan(payments.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, getAkumulasiPerBulan(payments.id) AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
-        //     ->leftJoin('majors','majors.id','=','students.major_id')
-        //     ->leftJoin('payments','payments.student_id','=','students.id')
-        //     ->leftJoin('financing_categories','financing_categories.id','=','payments.financing_category_id')
-        //     ->leftJoin('payment_details','payment_details.payment_id','=','payments.id')
-        //     ->where([
-        //         ['financing_categories.id','=',$id],
-        //         ['majors.id','=',$filter],
-        //     ])->get();
-        // }
         $title="Rekapitulasi Pembiayaan {$kategori}";
         $pdf = PDF::loadView('export.rekap_bulanan',compact('no','title','datas'));
         //$pdf->setPaper('A4', 'landscape');
@@ -362,23 +341,35 @@ class RekapController extends Controller
             $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }else{
-            $datas = DB::table('students')
-                        ->selectRaw('financing_categories.id as financing_category_id, students.id as student_id, payments.id as payment_id, majors.id as major_id, payment_details.id as payment_detail_id, students.nama, students.`kelas`, majors.`nama` AS jurusan, financing_categories.`besaran` AS akumulasi, (SELECT SUM(nominal) FROM payment_details pd2 WHERE pd2.`id` = payment_details.id ) AS terbayar,(SELECT jenis_pembayaran FROM payments p2 WHERE p2.id = payments.id) AS metode')
-                        ->join('majors','majors.id','=','students.major_id')
-                        ->join('payments','payments.student_id','=','students.id')
-                        ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
-                        ->join('payment_details','payment_details.payment_id','=','payments.id')
-                        ->orderBy
+
+            $sum = 0;
+            $no = 1;
+            $payments = Payment::join('students','students.id','=','payments.student_id')
+                        ->join('payment_details','payment_details.id','=','payments.id')
+                        ->where('payment_details.status', '=', 'Nunggak')
                         ->get();
-            if($req['jenis_kategori'] != "all"){
-                $datas = $datas->where('financing_category_id', $req['jenis_kategori']);
+            if($req['major_id']!="all" && $req['kelas']!="all"){
+                $payments = Payment::join('students','students.id','=','payments.student_id')
+                        ->join('payment_details','payment_details.id','=','payments.id')
+                        ->where('payment_details.status', '=', 'Nunggak')
+                        ->where('students.major_id', $req['major_id'])
+                        ->where('students.kelas', $req['kelas'])
+                        ->where('financing_category_id', $req['jenis_kategori'])
+                        ->get();
+            }elseif($req['kelas']!="all"){
+                $payments = Payment::join('students','students.id','=','payments.student_id')
+                ->join('payment_details','payment_details.id','=','payments.id')
+                ->where('payment_details.status', '=', 'Nunggak')->where('students.kelas', $req['kelas'])
+                ->where('financing_category_id', $req['jenis_kategori'])
+                ->get();
+            }elseif($req['major_id']!="all"){
+                $payments = Payment::join('students','students.id','=','payments.student_id')
+                        ->join('payment_details','payment_details.id','=','payments.id')
+                        ->where('payment_details.status', '=', 'Nunggak')->where('students.major_id', $req['major_id'])
+                        ->where('financing_category_id', $req['jenis_kategori'])
+                        ->get();
             }
-            if($req['major_id'] != "all"){
-                $datas = $datas->where('major_id', $req['major_id']);
-            }
-            if($req['kelas'] != "all"){
-                $datas = $datas->where('kelas', $req['kelas']);
-            }
+            $datas = $payments;
             $pdf = PDF::loadView('export.tunggakan_sekali',compact('no','title','datas'));
             //$pdf->setPaper('A4', 'landscape');
             $pdf->setPaper('A4', 'potrait');

@@ -9,51 +9,56 @@
 @endsection
 
 @section('content')
-<table class="table1">
+<table class="table1 table-content" style="margin-left: -20px">
     <tr>
         <th>No</th> 
         <th>Nama</th>
         <th>Kelas</th>
-        <th>Akumulasi Biaya</th>
+        <th>Total</th>
+        <th>Potongan</th>
         <th>Terbayar</th>
-        <th>Sisa Pembayaran</th>
-        <th>Metode</th>
+        <th>Sisa</th>
         <th>Keterangan</th>
     </tr>
 @php
-$total = [0,0,0];
+$total = [0,0,0,0];
 @endphp
-@foreach($datas as $data)
+@foreach($datas as $k)
 @php
-  $tunggakan = intval($data->akumulasi)-intval($data->terbayar);
-  if($tunggakan!=0){
-    $besaran = intval($data->akumulasi);
-    $terbayar = intval(($data->terbayar!=0)?$data->terbayar:0);
-    $sisa = $besaran - $terbayar;
-    $total[0] += $besaran;
-    $total[1] += $terbayar;
-    $total[2] += $sisa;
+  $detail = $k->detail->first();
+  $nominal = intval($detail->periode->nominal);
+  $terbayar = intval($detail->cicilan->sum('nominal'));
+  $potongan  = intval($k->persentase)*$nominal/100;
+  $sisa = $nominal - ($terbayar + $potongan);
+  $total[0] += $nominal;
+  $total[1] += $potongan;
+  $total[2] += $terbayar;
+  $total[3] += $sisa;
+  if($k->jenis_pembayaran=="Waiting"){
+    $keterangan = "Unconfirmed";
+  }elseif($k->jenis_pembayaran=="Cicilan"){
+    $keterangan = "Cicilan";
+  }else{
+    $keterangan = "Nunggak";
   }
-  
 @endphp
-  @if($tunggakan!=0)
     <tr>
         <td>{{$no++}}</td>
-        <td style="text-align:left;">{{$data->nama}}</td>
-        <td>{{$data->kelas}}&nbsp;-&nbsp;{{$data->jurusan}}</td>
-        <td style="text-align:right">{{number_format($data->akumulasi,0,',','.')}}</td>
-        <td style="text-align:right">{{number_format($data->terbayar,0,',','.')}}</td>
-        <td style="text-align:right">{{number_format($tunggakan,0,',','.')}}</td>
-        <td>{{$data->metode}}</td>
-        <td>Nunggak</td>
+        <td style="text-align:left;">{{$k->student->nama}}</td>
+        <td>{{$k->student->kelas}}&nbsp;-&nbsp;{{$k->student->major->inisial}}</td>
+        <td style="text-align:right">{{number_format($nominal,0,',','.')}}</td>
+        <td style="text-align:right">{{number_format($potongan,0,',','.')}}</td>
+        <td style="text-align:right">{{number_format($terbayar,0,',','.')}}</td>
+        <td style="text-align:right">{{number_format($sisa,0,',','.')}}</td>
+        <td>{{$keterangan}}</td>
     </tr>
-  @endif
 @endforeach
     <tr class="footer-section">
         <th colspan="3" style="text-align:center"><span style="font-size:20px;font-weight:bold;">Total </span></th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
+        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
+        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
+        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
+        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[3],0,',','.')}}</th>
         <th>&nbsp;</th>
         <th>&nbsp;</th>
     </tr>
