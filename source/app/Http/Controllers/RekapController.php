@@ -89,7 +89,8 @@ class RekapController extends Controller
                             ['sumber','<>','Siswa']
                         ])->get();
             }else{
-                $datas = Pencatatan::where([
+                $datas = Pencatatan::join('incomes','incomes.id','=','pencatatans.income_id')
+                        ->where([
                             ['debit','<>','0'],
                             ['sumber','<>','Siswa']
                         ])->orderBy('pencatatans.updated_at', 'desc')
@@ -122,7 +123,7 @@ class RekapController extends Controller
                     ->get();
             }else{
                 $datas = Expense::orderBy('expenses.updated_at', 'desc')
-                ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
+                    ->join('pencatatans','expenses.id','=','pencatatans.expense_id')
                     ->whereMonth('expenses.created_at',$request->bulan)
                     ->whereYear('expenses.created_at',$request->tahun)
                     ->where([
