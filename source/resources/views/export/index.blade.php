@@ -18,14 +18,14 @@ SPP | Rekap
                             <i class="educate-icon educate-department" style="color:#27ae60"></i>
                         </div>
                         <div class="m-t-xl widget-cl-1">
-                            <form action="{{route('pdf.print')}}" method="post" id="form_pemasukan">
+                            <form action="{{route('pdf.print')}}" method="post" target="_blank">
                                 @csrf
                                 <input type="hidden" name="id" value="pemasukan">
                             <h1 class="text-success" style="color:#27ae60">Rp. {{number_format($rekap->pemasukan,0,',','.')}}</h1>
-                            <a class="btn btn-block loginbtn" style="background-color:#27ae60;color:white" href="#" onclick="$('#form_pemasukan').submit()" target="_blank">
+                            <button type="submit" class="btn btn-block loginbtn" style="background-color:#27ae60;color:white">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
-                            </a>
+                            </button>
                             </form>
                         </div>
                     </div>
@@ -42,10 +42,14 @@ SPP | Rekap
                         </div>
                             <div class="m-t-xl widget-cl-2">
                             <h1 class="text-info" style="color:#f39c12">Rp. {{number_format($rekap->pengeluaran,0,',','.')}}</h1>
-                            <a class="btn btn-block loginbtn" style="background-color:#f39c12;color:white" href="{{route('pdf.print','pengeluaran')}}" target="_blank">
+                            <form action="{{route('pdf.print')}}" method="post" target="_blank">
+                                @csrf
+                                <input type="hidden" name="id" value="pengeluaran">
+                            <button type="submit" class="btn btn-block loginbtn" style="background-color:#f39c12;color:white">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
-                            </a>
+                            </button>
+                            </form>
                         </div>
                     </div>
                 </div> 
@@ -61,10 +65,14 @@ SPP | Rekap
                         </div>
                         <div class="m-t-xl widget-cl-3">
                             <h1 class="text-success" style="color:#2980b9">Rp. {{number_format($rekap->saldo,0,',','.')}}</h1>
-                            <a class="btn btn-block loginbtn" style="background-color:#2980b9;color:white" href="{{route('pdf.print','BukuBesar')}}" target="_blank">
+                            <form action="{{route('pdf.print')}}" method="post" target="_blank">
+                                @csrf
+                                <input type="hidden" name="id" value="BukuBesar">
+                            <button type="submit" class="btn btn-block loginbtn" style="background-color:#2980b9;color:white">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
-                            </a>
+                            </button>
+                            </form>
                         </div>
                     </div>
                 </div>
