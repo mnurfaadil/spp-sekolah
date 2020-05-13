@@ -22,12 +22,9 @@ $total = 0;
 @endphp
 @foreach($datas as $data)
 @php
-    $url=null;
     $total =$total + intval($data->kredit); 
-    if(isset($data->pengeluaran)){
-        $url = "nota/{$data->pengeluaran->foto}";
-        $url = asset('').$url;
-    }
+    $url = "nota/{$data->pengeluaran->foto}";
+    $url = asset('').$url;
     $temp = strtotime($data->created_at);
     $tanggal = date('j - M - Y', $temp); 
 @endphp
@@ -37,10 +34,8 @@ $total = 0;
             @if($data->tipe=="img")
             <img style="height:70; width:70;" src="{{$url}}" alt="Foto Bukti"/>
             @else
-            {{$url}}
-            <br>
-            {{$data->tipe}}
             &nbsp;
+            {{$data->tipe}}
             @endif
         </td>
         <td style="text-align:left;">{{$tanggal}}</td>
