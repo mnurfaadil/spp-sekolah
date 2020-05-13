@@ -134,7 +134,7 @@ class RekapController extends Controller
             $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
 
-        }elseif($request->id=="Buku Besar"){
+        }elseif($request->id=="BukuBesar"){
             $rincian = "Buku Besar";
             $title = "Laporan Keuangan";
             $datas = Pencatatan::all();

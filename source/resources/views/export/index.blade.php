@@ -57,7 +57,7 @@ SPP | Rekap
                         </div>
                         <div class="m-t-xl widget-cl-3">
                             <h1 class="text-success" style="color:#2980b9">Rp. {{number_format($rekap->saldo,0,',','.')}}</h1>
-                            <a class="btn btn-block loginbtn" style="background-color:#2980b9;color:white" href="{{route('pdf.print','Buku Besar')}}" target="_blank">
+                            <a class="btn btn-block loginbtn" style="background-color:#2980b9;color:white" href="{{route('pdf.print','BukuBesar')}}" target="_blank">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
                             </a>
