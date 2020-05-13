@@ -361,36 +361,38 @@ SPP | Pembayaran {{$financing->nama}}
             buttons: ["Cancel", "Yes!"],
         }).then(function (value) {
             if (value) {
-                var form = $('#store').serializeArray();
-                if(form[10].value==""){
-                    swal("Tanggal pembayaran kosong!");
-                    bind();
-                    return false;
-                }
-                if(form[11].value==""){
-                    swal("Uang pembayaran kosong!");
-                    bind();
-                    return false;
-                }
-                if(parseInt(form[4].value) > parseInt(form[11].value)){
-                    swal("Uang pembayaran kurang!");
-                    bind(); 
-                    return false;
-                }
-                if(parseInt(form[4].value) < parseInt(form[11].value)){
-                    swal({
-                        title : 'Konfirmasi',
-                        text : 'Uang bayar lebih, masuk simpanan siswa ?',
-                        icon : 'warning',
-                        buttons : ['Tidak', 'Ya!'],
-                    }).then(function(value){
-                        if(value){
-                            $('input[name=set_simpanan]').val(1);
-                        }else{
-                            $('input[name=set_simpanan]').val(0);
-                        }
-                        document.getElementById('store').submit();
-                    });
+                var metode = $('input[name=metode_pembayaran]').val();
+                if(metode=="Tunai"){
+                    var form = $('#store').serializeArray();
+                    if(form[10].value==""){
+                        swal("Tanggal pembayaran kosong!");
+                        bind();
+                        return false;
+                    }
+                    if(form[11].value==""){
+                        swal("Uang pembayaran kosong!");
+                        bind();
+                        return false;
+                    }
+                    if(parseInt(form[4].value) > parseInt(form[11].value)){
+                        swal("Uang pembayaran kurang!");
+                        bind(); 
+                        return false;
+                    }
+                    if(parseInt(form[4].value) < parseInt(form[11].value)){
+                        swal({
+                            title : 'Konfirmasi',
+                            text : 'Uang bayar lebih, masuk simpanan siswa ?',
+                            icon : 'warning',
+                            buttons : ['Tidak', 'Ya!'],
+                        }).then(function(value){
+                            if(value){
+                                $('input[name=set_simpanan]').val(1);
+                            }else{
+                                $('input[name=set_simpanan]').val(0);
+                            }
+                            document.getElementById('store').submit();
+                        });
                 }else{
                     document.getElementById('store').submit();
                 }
