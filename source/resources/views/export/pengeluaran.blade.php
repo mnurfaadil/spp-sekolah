@@ -25,7 +25,7 @@ $total = 0;
     $url=null;
     $total =$total + intval($data->kredit); 
     if(isset($data->pengeluaran)){
-        $url = "nota/".$data->pengeluaran->foto;
+        $url = "nota/{$data->pengeluaran->foto}";
         $url = asset('').$url;
     }
     $temp = strtotime($data->created_at);
