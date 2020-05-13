@@ -23,7 +23,7 @@ $total = 0;
 @foreach($datas as $data)
 @php
     $total =$total + intval($data->kredit); 
-    $url = "nota/{$data->pengeluaran->foto}";
+    $url = "nota/{$data->foto}";
     $url = asset('').$url;
     $temp = strtotime($data->created_at);
     $tanggal = date('j - M - Y', $temp); 
