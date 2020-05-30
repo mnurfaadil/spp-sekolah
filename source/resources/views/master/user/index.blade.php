@@ -29,11 +29,6 @@ SPP | User Management
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                 data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
@@ -42,11 +37,11 @@ SPP | User Management
                                 data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
                                         <th data-field="id">No</th>
                                         <th data-field="name">Nama</th>
                                         <th data-field="username">Username</th>
                                         <th data-field="email">Email</th>
+                                        <th data-field="akses">Hak Akses</th>
                                         <th data-field="tanggal_bergabung">Tanggal Bergabung</th>
                                         <th data-field="action">Action</th>
                                     </tr>
@@ -54,16 +49,16 @@ SPP | User Management
                                 <tbody>
                                     @foreach($users as $data)
                                     <tr>
-                                        <td></td>
                                         <td><div style="text-align:center;">{{$no++}}</div></td>
                                         <td>{{$data->name}}</td>
                                         <td>{{$data->username}}</td>
                                         <td><div style="text-align:center;vertical-align:middle;">{{$data->email}}</div></td>
+                                        <td><div style="text-align:center">{{$data->role}}</div></td>
                                         <td><div style="text-align:center">{{$data->created_at}}</div></td>
                                         <td>
                                             <div style="text-align:center">
                                               <a href="#" class="btn btn-warning"
-                                              onclick="editConfirm( '{{$data->id}}', '{{$data->name}}', '{{$data->username}}','{{$data->email}}')"
+                                              onclick="editConfirm( {{$data}})"
                                               title="Edit"><i class="fa fa-edit"> Edit</i></a>
                                               <a href="{{ route('user.destroy',$data) }}" class="btn btn-danger"
                                               onclick="event.preventDefault();destroy('{{ route('user.destroy',$data) }}');"
@@ -113,6 +108,15 @@ SPP | User Management
                         <label class="control-label col-md-2">Password </label>
                         <input name='password' placeholder="Masukan password" type='text' title="Untuk pembuatan akun sementara akan menggunakan password default" value="12345" class='form-control' readonly required>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label">Hak Akses</label>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="role"  required>
+                                <option value="Sekolah">Sekolah</option>
+                                <option value="Yayasan">Yayasan</option>     
+                            </select>
+                        </div>
+                    </div>
             </div>
             <div class="modal-footer">
                 <div style="float: right">
@@ -137,8 +141,9 @@ SPP | User Management
               <h4 class="modal-title" id="modalUpdateLabel">Update User Data</h4>
             </div>
             <div class="modal-body">
-                <form id="editForm" role="form" method="put">
-                    {{csrf_field()}}
+                <form id="editForm" role="form" method="post">
+                    @method('PUT')
+                    @csrf
                     <div class="form-group">
                         <label class="control-label col-md-2">Nama </label>
                         <input name='nama' id="nama" placeholder="Masukan nama" type='text' class='form-control' required>
@@ -154,6 +159,15 @@ SPP | User Management
                     <div class="form-group">
                         <label class="control-label col-md-2">Password </label>
                         <input name='password' id="password" placeholder="Masukan password" type='password' title="Hanya dapat mengubah nama saja" value="12345" class='form-control' disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Hak Akses</label>
+                        <div class="chosen-select-single mg-b-20">
+                            <select class="form-control" name="role"  required id="role_edit" disabled>
+                                <option value="Sekolah">Sekolah</option>
+                                <option value="Yayasan">Yayasan</option>     
+                            </select>
+                        </div>
                     </div>
             </div>
             <div class="modal-footer">
@@ -193,12 +207,13 @@ SPP | User Management
 @push('scripts')
 
 <script>
-    function editConfirm(id, nama, username, email) 
+    function editConfirm(data) 
     {
-      $('#nama').attr('value', nama);
-      $('#username').attr('value', username);
-      $('#email').attr('value', email);
-      $('#editForm').attr('action',"{{ url('user') }}/"+id)
+      $('#nama').attr('value', data.name);
+      $('#username').attr('value', data.username);
+      $('#email').attr('value', data.email);
+      $('#role_edit').attr('value', data.role);
+      $('#editForm').attr('action',"{{ url('user') }}/"+data.id)
       $('#modalUpdate').modal();
     }
 

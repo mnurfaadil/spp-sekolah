@@ -8,6 +8,7 @@ use App\Student;
 use App\FinancingCategory;
 use App\Payment;
 use App\PaymentPeriodeDetail;
+use App\PaymentDetail;
 use App\Angkatan;
 use Illuminate\Support\Facades\Session;
 
@@ -26,7 +27,8 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $angkatan = Angkatan::where('status','<>','ALUMNI')->get();
+        // $angkatan = Angkatan::where('status','<>','ALUMNI')->get();
+        $angkatan = Angkatan::all();
         $students = Student::orderBy('updated_at','desc')->get();
         $no=1;
         $fil = '';
@@ -103,13 +105,20 @@ class StudentController extends Controller
             $req = $request->all();
 
             $date = $this->convertDateToSQLDate($req['tgl_masuk']);
-        
+            
             if (strlen($req['phone'])>14) {
                 return redirect()
                 ->route('students.index')
                 ->with('error', 'Inputan tidak valid!');
             }
-            Student::create([
+            $categories = FinancingCategory::join('financing_periodes','financing_periodes.financing_category_id','=','financing_categories.id')
+                            ->where('financing_periodes.major_id', $request->major_id)
+                            ->where('financing_periodes.angkatan_id', $request->angkatan)
+                            ->groupBy('financing_categories.id')
+                            ->selectRaw('financing_categories.*, financing_periodes.id as periode_id, financing_periodes.major_id, financing_periodes.angkatan_id, 
+                            financing_periodes.nominal')
+                            ->get();
+            $student = Student::create([
                 'id' => null,
                 'nis' => $req['nis'],
                 'nama' => $req['nama'],
@@ -122,40 +131,48 @@ class StudentController extends Controller
                 'alamat' => $req['alamat'],
                 'tgl_masuk' => $date,
                 'kelas' => $req['kelas'],
-                ]);
+            ]);
             $id = DB::getPdo()->lastInsertId();
-            $categories = FinancingCategory::all();
-            for ($i=0; $i < $categories->count(); $i++) 
-            { 
-                Payment::create([
-                    'financing_category_id' => $categories[$i]->id,
+            foreach ($categories as $category) {
+                $payment = Payment::create([
+                    'financing_category_id' => $category->id,
                     'student_id' => $id,
                     'jenis_pembayaran' => "Waiting",
                 ]);
-            }
-            $status = "Waiting";
-            $payment = Payment::where('student_id',$id)->get();
-            for ($i=0; $i < $categories->count(); $i++) {  
-                if($categories[$i]->jenis=="Bayar per Bulan"){
-                    for ($j=0; $j < $payment->count(); $j++) { 
-                        if($payment[$j]->financing_category_id==$categories[$i]->id){
-                            $periode = $categories[$i]->periode->count();
-                            for ($k=0; $k < $periode; $k++) {
-                                PaymentPeriodeDetail::create([
-                                    'payment_periode_id' => $categories[$i]->periode[$k]->id,
-                                    'payment_id' => $payment[$j]->id,
-                                    'user_id' => 0,
-                                    'status' => $status,
-                                ]);
-                            }
+                if($category->jenis=="Bayar per Bulan"){
+                    $temp = explode("-", $date);
+                    $thn = $temp[0];
+                    $tgl_hitung = "{$thn}-07-01";
+                    $time = strtotime($tgl_hitung);
+                    for ($j=0, $count=0; $j < 36; $j++) {
+                        $inc = "+{$j} month"; 
+                        $final = date("Y-m-d", strtotime($inc, $time));
+                        $status = "Waiting";
+                        PaymentDetail::create([
+                            'id' => null,
+                            'payment_id' => $payment->id,
+                            'payment_periode_id' => $category->periode_id,
+                            'bulan' => $final,
+                            'user_id' => 0,
+                            'status' => $status,
+                        ]);
+                        if($j%12==0){
+                            $count++;
                         }
                     }
+                }else{
+                    PaymentDetail::create([
+                        'id' => null,
+                        'payment_id' => $payment->id,
+                        'payment_periode_id' => $category->periode_id,
+                        'user_id' => 0,
+                        'status' => "Waiting"
+                    ]);
                 }
             }
           return redirect()
               ->route('students.index')
               ->with('success', 'Data siswa berhasil disimpan!');
-
         }catch(Exception $e){
           return redirect()
               ->route('students.create')

@@ -32,7 +32,8 @@ class PaymentController extends Controller
     public function index()
     {
         
-        $datas = FinancingCategory::selectRaw('financing_categories.*, getJumlahTunggakanKategori(financing_categories.id) as tunggakan, getCountNunggakPeriodeUseKategori(financing_categories.id) as tunggakan_periode')
+        $datas = FinancingCategory::selectRaw('financing_categories.*, getJumlahTunggakanKategori(financing_categories.id) as tunggakan, 
+        getCountNunggakPeriodeUseKategori(financing_categories.id) as tunggakan_periode')
                 ->orderBy('updated_at','desc')->get();
         $no = 1;
         return view('pembayaran.index', compact('datas', 'no'));
@@ -242,7 +243,9 @@ class PaymentController extends Controller
                 ['students.angkatan_id', '=',$request->angkatan],
             ])->orderBy('payments.updated_at', 'desc')->get();
         }else{
-            $payments = Payment::join('students','payments.student_id','=','students.id')->where('financing_category_id', $request->id_kategori)->orderBy('payments.updated_at', 'desc')->get();
+            $payments = Payment::join('students','payments.student_id','=','students.id')
+            ->where('financing_category_id', $request->id_kategori)
+            ->orderBy('payments.updated_at', 'desc')->get();
         }
 
         $datas = $payments;
@@ -255,10 +258,13 @@ class PaymentController extends Controller
         $kls = $request->kelas;
         $no = 1;
 
-        $majors = PaymentPeriode::select('major_id')->where('financing_category_id', $request->id_kategori)->groupBy('major_id')->get();
-        $angkatan = PaymentPeriode::select('angkatan_id')->where('financing_category_id', $request->id_kategori)->groupBy('angkatan_id')->get();
+        $majors = PaymentPeriode::select('major_id')->where('financing_category_id',
+        $request->id_kategori)->groupBy('major_id')->get();
+        $angkatan = PaymentPeriode::select('angkatan_id')->where('financing_category_id',
+        $request->id_kategori)->groupBy('angkatan_id')->get();
 
-        return view('pembayaran.show_sekali_bayar', compact('datas','financing','periode','no','payment_details','cicilans','majors','angkatan','fil','fil2','kls'));
+        return view('pembayaran.show_sekali_bayar', compact('datas','financing','periode',
+        'no','payment_details','cicilans','majors','angkatan','fil','fil2','kls'));
     }
 
     /**
@@ -393,60 +399,67 @@ class PaymentController extends Controller
         $req['date'] = date('Y-m-d', time());
         $req['user_id'] = Auth::user()->id;
         $obj = Student::where('id',$req['student_id'])->first();
-        $percent = $req['persentase'];
-        $nominal = intval($req['nominal'])-((intval($req['nominal'])*$percent)/100);
+        $percent = (int) $req['persentase'];
+        $nominal = intval($req['dump'])-((intval($req['dump'])*$percent)/100);
         if($req['metode_pembayaran']=='Tunai')
         {
-            $desc = "Pembayaran Tunai ".$req['financing_category']." dari ".$obj['nama']." kelas ".$obj['kelas']." ( ".$obj->major->nama." )"." diterima oleh ".$req['penerima'];
+            $cek = json_decode($req['data']);
+            $date = $this->convertToCorrectDateValue($request->tanggal_bayar);
+            $penerima = Auth::user()->name;
+            if($obj['kelas']=='ALUMNI')
+            {
+                $desc = "Pembayaran Tunai ".$req['financing_category']." dari ".$obj['nama']." ".$obj['kelas']." ( ".$obj->major->nama." )"." diterima oleh ".$penerima;
+            }else
+            {
+                $desc = "Pembayaran Tunai ".$req['financing_category']." dari ".$obj['nama']." kelas ".$obj['kelas']." ( ".$obj->major->nama." )"." diterima oleh ".$penerima;
+            }
+            
             $payment = Payment::findOrFail($req['payment_id']);
+            $detail_new = PaymentDetail::findOrFail($payment->detail->first()->id);
+
             $payment->jenis_pembayaran = "Tunai";
             $payment->persentase = $percent;
             $payment->save();
-            $date = $this->convertToCorrectDateValue($request->tanggal_bayar);
             
-            PaymentDetail::create([
+            $detail_new->tgl_dibayar = $date;
+            $detail_new->nominal = $nominal;
+            $detail_new->bulan = $date;
+            $detail_new->user_id = $req['user_id'];
+            $detail_new->status = "Lunas";
+            $detail_new->save();
+
+            $cicilan_new = Cicilan::create([
                 'id' => null,
-                'payment_id' => $payment->id,
+                'payment_detail_id' => $detail_new->id,
                 'tgl_dibayar' => $date,
                 'nominal' => $nominal,
-                'user_id' => $req['user_id'],
-                'status' => 'Lunas',
-                ]);
+                'user_id' => Auth::user()->id,
+            ]);
                 
-                $last_id = DB::getPdo()->lastInsertId();
+            $title = "Pembayaran Tunai {$req['financing_category']} {$obj['nama']}";
+            Income::create([
+                'id' => null,
+                'payment_detail_id' => $detail_new->id,
+                'cicilan_id' => $cicilan_new->id,
+                'title' => $title,
+                'description' => $desc,
+                'sumber' => "Siswa",
+                'nominal' => $nominal,
+            ]);
+            
+            $id = DB::getPdo()->lastInsertId();
 
-                Cicilan::create([
-                    'id' => null,
-                    'payment_detail_id' => $last_id,
-                    'tgl_dibayar' => $date,
-                    'nominal' => $nominal,
-                    'user_id' => Auth::user()->id,
-                ]);
-
-                
-                $title = "Pembayaran Tunai {$req['financing_category']} {$obj['nama']}";
-                Income::create([
-                    'id' => null,
-                    'payment_detail_id' => $last_id,
-                    'title' => $title,
-                    'description' => $desc,
-                    'sumber' => "Siswa",
-                    'nominal' => $nominal,
-                ]);
-                
-                $id = DB::getPdo()->lastInsertId();
-
-                Pencatatan::create([
+            Pencatatan::create([
                 'id' => null,
                 'expense_id' => 0,
                 'income_id' => $id,
                 'debit' => $nominal,
                 'description' => $desc,
                 'kredit' => 0,
-                ]);
-                    
+            ]);
+                
             if($request->set_simpanan == "1"){
-                $simpan = intval($request->nominal_bayar) - intval($request->nominal);
+                $simpan = intval($request->dump) - intval($request->nominal);
                 $obj->simpanan += $simpan;
                 $obj->save();
             }
@@ -678,7 +691,7 @@ class PaymentController extends Controller
         $no = 1;
         //data Pembiayaan
         $payments = Payment::where('id',$payment)->first();
-        $payment_details = PaymentDetail::where('payment_id',$payment)->orderBy('updated_at','desc')->get();
+        $payment_details = PaymentDetail::where('payment_id',$payment)->orderBy('bulan')->get();
 
         $date = $this->getTanggalHariIni();
         
@@ -765,7 +778,7 @@ class PaymentController extends Controller
             $data = PaymentDetail::findOrFail($req['id']);
             $bulan = $this->convertToCorrectDateValue($req['calendar']);
             $desc = "Pembayaran {$category->nama} untuk periode {$data->bulan} dari {$student->nama} kelas {$student->kelas} ( {$student->major->nama} ) dibayar pada {$bulan} diterima oleh {$penerima}";
-            $title = "Pembayaran {$category->nama} {$student->nama} periode {$data->bulan}";
+            $title = "{$category->nama} {$student->nama} periode {$data->bulan}";
             
             $data->user_id = $user;
             $data->tgl_dibayar = $bulan;

@@ -1,8 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Angkatan;
+
 use Illuminate\Http\Request;
+
+use App\Angkatan;
+use App\PaymentPeriode;
+use App\FinancingCategory;
+use DB;
 
 class AngkatanController extends Controller
 {
@@ -66,11 +71,27 @@ class AngkatanController extends Controller
                 'angkatan' => $req['angkatan'],
                 'tahun' => $req['tahun'],
                 'status' => $req['status'],
-              ]);
-          return redirect()
-              ->route('angkatan.index')
-              ->with('success', 'Data angkatan berhasil disimpan!');
-
+            ]);
+            $id = DB::getPdo()->lastInsertId();
+            $categories = FinancingCategory::join('financing_periodes','financing_periodes.financing_category_id','=','financing_categories.id')
+                            ->groupBy(['financing_categories.id','financing_periodes.major_id'])
+                            ->selectRaw('financing_categories.*, financing_periodes.id as periode_id, financing_periodes.major_id, financing_periodes.angkatan_id, 
+                            financing_periodes.nominal')
+                            ->get();
+            foreach ($categories as $category) {
+                $count_angkatan = $category->periode->groupBy('angkatan_id')->count();
+                if($count_angkatan>1){
+                    PaymentPeriode::create([
+                        'id' => null,
+                        'financing_category_id' => $category->id,
+                        'angkatan_id' => $id,
+                        'major_id' => $category->major_id
+                    ]);
+                }
+            }
+            return redirect()
+                ->route('angkatan.index')
+                ->with('success', 'Data angkatan berhasil disimpan!');
         }catch(Exception $e){
           return redirect()
               ->route('angkatan.create')

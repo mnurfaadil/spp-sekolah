@@ -62,7 +62,8 @@ SPP | Kategori Pembayaran
                                                 </td>
                                                 <td>
                                                 <div style="text-align:center">
-                                                <a href="{{route('periode.all.setting',[$periode->financing_category_id, $periode->major_id])}}" class="btn btn-info" style="margin:0;"><i class="fa fa-gear"></i> Setting</a>                                              
+                                                <a href="{{route('periode.all.setting',[$periode->financing_category_id, $periode->major_id])}}" 
+                                                class="btn btn-info" style="margin:0;"><i class="fa fa-gear"></i> Setting</a>                                              
                                               </div>
                                             </td>
                                           </tr>

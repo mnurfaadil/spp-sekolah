@@ -124,7 +124,7 @@
                                                         <ul role="menu"
                                                             class="dropdown-header-top author-log dropdown-menu animated zoomIn">
                                                             <li>
-                                                                <a title="Rekapitulasi" class="" href="{{route('password.edit')}}" aria-expanded="false">
+                                                                <a title="Ubah Password" class="" href="{{route('password.edit')}}" aria-expanded="false">
                                                                     <span class="fa fa-gears sub-icon-mg" aria-hidden="true"></span>
                                                                     <span class="mini-click-non ">Ubah Password</span>
                                                                 </a>

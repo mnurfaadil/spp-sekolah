@@ -45,9 +45,27 @@ class UserController extends Controller
     {
         $this->validate($request,[
             'nama' => 'required',
+            'username' => 'required',
             'email' => 'required',
             'password' => 'required',
+            'role' => 'required',
             ]);
+
+        $cek = User::where('username', $request->username)->count();
+        $cek2 = User::where('email', $request->email)->count();
+
+        if($cek > 0)
+        {
+            return redirect()
+              ->route('user.index')
+              ->with('error', 'Username telah digunakan !');
+        }
+        if($cek2 > 0)
+        {
+            return redirect()
+              ->route('user.index')
+              ->with('error', 'Email telah digunakan !');
+        }
             
         try {
             $req = $request->all();
@@ -56,6 +74,7 @@ class UserController extends Controller
                 'name' => $req['nama'],
                 'username' => $req['username'],
                 'email' => $req['email'],
+                'role' => $req['role'],
                 'password' => Hash::make($req['password']),
               ]);
           return redirect()
@@ -64,7 +83,7 @@ class UserController extends Controller
 
         }catch(Exception $e){
           return redirect()
-              ->route('user.create')
+              ->route('user.index')
               ->with('error', 'Gagal menambah user!');
         }
     }

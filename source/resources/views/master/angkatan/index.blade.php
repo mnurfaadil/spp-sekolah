@@ -141,11 +141,6 @@ SPP | Angkatan
                             <div class="sparkline13-graph">
                                 <div class="datatable-dashv1-list custom-datatable-overright">
                                     <div id="toolbar">
-                                        <select class="form-control dt-tb">
-                                            <option value="">Export Basic</option>
-                                            <option value="all">Export All</option>
-                                            <option value="selected">Export Selected</option>
-                                        </select>
                                     </div>
                                     <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                         data-show-columns="true" data-show-pagination-switch="true"
@@ -200,7 +195,6 @@ SPP | Angkatan
     </div>
 </div>
 <!-- Static Table End -->
-
 @endsection
 
 @push('styles')
@@ -238,6 +232,7 @@ SPP | Angkatan
         $('#a').focus();
         $('#edit-form').hide();
     }
+
 </script>
 <!-- data table JS
 		============================================ -->
@@ -265,14 +260,14 @@ SPP | Angkatan
 @endpush
 
 @push('breadcrumb-left')
-<h2>Menu angkatan</h2>
+<h2>Menu Angkatan</h2>
 @endpush
 @push('breadcrumb-right')
 <div style="float:right">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="margin-bottom:0">
             <li class="breadcrumb-item"><a href="{{ url('/')}}">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">angkatan</li>
+            <li class="breadcrumb-item active" aria-current="page">Angkatan</li>
         </ol>
     </nav>
 </div>

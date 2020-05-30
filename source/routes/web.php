@@ -122,7 +122,9 @@ Route::get('export/bulanan/detail/{nama}/{payment}','RekapController@kwitansiBul
 Route::post('export/sesekali/rekap/','RekapController@rekapSesekali')->name('pdf.print.rekap.sesekali');
 Route::get('export/sesekali/onepage/{siswa}/{payment}/{kategory}','RekapController@kwitansiSesekali')->name('pdf.print.sesekali');
 Route::get('export/sesekali/detail/{nama}/{payment}/{stat?}','RekapController@kwitansiSesekaliSatuan')->name('pdf.print.sesekali.detail');
-
+//ajax
+Route::get('export/ajax/major/{category}/{kelas?}','RekapController@ajaxMajor')->name('rekap.ajax.major');
+Route::get('export/ajax/kelas/{category}/{major?}','RekapController@ajaxKelas')->name('rekap.ajax.kelas');
 /**
  * Route Simpanan
  */

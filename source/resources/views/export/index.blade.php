@@ -116,10 +116,10 @@ SPP | Rekap
                         <div class="form-group">
                             <label class="control-label col-md-2">Jenis Kategori<kode>*</kode></label>
                             <div class="chosen-select-single mg-b-20">
-                                <select class="chosen-select" name="jenis_kategori" id="jenis_kelamin_add" required>
+                                <select class="chosen-select" name="jenis_kategori" id="category" required>
                                     <option value="">-- Pilih Kategori --</option>
                                     @foreach($categorys as $d)
-                                        <option @php value="{{$d->id}}">{{$d->nama}}</option>
+                                        <option value="{{$d->id}}">{{$d->nama}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -128,11 +128,7 @@ SPP | Rekap
                             <label class="control-label col-md-2">Jurusan<kode>*</kode></label>
                             <div class="chosen-select-single mg-b-20">
                                 <select class="chosen-select" name="major_id" id="major_id_add" required>
-                                    <option value="">-- Pilih Jurusan --</option>
                                     <option value="all">Semua</option>
-                                    @foreach($majors as $d)
-                                    <option @php value="{{$d->id}}">{{$d->nama}}</option>
-                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -140,18 +136,14 @@ SPP | Rekap
                             <label class="control-label col-md-2">Kelas<kode>*</kode></label>
                             <div class="chosen-select-single mg-b-20">
                                 <select class="chosen-select" name="kelas" id="kelas_add" required>
-                                    <option value="">-- Pilih Kelas --</option>
                                     <option value="all">Semua</option>
-                                    <option value="X">X</option>
-                                    <option value="XI">XI</option>
-                                    <option value="XII">XII</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <input type="reset" class="btn btn-danger" data-dismiss="modal" tabindex="-1" value="Close">
                     <button type='submit' class="btn btn-primary"><i class="fa fa-print"></i> Cetak</button>
                 </div>
             </form>
@@ -202,6 +194,61 @@ SPP | Rekap
 ============================================ -->
 <script src="{{ asset('assets/js/chosen/chosen.jquery.js')}}"></script>
 <script src="{{ asset('assets/js/chosen/chosen-active.js')}}"></script>
+
+<script>
+    function change_category()
+    {
+        var category = $('#category').val() == "" ? "NULL" : $('#category').val();
+        $.get('{{ url('') }}/export/ajax/major/' + category, function(data){
+            $('#major_id_add').empty()
+            var temp = {major_id: "all", nama: "Semua"};
+            data.unshift(temp);
+            $.each(data, function (i, val) {
+                $("#major_id_add").append(`<option value="${val.major_id}">${val.nama}</option>`); 
+            });
+        });
+        $.get('{{ url('') }}/export/ajax/kelas/' + category, function(data){
+            var temp = {major_id: "all", nama: "Semua"};
+            $('#kelas_add').empty()
+            data.unshift(temp);
+            $.each(data, function (i, val) {
+                if(i === 0)
+                {
+                    $("#kelas_add").append(`<option value="${val.major_id}">${val.nama}</option>`); 
+                }
+                else
+                {
+                    $("#kelas_add").append(`<option value="${val.kelas}">${val.kelas}</option>`); 
+                }
+            });
+        });
+    }
+
+    function change_major() {
+        var category = $('#category').val() == "" ? "NULL" : $('#category').val();
+        var major = $('#major_id_add').val() == "" ? "NULL" : $('#major_id_add').val();
+        $.get(`{{ url('') }}/export/ajax/kelas/${category}/${major}`, function(data){
+            var temp = {major_id: "all", nama: "Semua"};
+            $('#kelas_add').empty()
+            data.unshift(temp);
+            $.each(data, function (i, val) {
+                if(i === 0)
+                {
+                    $("#kelas_add").append(`<option value="${val.major_id}">${val.nama}</option>`); 
+                }
+                else
+                {
+                    $("#kelas_add").append(`<option value="${val.kelas}">${val.kelas}</option>`); 
+                }
+            });
+        });
+    }
+
+    $('document').ready(function () {
+        $('#category').change(change_category);
+        $('#major_id_add').change(change_major);
+    });
+</script>
 @endpush
 
 @push('breadcrumb-left')

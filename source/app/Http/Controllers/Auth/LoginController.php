@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 use App\User;
 
 class LoginController extends Controller
@@ -38,5 +41,25 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function login(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+        $fieldType = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        if(auth()->attempt(array($fieldType => $request->email, 'password' => $request->password)))
+        {
+            return redirect('home');
+        }
+        else
+        {
+            return redirect()
+                ->route('login')
+                ->with('error', 'Login gagal, anda tidak punya akses !');
+        }
     }
 }

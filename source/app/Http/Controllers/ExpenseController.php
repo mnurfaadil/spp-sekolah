@@ -192,7 +192,7 @@ class ExpenseController extends Controller
             $data->description = $req['description'];
             $data->sumber = $req['sumber'];
             $data->nominal = $req['nominal'];
-            $data->updated_at = $req['tanggal'];
+            $data->created_at = $req['tanggal'];
             $data->save();
 
             $desc = "Pembelian {$req['title']} oleh {$req['sumber']}";

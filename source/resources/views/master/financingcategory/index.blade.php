@@ -66,13 +66,13 @@ SPP | Kategori Pembayaran
                                         </td>
                                         <td>
                                             <div style="text-align: center">
-                                            @if($count_jurusan < 2)
-                                            <span class="label-warning label-3 label" style="font-size:10pt;color:black">{{$data->periode[0]->major->nama}}</span>
+                                            @if($count_jurusan < 2 )
+                                                <span class="label-warning label-3 label" style="font-size:10pt;color:black">{{$data->periode->first()->major->nama}}</span>
                                             @else
                                             <span class="label-purple label-6 label" style="font-size:10pt;">Semua Jurusan</span>
                                             @endif
                                             @if($count_angkatan < 2)
-                                            <span class="label-success label-3 label" style="font-size:10pt;color:black">Angkatan ke - {{$data->periode[0]->angkatan->angkatan}} ({{$data->periode[0]->angkatan->tahun}})</span>
+                                            <span class="label-success label-3 label" style="font-size:10pt;color:black">Angkatan ke - {{$data->periode->first()->angkatan->angkatan}} ({{$data->periode->first()->angkatan->tahun}})</span>
                                             @else
                                             <span class="label-danger label-1 label" style="font-size:10pt">Semua Angkatan</span>
                                             @endif

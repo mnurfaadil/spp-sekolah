@@ -99,7 +99,15 @@ SPP | Pembayaran {{$financing->nama}}
                                 <tbody>
                                     @foreach($datas as $data)
                                     @php
-                                    $akumulasi = number_format($data->periode[0]->nominal,0,',','.');
+                                    if(isset($data->periode[0]->nominal)){
+                                        $akumulasi = number_format($data->periode[0]->nominal,0,',','.');
+                                        $besaran = intval($data->periode[0]->nominal);
+                                    }
+                                    else
+                                    {
+                                        $akumulasi = 0;
+                                        $besaran = 0;
+                                    }
                                     $piece = $payment_details->where('payment_id', $data->id);
                                     $terbayar = 0;
                                     $i = '';
@@ -107,11 +115,14 @@ SPP | Pembayaran {{$financing->nama}}
                                     foreach($piece as $p){
                                         $i=$p;
                                     }
-                                    $piece_cicilan = $cicilans->where('payment_detail_id', $i->id);
-                                    foreach($piece_cicilan as $p){
-                                        $terbayar += $p->nominal;
+                                    if(isset($i->id)){
+                                        $piece_cicilan = $cicilans->where('payment_detail_id', $i->id);
+                                        foreach($piece_cicilan as $p){
+                                            $terbayar += $p->nominal;
+                                        }
+                                    }else{
+                                        $terbayar += 0;
                                     }
-                                    $besaran = intval($data->periode[0]->nominal);
                                     $potongan = floor($besaran*$data->persentase/100);
                                     $sisa = $besaran - $potongan - $terbayar;
                                     @endphp
@@ -171,6 +182,8 @@ SPP | Pembayaran {{$financing->nama}}
                                         </td>
                                         <td>
                                             <div style="text-align:center">
+                                                {{$data->jenis_pembayaran}}
+                                                {{$data->detail->first()}}
                                                 @if($data->jenis_pembayaran=="Waiting" || $data->jenis_pembayaran=="Nunggak")
                                                 <button class="btn btn-warning"
                                                     onclick="addConfirm({{$data}},'{{$akumulasi}}')"
@@ -182,9 +195,11 @@ SPP | Pembayaran {{$financing->nama}}
                                                     class="btn btn-primary" title="Cetak Bukti Pembayaran"
                                                     style="color:white;"><i class="fa fa-eye"> Rincian</i></a>
                                                 @else
-                                                <a href="{{ route('pdf.print.sesekali.detail',[$data->student->id,$data->detail[1]->id, 'tunai'])}}"
-                                                    class=" btn btn-success" target="_blank" title="Cetak kwitansi">
-                                                    <i class="fa fa-print"></i>&nbsp;Cetak</a>
+                                                    @if($data->detail->first() !== null)
+                                                        <a href="{{ route('pdf.print.sesekali.detail',[$data->student->id,$data->detail->first()->id, 'tunai'])}}"
+                                                            class=" btn btn-success" target="_blank" title="Cetak kwitansi">
+                                                        <i class="fa fa-print"></i>&nbsp;Cetak</a>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
@@ -217,11 +232,13 @@ SPP | Pembayaran {{$financing->nama}}
                     <form action="{{ route('payment.storeMethod') }}" role="form" method="post" id="store">
                         {{csrf_field()}}
                         <input type="hidden" name="payment_id">
+                        <input type="hidden" name="data">
                         <input type="hidden" name="financing_category_id" value="{{$financing->id}}">
                         <input type="hidden" name="financing_category" value="{{$financing->nama}}">
                         <input type="hidden" name="nominal" value="{{$financing->besaran}}">
                         <input type="hidden" name="student_id" id="student_id_add" value="">
                         <input type="hidden" name="penerima" value="{{ Auth::user()->nama }}">
+                        <input type="hidden" name="dump" id="dump">
                         <div class="row mb-3">
                             <div class="col-md-3 col-sm-3">
                                 Pembiayaan
@@ -264,7 +281,8 @@ SPP | Pembayaran {{$financing->nama}}
                                 <label>Nominal Pembayaran</label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><strong>Rp.</strong></span>
-                                    <input type="number" min="0" class="form-control" name="nominal_bayar" id="nominal_bayar_add" value="" placeholder="Masukan Nominal pembayaran">
+                                    <input type="number" min="0" class="form-control" name="nominal_bayar" id="nominal_bayar_add" value="" 
+                                    placeholder="Masukan Nominal pembayaran">
                                 </div>
                             </div>
                         </div>
@@ -306,7 +324,6 @@ SPP | Pembayaran {{$financing->nama}}
     kode {
         color: red;
     }
-
 </style>
 @endpush
 
@@ -318,10 +335,15 @@ SPP | Pembayaran {{$financing->nama}}
     }
 
     function addConfirm(data, nominal) {
+        $('input[name=persentase]').val(0);
+        $('input[name=data]').attr('value', JSON.stringify(data));
         $('input[name=payment_id]').attr('value', data.id);
         $('input[name=student_id]').attr('value', data.student.id);
         $('input[name=financing_category_id]').attr('value', data.financing_category_id);
         $('input[name=nominal]').attr('value', data.periode[0].nominal);
+        $('input[name=nominal_bayar]').attr('value', data.periode[0].nominal);
+        $('input[name=nominal_bayar]').attr('min', data.periode[0].nominal);
+        $('input[name=dump]').attr('value', data.periode[0].nominal);
         $('#nominal_show').html(nominal);
         $('#modalAdd').modal();
     }
@@ -333,8 +355,8 @@ SPP | Pembayaran {{$financing->nama}}
             $('input[name=nominal_bayar]').attr('required', true);
             $('#tanggal').show();
         }else{
-            $('input[name=tanggal_bayar]').attr('required', false);
-            $('input[name=nominal_bayar]').attr('required', false);
+            $('input[name=tanggal_bayar]').removeAttr('required');
+            $('input[name=nominal_bayar]').removeAttr('required');
             $('#tanggal').hide();
         }
     });
@@ -346,11 +368,30 @@ SPP | Pembayaran {{$financing->nama}}
             $('input[name=nominal_bayar]').attr('required', true);
             $('#tanggal').show();
         }else{
-            $('input[name=tanggal_bayar]').attr('required', false);
-            $('input[name=nominal_bayar]').attr('required', false);
+            $('input[name=tanggal_bayar]').removeAttr('required');
+            $('input[name=nominal_bayar]').removeAttr('required');
             $('#tanggal').hide();
         }
     });
+
+    function change_persentase()
+    {
+        var temp = parseInt($('#dump').val());
+        var pers = parseInt($('#persentase_add').val());
+        var potongan = temp * ( pers / 100 );
+        potongan = potongan.toString() == 'NaN' ? 0 : potongan;
+        var number = temp
+        if(pers <= 100 && pers >= 0){
+            number = temp - potongan;
+        }
+        $('input[name=nominal]').val(number);
+        $('input[name=nominal_bayar]').attr('min',number);
+        var format = new Intl.NumberFormat(['ban', 'id']).format(number);
+        $('#nominal_show').html(format);
+    }
+    $('#persentase_add').change(change_persentase);
+    $('#persentase_add').keyup(change_persentase);
+
 
     function confirm() {
         event.preventDefault();
@@ -361,25 +402,26 @@ SPP | Pembayaran {{$financing->nama}}
             buttons: ["Cancel", "Yes!"],
         }).then(function (value) {
             if (value) {
-                var metode = $('input[name=metode_pembayaran]').val();
-                if(metode=="Tunai") {
+                var metode = $('select[name=metode_pembayaran]').val();
+                if(metode=="Tunai") 
+                {
                     var form = $('#store').serializeArray();
-                    if(form[10].value==""){
+                    if(form[12].value==""){
                         swal("Tanggal pembayaran kosong!");
                         bind();
                         return false;
                     }
-                    if(form[11].value==""){
+                    if(form[13].value==""){
                         swal("Uang pembayaran kosong!");
                         bind();
                         return false;
                     }
-                    if(parseInt(form[4].value) > parseInt(form[11].value)){
+                    if(parseInt(form[5].value) > parseInt(form[13].value)){
                         swal("Uang pembayaran kurang!");
-                        bind(); 
+                        bind();
                         return false;
                     }
-                    if(parseInt(form[4].value) < parseInt(form[11].value)){
+                    if(parseInt(form[5].value) < parseInt(form[13].value)){
                         swal({
                             title : 'Konfirmasi',
                             text : 'Uang bayar lebih, masuk simpanan siswa ?',
@@ -394,7 +436,13 @@ SPP | Pembayaran {{$financing->nama}}
                             document.getElementById('store').submit();
                         });
                     }
-                }else{
+                    else
+                    {
+                        document.getElementById('store').submit();
+                    }
+                }
+                else
+                {
                     document.getElementById('store').submit();
                 }
             } else {

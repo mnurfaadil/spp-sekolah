@@ -47,10 +47,16 @@ SPP | Kategori Pembayaran
                                 </div>
                             </div>
                             <div class="login-btn-inner">
-                                <div class="inline-remember-me">
+                                <div class="inline-remember-me">    
+                                @if(isset($periodes->first()->angkatan->status) && $periodes->first()->angkatan->status=="ALUMNI")
+                                    <div class="alert alert-info" role="alert" style="text-align:center; margin-bottom:0px;padding-top:5px;padding-bottom:5px;">
+                                        <strong>Alumni</strong>
+                                    </div>
+                                @else
                                     <button class="btn btn-sm btn-primary pull-right login-submit-cs"
                                         type="submit">Ubah</button>
                                     <label>
+                                @endif
                                 </div>
                             </div>
                         </form>

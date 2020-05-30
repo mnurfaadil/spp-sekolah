@@ -15,6 +15,7 @@ use App\PaymentPeriodeDetail;
 use App\Major;
 use App\Expense;
 use App\Cicilan;
+use App\ViewTunggakan;
 
 use PDF; 
 use DB; 
@@ -32,11 +33,11 @@ class RekapController extends Controller
     public function index()
     {
         $categorys = FinancingCategory::join('payments','payments.financing_category_id','=','financing_categories.id')
-                    ->join('payment_details','payment_details.payment_id','=','payments.id')
-                    ->where('payment_details.status','Nunggak')
-                    ->groupBy('financing_categories.id')
-                    ->get();
-        $majors = Major::all();
+        ->join('payment_details','payment_details.payment_id','=','payments.id')
+        ->selectRaw('financing_categories.*')
+        ->where('payment_details.status','Nunggak')
+        ->groupBy('financing_categories.id')
+        ->get();
         $rekap = DB::table('rekap_view')->first();
         $sum = 0;
         
@@ -51,7 +52,64 @@ class RekapController extends Controller
             $sum += $sisa;
         }
         $rekap->tunggakan = $sum;
-        return view('export.index',compact('categorys','majors','rekap'));
+        return view('export.index',compact('categorys','rekap'));
+    }
+
+    public function ajaxMajor($category, $kelas = '')
+    {
+        if($kelas != '')
+        {
+            return FinancingCategory::join('payments','payments.financing_category_id','=','financing_categories.id')
+                        ->join('payment_details','payment_details.payment_id','=','payments.id')
+                        ->join('students','students.id','=','payments.student_id')
+                        ->join('majors','majors.id','=','students.major_id')
+                        ->join('angkatans','angkatans.id','=','students.angkatan_id')
+                        ->selectRaw('majors.id as major_id, majors.nama')
+                        ->where('payment_details.status','Nunggak')
+                        ->where('financing_categories.id', $category)
+                        ->where('students.kelas', $kelas)
+                        ->groupBy('majors.id')
+                        ->get();
+        }
+        return FinancingCategory::join('payments','payments.financing_category_id','=','financing_categories.id')
+                    ->join('payment_details','payment_details.payment_id','=','payments.id')
+                    ->join('students','students.id','=','payments.student_id')
+                    ->join('majors','majors.id','=','students.major_id')
+                    ->join('angkatans','angkatans.id','=','students.angkatan_id')
+                    ->selectRaw('majors.id as major_id, majors.nama')
+                    ->where('payment_details.status','Nunggak')
+                    ->where('financing_categories.id', $category)
+                    ->groupBy('majors.id')
+                    ->get();
+    }
+
+    public function ajaxKelas($category, $major = '')
+    {
+        if($major != '')
+        {
+            return FinancingCategory::join('payments','payments.financing_category_id','=','financing_categories.id')
+                        ->join('payment_details','payment_details.payment_id','=','payments.id')
+                        ->join('students','students.id','=','payments.student_id')
+                        ->join('majors','majors.id','=','students.major_id')
+                        ->join('angkatans','angkatans.id','=','students.angkatan_id')
+                        ->selectRaw('students.kelas')
+                        ->where('payment_details.status','Nunggak')
+                        ->where('financing_categories.id', $category)
+                        ->where('majors.id', $major)
+                        ->groupBy('students.kelas')
+                        ->get();
+        }
+        return FinancingCategory::join('payments','payments.financing_category_id','=','financing_categories.id')
+                    ->join('payment_details','payment_details.payment_id','=','payments.id')
+                    ->join('students','students.id','=','payments.student_id')
+                    ->join('majors','majors.id','=','students.major_id')
+                    ->join('angkatans','angkatans.id','=','students.angkatan_id')
+                    ->selectRaw('students.kelas')
+                    ->where('payment_details.status','Nunggak')
+                    ->where('financing_categories.id', $category)
+                    ->groupBy('students.kelas')
+                    ->get();
+
     }
 
     public function print(Request $request) 
@@ -73,8 +131,7 @@ class RekapController extends Controller
                         ->whereMonth('incomes.created_at',$request->bulan)
                         ->whereYear('incomes.created_at',$request->tahun)
                         ->where([
-                            ['debit','<>','0'],
-                            ['sumber','<>','Siswa']
+                            ['debit','<>','0']
                         ])->get();
             }
             elseif(isset($request->tahun)){   
@@ -82,8 +139,7 @@ class RekapController extends Controller
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
                         ->whereYear('incomes.created_at',$request->tahun)
                         ->where([
-                            ['debit','<>','0'],
-                            ['sumber','<>','Siswa']
+                            ['debit','<>','0']
                         ])->get();
             }
             elseif(isset($request->bulan)){
@@ -91,14 +147,12 @@ class RekapController extends Controller
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
                         ->whereMonth('incomes.created_at',$request->bulan)
                         ->where([
-                            ['debit','<>','0'],
-                            ['sumber','<>','Siswa']
+                            ['debit','<>','0']
                         ])->get();
             }else{
                 $datas = Pencatatan::join('incomes','incomes.id','=','pencatatans.income_id')
                         ->where([
-                            ['debit','<>','0'],
-                            ['sumber','<>','Siswa']
+                            ['debit','<>','0']
                         ])->orderBy('pencatatans.updated_at', 'desc')
                         ->get();
             }
@@ -142,7 +196,7 @@ class RekapController extends Controller
 
         }else{
             $rincian = "Buku Besar";
-            $title = "Laporan Keuangan";
+            $title = "Buku Besar";
             $datas = Pencatatan::all();
             $pdf = PDF::loadView('export.bukubesar',compact('tanggal','user','rincian','datas','no','title'));
             $pdf->setPaper('A4', 'potrait');
@@ -246,6 +300,7 @@ class RekapController extends Controller
         $user= Auth::user()->name;
         $siswa = Student::where('id',$siswa)->first();
         $data = PaymentDetail::where('id',$detail)->first();
+
         $d = "Pembayaran {$data->payment->category->nama} untuk periode {$data->bulan}";
         
         $data['tanggal'] = $this->getTanggalHariIni();
@@ -284,9 +339,6 @@ class RekapController extends Controller
         } catch (Throwable $th) {
             abort(500);die;
         }
-
-        // echo '<pre>';
-        // var_dump($datas);die;
         
         $pdf = PDF::loadView('export.kwitansi_rekap',compact('user','siswa','data','no','datas'));
         $pdf->setPaper('A4', 'potrait');
@@ -313,27 +365,25 @@ class RekapController extends Controller
     {
 
         if (!isset($request->jenis_kategori) || !isset($request->major_id) || !isset($request->kelas)) {
-            abort(404);
+            return redirect()
+                ->route('rekap.index')
+                ->with('error', 'Filter data ada yang kosong');
         }
 
-        $req = $request->all();
+        $req = $request->all(); 
 
         $kategori = FinancingCategory::findOrFail($request->jenis_kategori);
         
+
         $no =1;
         $title="Rekapitulasi Tunggakan {$kategori['nama']}";
         
         if($kategori['jenis']=="Bayar per Bulan"){
-            $datas=DB::table('students')
-                ->selectRaw('students.*,getNominalTerbayarBulanan(payments.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, getAkumulasiPerBulan(payments.id) AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_category_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
-                ->leftJoin('majors','majors.id','=','students.major_id')
-                ->leftJoin('payments','payments.student_id','=','students.id')
-                ->leftJoin('financing_categories','financing_categories.id','=','payments.financing_category_id')
-                ->leftJoin('payment_details','payment_details.payment_id','=','payments.id')
-                ->get();
-            if($req['jenis_kategori'] != "all"){
-                $datas = $datas->where('financing_category_id', $req['jenis_kategori']);
-            }
+            $datas = Payment::
+            where('financing_category_id', $kategori->id)
+            ->orderBy('updated_at','desc')->get();
+            $datas = ViewTunggakan::where('financing_category_id', $kategori->id)->get();
+
             if($req['major_id'] != "all"){
                 $datas = $datas->where('major_id', $req['major_id']);
             }
@@ -349,12 +399,13 @@ class RekapController extends Controller
             $sum = 0;
             $no = 1;
             $payments = Payment::join('students','students.id','=','payments.student_id')
-                        ->join('payment_details','payment_details.id','=','payments.id')
+                        ->join('payment_details','payment_details.payment_id','=','payments.id')
                         ->where('payment_details.status', '=', 'Nunggak')
+                        ->where('payments.financing_category_id', $request->jenis_kategori)
                         ->get();
             if($req['major_id']!="all" && $req['kelas']!="all"){
                 $payments = Payment::join('students','students.id','=','payments.student_id')
-                        ->join('payment_details','payment_details.id','=','payments.id')
+                        ->join('payment_details','payment_details.payment_id','=','payments.id')
                         ->where('payment_details.status', '=', 'Nunggak')
                         ->where('students.major_id', $req['major_id'])
                         ->where('students.kelas', $req['kelas'])
@@ -362,18 +413,28 @@ class RekapController extends Controller
                         ->get();
             }elseif($req['kelas']!="all"){
                 $payments = Payment::join('students','students.id','=','payments.student_id')
-                ->join('payment_details','payment_details.id','=','payments.id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
                 ->where('payment_details.status', '=', 'Nunggak')->where('students.kelas', $req['kelas'])
                 ->where('financing_category_id', $req['jenis_kategori'])
                 ->get();
             }elseif($req['major_id']!="all"){
                 $payments = Payment::join('students','students.id','=','payments.student_id')
-                        ->join('payment_details','payment_details.id','=','payments.id')
+                        ->join('payment_details','payment_details.payment_id','=','payments.id')
                         ->where('payment_details.status', '=', 'Nunggak')->where('students.major_id', $req['major_id'])
                         ->where('financing_category_id', $req['jenis_kategori'])
                         ->get();
             }
-            $datas = $payments;
+            $datas = Payment::all();
+
+            $filter = $datas->where('financing_category_id', $req['jenis_kategori']);
+            
+            $datas = $filter;
+            
+
+            // echo '<pre>';
+            // var_dump ($req); echo"<hr>";
+            // var_dump($filter->first()->detail);die;
+
             $pdf = PDF::loadView('export.tunggakan_sekali',compact('no','title','datas'));
             //$pdf->setPaper('A4', 'landscape');
             $pdf->setPaper('A4', 'potrait');
@@ -409,47 +470,71 @@ class RekapController extends Controller
             $payments = Payment::join('students','payments.student_id','=','students.id')->where([
                 ['financing_category_id', '=',$request->id],
                 ['students.major_id', '=',$request->jurusan],
-            ])->orderBy('payments.updated_at', 'desc')->get();
+            ])->orderBy('payments.updated_at', 'desc')
+            ->selectRaw('payments.*')
+            ->get();
         }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan=='') {
             $payments = Payment::join('students','payments.student_id','=','students.id')->where([
                 ['financing_category_id', '=',$request->id],
                 ['students.kelas', '=',$request->kelas],
-            ])->orderBy('payments.updated_at', 'desc')->get();
+            ])->orderBy('payments.updated_at', 'desc')
+            ->selectRaw('payments.*')
+            ->get();
         }elseif ($request->jurusan=='' && $request->kelas=='' && $request->angkatan!='') {
             $payments = Payment::join('students','payments.student_id','=','students.id')->where([
                 ['financing_category_id', '=',$request->id],
                 ['students.angkatan_id', '=',$request->angkatan],
-            ])->orderBy('payments.updated_at', 'desc')->get();
+            ])->orderBy('payments.updated_at', 'desc')
+            ->selectRaw('payments.*')
+            ->get();
         }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan=='') {
             $payments = Payment::join('students','payments.student_id','=','students.id')->where([
                 ['financing_category_id', '=',$request->id],
                 ['students.kelas', '=',$request->kelas],
                 ['students.major_id', '=',$request->jurusan],
-            ])->orderBy('payments.updated_at', 'desc')->get();
+            ])->orderBy('payments.updated_at', 'desc')
+            ->selectRaw('payments.*')
+            ->get();
         }elseif ($request->jurusan=='' && $request->kelas!='' && $request->angkatan!='') {
             $payments = Payment::join('students','payments.student_id','=','students.id')->where([
                 ['financing_category_id', '=',$request->id],
                 ['students.kelas', '=',$request->kelas],
                 ['students.angkatan_id', '=',$request->angkatan],
-            ])->orderBy('payments.updated_at', 'desc')->get();
+            ])->orderBy('payments.updated_at', 'desc')
+            ->selectRaw('payments.*')
+            ->get();
         }elseif ($request->jurusan!='' && $request->kelas=='' && $request->angkatan!='') {
             $payments = Payment::join('students','payments.student_id','=','students.id')->where([
                 ['financing_category_id', '=',$request->id],
                 ['students.major_id', '=',$request->jurusan],
                 ['students.angkatan_id', '=',$request->angkatan],
-            ])->orderBy('payments.updated_at', 'desc')->get();
+            ])->orderBy('payments.updated_at', 'desc')
+            ->selectRaw('payments.*')
+            ->get();
         }elseif ($request->jurusan!='' && $request->kelas!='' && $request->angkatan!='') {
             $payments = Payment::join('students','payments.student_id','=','students.id')->where([
                 ['financing_category_id', '=',$request->id],
                 ['students.kelas', '=',$request->kelas],
                 ['students.major_id', '=',$request->jurusan],
                 ['students.angkatan_id', '=',$request->angkatan],
-            ])->orderBy('payments.updated_at', 'desc')->get();
+            ])->orderBy('payments.updated_at', 'desc')
+            ->selectRaw('payments.*')
+            ->get();
         }else{
-            $payments = Payment::join('students','payments.student_id','=','students.id')->where('financing_category_id', $request->id)->orderBy('payments.updated_at', 'desc')->get();
+            $payments = Payment::join('students','payments.student_id','=','students.id')->where('financing_category_id', $request->id)
+            ->selectRaw('payments.*')
+            ->orderBy('payments.updated_at', 'desc')->get();
         }
 
         $datas = $payments;
+
+        // echo '<pre>';
+        // foreach ($datas as $data) {
+        //     $print = "{$data->student->nama} | {$data->student->kelas} | {$data->student->major->inisial} | {$data->id} |";
+        //     var_dump ($data->detail->first()); echo"<hr>";
+        //     var_dump ($print); echo"<hr>";
+        // }
+        // var_dump($datas->first());die;
 
         $title="Rekapitulasi Pembiayaan {$cek->nama}";
         $pdf = PDF::loadView('export.rekap_sekali',compact('no','title','datas'));
@@ -484,6 +569,7 @@ class RekapController extends Controller
 
         $pdf = PDF::loadView('export.kwitansi_sekali_satuan',compact('user','siswa','data','no'));
         //$pdf->setPaper('A4', 'landscape');
+        // $customPaper = array(0,0,297.64,420.94);
         $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }
@@ -493,17 +579,20 @@ class RekapController extends Controller
         $no = 1;
         $user= Auth::user()->name;
         $siswa = Student::where('id',$siswa)->first();
+        $cek = PaymentDetail::select('id')->where('payment_id', $payment)->first();
         // $datas = PaymentDetail::where([
         //     ['payment_id','=',$payment],
         //     ['status','<>',"Waiting"]
         // ])->get();
-        $datas = Cicilan::where('payment_detail_id', $payment)->get();
-        $source = Cicilan::where('payment_detail_id', $payment)->first();
+        $datas = Cicilan::where('payment_detail_id', $cek->id)->get();
+        $source = Cicilan::where('payment_detail_id', $cek->id)->first();
+        
         if($datas->count()<1){
             return redirect()
                 ->route('payment.details.cicilan',[$category, $siswa, $payment])
                 ->with('error','Belum ada data cicilan');
         }
+
         try {
             $data['tanggal'] = $this->getTanggalHariIni();
             $data['waktu'] = $this->getWaktuHariIni();
@@ -513,10 +602,10 @@ class RekapController extends Controller
             $data['jurusan'] = $source->detail->payment->student->major->nama;
             $data['kategori'] = $source->detail->payment->category->nama;
         } catch (Throwable $th) {
-            abort(500);die;
+            abort(500);
         }
         
-        $pdf = PDF::loadView('export.kwitansi_sekali_rekap',compact('user','siswa','data','no','datas'));
+        $pdf = PDF::loadView('export.kwitansi_sekali_rekap', compact('user','siswa','data','no','datas'));
         $pdf->setPaper('A4', 'potrait');
         return $pdf->stream();
     }

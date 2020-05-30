@@ -177,7 +177,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                                 <td>
                                                     <div style="text-align: center">
                                                     @if($data->status="Lunas" && $data->tgl_dibayar)
-                                                    <a href="{{ route('pdf.print.bulanan.detail',[1,1])}}" class="btn btn-success" style="color:white;margin-top:0" target="_blank"><i class="fa fa-print"></i></a>
+                                                    <a href="{{ route('pdf.print.bulanan.detail',[$payment_details->first()->payment->student->id, $data->id])}}" class="btn btn-success" style="color:white;margin-top:0" target="_blank"><i class="fa fa-print"></i></a>
                                                     @else
                                                       <button class="btn btn-primary" title="Atur Pembayaran" onclick="addConfirm({{$data}})"><i class="fa fa-credit-card"></i></button>
                                                     @endif
@@ -408,7 +408,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
             event.preventDefault();
             swal({
                 title: 'Apakah anda yakin?',
-                text: 'Data yang sudah dimasukan tidak dapat diubah!',
+                text: 'Konfirmasi status pembayaran!',
                 icon: 'warning',
                 buttons: ["Cancel", "Yes!"],
             }).then(function (value) {

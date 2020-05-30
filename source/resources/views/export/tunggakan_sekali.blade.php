@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<table class="table1 table-content" style="margin-left: -20px">
+<table class="table1">
     <tr>
         <th>No</th> 
         <th>Nama</th>
@@ -30,10 +30,13 @@ $total = [0,0,0,0];
   $terbayar = intval($detail->cicilan->sum('nominal'));
   $potongan  = intval($k->persentase)*$nominal/100;
   $sisa = $nominal - ($terbayar + $potongan);
-  $total[0] += $nominal;
-  $total[1] += $potongan;
-  $total[2] += $terbayar;
-  $total[3] += $sisa;
+  if($detail->status=="Nunggak")
+  {
+    $total[0] += $nominal;
+    $total[1] += $potongan;
+    $total[2] += $terbayar;
+    $total[3] += $sisa;
+  }
   if($k->jenis_pembayaran=="Waiting"){
     $keterangan = "Unconfirmed";
   }elseif($k->jenis_pembayaran=="Cicilan"){
@@ -42,7 +45,8 @@ $total = [0,0,0,0];
     $keterangan = "Nunggak";
   }
 @endphp
-    <tr>
+  @if($detail->status=="Nunggak")
+    <tr class="row-content">
         <td>{{$no++}}</td>
         <td style="text-align:left;">{{$k->student->nama}}</td>
         <td>{{$k->student->kelas}}&nbsp;-&nbsp;{{$k->student->major->inisial}}</td>
@@ -52,13 +56,14 @@ $total = [0,0,0,0];
         <td style="text-align:right">{{number_format($sisa,0,',','.')}}</td>
         <td>{{$keterangan}}</td>
     </tr>
+  @endif
 @endforeach
     <tr class="footer-section">
         <th colspan="3" style="text-align:center"><span style="font-size:20px;font-weight:bold;">Total </span></th>
-        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
-        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
-        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
-        <th style="text-align:right;font-size:16pt;font-weight:bold;">{{number_format($total[3],0,',','.')}}</th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[3],0,',','.')}}</th>
         <th>&nbsp;</th>
     </tr>
 </table>

@@ -80,7 +80,8 @@ class FinancingCategoryController extends Controller
         $jurusan = Major::all();
         $murid = Student::all();
 
-        $filter_angkatan = $angkatan->where('status','<>','ALUMNI');
+        // $filter_angkatan = $angkatan->where('status','<>','ALUMNI');
+        $filter_angkatan = $angkatan->all();
     
         if($req['jurusan']=="all"){
             $req['jurusan']=0;
@@ -380,7 +381,7 @@ class FinancingCategoryController extends Controller
         }catch(Exception $e){
         return redirect()
             ->route('financing.create')
-            ->with('error', 'Data jurursan gagal disimpan!');
+            ->with('error', 'Data gagal disimpan!');
         }
         
     }

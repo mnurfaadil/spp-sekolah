@@ -18,7 +18,6 @@
         <th >Potongan</th>
         <th >Terbayar</th>
         <th >Sisa</th>
-        <th >Metode</th>
         <th >Keterangan</th>
     </tr>
 @php
@@ -45,7 +44,6 @@
         <td style="text-align:right">{{number_format($potongan,0,',','.')}}</td>
         <td style="text-align:right">{{number_format($terbayar,0,',','.')}}</td>
         <td style="text-align:right">{{number_format($sisa,0,',','.')}}</td>
-        <td>{{$data->jenis_pembayaran}}</td>
         <td>
             @if($sisa==0 && ($data->jenis_pembayaran == "Cicilan" || $data->jenis_pembayaran == "Tunai"))
                 Lunas
@@ -67,7 +65,6 @@
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
         <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[3],0,',','.')}}</th>
-        <th class="footer-right">&nbsp;</th>
         <th class="footer-right">&nbsp;</th>
     </tr>
 </table>

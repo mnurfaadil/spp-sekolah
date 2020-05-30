@@ -69,11 +69,6 @@ SPP | Siswa
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
@@ -185,6 +180,7 @@ SPP | Siswa
                                             <option value="X">X</option>
                                             <option value="XI">XI</option>
                                             <option value="XII">XII</option>
+                                            <option value="ALUMNI">ALUMNI</option>
                                         </select>
                                     </div>
                                 </div>
@@ -299,6 +295,7 @@ SPP | Siswa
                                         <option value="X">X</option>
                                         <option value="XI">XI</option>
                                         <option value="XII">XII</option>
+                                        <option value="ALUMNI">ALUMNI</option>
                                     </select>
                                 </div>
                             </div>
@@ -317,7 +314,7 @@ SPP | Siswa
                             </div>  
                             <div class="form-group">
                                 <label class="control-label col-md-2">Simpanan<kode>*</kode></label>
-                                <input name='simpanan' placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0" required>
+                                <input name='simpanan' id="simpanan_edit" placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0" required>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
@@ -365,7 +362,7 @@ SPP | Siswa
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h5 class="modal-title" id="modalDetail">Ubah Siswa</h5>
+                        <h5 class="modal-title" id="modalDetail">Detail Siswa</h5>
                     </div>
                     <div class="modal-body">
                         <form id='editSiswa' action='' role="form" method="post">
@@ -410,6 +407,7 @@ SPP | Siswa
                                         <option value="X">X</option>
                                         <option value="XI">XI</option>
                                         <option value="XII">XII</option>
+                                        <option value="ALUMNI">ALUMNI</option>
                                     </select>
                                 </div>
                             </div>
@@ -529,7 +527,7 @@ SPP | Siswa
 
                 $('#jenis_kelamin_edit').val(data.jenis_kelamin);
                 $('#jenis_kelamin_edit_chosen .chosen-single span').html((data.jenis_kelamin == 'L') ? 'Laki - Laki' : 'Perempuan');
-                $('#simpanan').val(data.simpanan);
+                $('#simpanan_edit').val(data.simpanan);
                 $('#major_id_edit').val(data.major.id).change();
                 $('#major_id_edit_chosen .chosen-single span').html(data.major.nama);
                 $('#angkatan_edit').val(data.angkatans.id);

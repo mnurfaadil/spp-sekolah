@@ -14,45 +14,35 @@
         <th>No</th> 
         <th>Nama</th>
         <th>Kelas</th>
-        <th>Akumulasi Biaya</th>
-        <th>Terbayar</th>
-        <th>Sisa Pembayaran</th>
+        <th>Biaya per Bulan</th>
         <th>Tunggakan</th>
+        <th>Besar Tunggakan</th>
     </tr>
 @php
 $total = [0,0,0,0];
 @endphp
 @foreach($datas as $data)
 @php
-  if($data->bulan_tidak_bayar!=0){
-    $besaran = intval($data->akumulasi);
-    $terbayar = intval(($data->terbayar!=0)?$data->terbayar:0);
-    $sisa = $besaran - $terbayar;
-    $total[0] += $besaran;
-    $total[1] += $terbayar;
-    $total[2] += $sisa;
-    $total[3] += intval($data->bulan_tidak_bayar);
-  }
-  
+  $nominal = intval($data->nominal);
+  $besaran = $data->banyak_tunggakan * $nominal;
+  $total[0] += $nominal;
+  $total[1] += intval($data->banyak_tunggakan);
+  $total[2] += $besaran;
 @endphp
-  @if($data->bulan_tidak_bayar!=0)
-    <tr>
-        <td>{{$no++}}</td>
-        <td style="text-align:left;">{{$data->nama}}</td>
-        <td>{{$data->kelas}}&nbsp;-&nbsp;{{$data->jurusan}}</td>
-        <td style="text-align:right">{{number_format($data->akumulasi,0,',','.')}}</td>
-        <td style="text-align:right">{{number_format($data->terbayar,0,',','.')}}</td>
-        <td style="text-align:right">{{number_format($sisa,0,',','.')}}</td>
-        <td>{{$data->bulan_tidak_bayar}} Bulan</td>
-    </tr>
-  @endif
+  <tr>
+      <td>{{$no++}}</td>
+      <td style="text-align:left;">{{$data->nama}}</td>
+      <td>{{$data->kelas}}&nbsp;-&nbsp;{{$data->inisial}}</td>
+      <td style="text-align:right">{{number_format($nominal,0,',','.')}}</td>
+      <td>{{$data->banyak_tunggakan}} Bulan </td>
+      <td style="text-align:right">{{number_format($besaran,0,',','.')}}</td>
+  </tr>
 @endforeach
     <tr class="footer-section">
         <th colspan="3" style="text-align:center"><span style="font-size:20px;font-weight:bold;">Total </span></th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
-        <th style="text-align:right;font-size:20px;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
-        <th class="footer-right">{{$total[3]}} Bulan</th>
+        <th class="footer-right"  style="font-size:12pt;">{{number_format($total[0],0,',','.')}}</th>
+        <th class="footer-right" style="font-size:12pt;">{{$total[1]}} Bulan</th>
+        <th class="footer-right"  style="font-size:12pt;">{{number_format($total[2],0,',','.')}}</th>
     </tr>
 </table>
 <small><span style="font-style:italic">Dicetak pada {{now()}}</span></small>

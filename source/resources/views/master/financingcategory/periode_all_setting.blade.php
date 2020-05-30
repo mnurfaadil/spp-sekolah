@@ -29,7 +29,15 @@ SPP | Kategori Pembayaran
                                 <input type="hidden" name="angkatan">
                                 <div class="input-group">
                                     <span class="input-group-addon"><strong><i class="fa fa-bookmark"></i></strong></span>
-                                    <input type="text" name="angkatan_show" id="edit-angkatan" class="form-control" value="Kelas {{ $periodes[0]->angkatan->status}} - Angkatan {{ $periodes[0]->angkatan->angkatan}} ({{ $periodes[0]->angkatan->tahun}})" readonly required>
+                                    @if($periodes[0]->angkatan->status=='ALUMNI')
+                                    <input type="text" name="angkatan_show" id="edit-angkatan" class="form-control" 
+                                    value="{{ $periodes[0]->angkatan->status}} - Angkatan {{ $periodes[0]->angkatan->angkatan}} ({{ $periodes[0]->angkatan->tahun}})" 
+                                    readonly required>
+                                    @else
+                                    <input type="text" name="angkatan_show" id="edit-angkatan" class="form-control" 
+                                    value="Kelas {{ $periodes[0]->angkatan->status}} - Angkatan {{ $periodes[0]->angkatan->angkatan}} ({{ $periodes[0]->angkatan->tahun}})" 
+                                    readonly required>
+                                    @endif
                                 </div>
                             </div>
                             <div class="form-group">
@@ -113,18 +121,17 @@ SPP | Kategori Pembayaran
                                             <tr>
                                                 <td>{{ $no++ }}</td>
                                                 <td>{{ $periode->updated_at }}</td>
+                                                @if($periode->angkatan->status=='ALUMNI')
+                                                <td>{{ $periode->angkatan->status }} - Angkatan {{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})</td>
+                                                @else
                                                 <td>Kelas {{ $periode->angkatan->status }} - Angkatan {{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})</td>
+                                                @endif
                                                 <td>
                                                     <div style="text-align:right">
                                                     {{ $periode->nominal }}
                                                     </div>
                                                 </td>
                                                 <td>
-                                                @if($periode->angkatan->status=="ALUMNI")
-                                                <div class="alert alert-info" role="alert" style="text-align:center; margin-bottom:0px;padding-top:5px;padding-bottom:5px;">
-                                                    <strong>Alumni</strong>
-                                                </div>
-                                                @else
                                                 <div style="text-align:center">
                                                     <button class="btn btn-warning editable"
                                                     title="Edit periode {{$category[0]->nama}}" style="color:white" 
@@ -132,7 +139,6 @@ SPP | Kategori Pembayaran
                                                       <i class="fa fa-edit"></i>
                                                     </button>
                                                 </div>
-                                                @endif
                                                 </td>
                                             </tr>
                                             @endforeach

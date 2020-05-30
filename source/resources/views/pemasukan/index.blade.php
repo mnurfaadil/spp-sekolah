@@ -78,7 +78,7 @@ SPP | Pemasukan
                                         <th data-field="description">Deskripsi</th>
                                         <th data-field="sumber">Sumber</th>
                                         <th data-field="nominal">Nominal</th>
-                                        <th data-field="action">Action</th>
+                                        <th data-field="action"><span style="padding-left:25px;padding-right:25px">Action</span></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -94,7 +94,7 @@ SPP | Pemasukan
                                         <td class="avatar text-center">
                                           @if($data->tipe=="img")
                                           <img class="rounded-circle" style="width: 100px; height: 100px;" src="{{ $url }}" alt="">
-                                          @else
+                                          @elseif($data->sumber!="Siswa")
                                           <a href="{{ route('income.download',$data->foto) }}" title="Download file" style="margin:0;color:blue"><i class="fa fa-download"></i> Download</a>
                                           @endif  
                                         </td>
@@ -107,8 +107,8 @@ SPP | Pemasukan
                                         </div>
                                         </td>
                                         <td>
-                                          <a href="#" class="btn btn-warning" onclick="editConfirm( '{{$data->created_at}}','{{$data->id}}','{{$data->title}}','{{$data->description}}','{{$data->sumber}}','{{$data->nominal}}')" title="Edit"><i class="fa fa-edit"> Edit</i></a>
-                                          <a href="{{ route('income.destroy',$data) }}" class="btn btn-danger" onclick="event.preventDefault();destroy('{{ route('income.destroy',$data) }}');" title="Hapus"><i class="fa fa-trash"></i> Hapus</a>
+                                          <a href="#" class="btn btn-warning" onclick="editConfirm( '{{$data->created_at}}','{{$data->id}}','{{$data->title}}','{{$data->description}}','{{$data->sumber}}','{{$data->nominal}}')" title="Edit Data"><i class="fa fa-edit"></i></a>
+                                          <a href="{{ route('income.destroy',$data) }}" class="btn btn-danger" onclick="event.preventDefault();destroy('{{ route('income.destroy',$data) }}');" title="Hapus Data"><i class="fa fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>@yield('title-html')</title>
     <style>
-    .page_break { page-break-before: always; },
+    .page_break { page-break-before: always; }
 
     .garis_dua{ 
       border: 0;
@@ -27,14 +27,20 @@
         color: black;
     }
 
+    .table1 tr td{
+        font-size:9pt;
+    }
+
     .table1 tr th .footer-right{
         background-color: #F0FFFF;
         font-weight: bold;
-        font-size:12pt;
+        font-size:10pt;
         text-align:right;
         color: black;
     }
     
+    .page { width: 100%; height: 100%; }
+
     .table1, th, td {
         padding: 8px 14px;
         text-align: center;
@@ -61,7 +67,7 @@
       <div >
         <div style="float:left;padding-right:20px;">
         <br>
-          <img style="height:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}"/>
+          <img style="height:70; width:70;" src=""/>
         </div>
         <div style="padding-top:10">
           <p> <span style="font-size:14pt;font-style:bold">SMK BAABUL KAMIL</span>
@@ -71,9 +77,10 @@
           | <span style="font-size:10pt">Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span>
           </p>
         </div>
+        <div class="garis_dua"></div>
       </div>
-        <hr class="garis_dua">
+    </header>
         <center><h3>@yield('title')</h3></center>
-        @yield('content')	
+        @yield('content')
   </body>
 </html>

@@ -24,16 +24,17 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        $datas = Income::orderBy('updated_at', 'desc')->get();
+        $datas = Income::orderBy('updated_at', 'desc')
+                ->where('sumber','<>','Siswa')->get();
         $no=1;
         $bulan = Income::selectRaw('MONTH(created_at) AS bulan')
                 ->groupBy('bulan')
                 ->orderBy('bulan')
-                ->get();
+                ->where('sumber','<>','Siswa')->get();
         $tahun = Income::selectRaw('YEAR(created_at) AS tahun')
                 ->groupBy('tahun')
                 ->orderBy('tahun')
-                ->get();
+                ->where('sumber','<>','Siswa')->get();
         $report['bulan'] = "";
         $report['tahun'] = "";
         return view('pemasukan.index', compact('datas','no','bulan','tahun', 'report'));
@@ -115,17 +116,17 @@ class IncomeController extends Controller
             $datas = Income::orderBy('updated_at', 'desc')
                     ->whereMonth('created_at','=',$request->bulan)
                     ->whereYear('created_at','=',$request->tahun)
-                    ->get();
+                    ->where('sumber','<>','Siswa')->get();
         }
-        elseif(isset($request->tahun)){   
+        elseif(isset($request->tahun)){
             $datas = Income::orderBy('updated_at', 'desc')
                     ->whereYear('created_at','=',$request->tahun)
-                    ->get();
+                    ->where('sumber','<>','Siswa')->get();
         }
         elseif(isset($request->bulan)){
             $datas = Income::orderBy('updated_at', 'desc')
                     ->whereMonth('created_at','=',$request->bulan)
-                    ->get();
+                    ->where('sumber','<>','Siswa')->get();
         }else{
             return redirect()
                     ->route('income.index');
@@ -135,11 +136,11 @@ class IncomeController extends Controller
         $bulan = Income::selectRaw('MONTH(created_at) AS bulan')
                 ->groupBy('bulan')
                 ->orderBy('bulan')
-                ->get();
+                ->where('sumber','<>','Siswa')->get();
         $tahun = Income::selectRaw('YEAR(created_at) AS tahun')
                 ->groupBy('tahun')
                 ->orderBy('tahun')
-                ->get();
+                ->where('sumber','<>','Siswa')->get();
         $report['bulan'] = $request->bulan;
         $report['tahun'] = $request->tahun;
         return view('pemasukan.index', compact('datas','no','bulan','tahun', 'report'));
