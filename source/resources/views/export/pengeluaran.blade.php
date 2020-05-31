@@ -31,7 +31,7 @@ $total = 0;
     <tr>
         <td>{{$no++}}</td>
         <td>
-            @if($data->tipe=="img" && false)
+            @if($data->tipe=="img")
             <img style="height:70; width:70;" src="{{$url}}" alt="Foto Bukti"/>
             @else
             &nbsp;
