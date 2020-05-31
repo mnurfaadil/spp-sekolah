@@ -67,7 +67,7 @@
       <div >
         <div style="float:left;padding-right:20px;">
         <br>
-          <img style="height:70; width:70;" src=""/>
+          <img style="height:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}"/>
         </div>
         <div style="padding-top:10">
           <p> <span style="font-size:14pt;font-style:bold">SMK BAABUL KAMIL</span>
