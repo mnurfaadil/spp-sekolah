@@ -35,9 +35,15 @@ class IncomeController extends Controller
                 ->groupBy('tahun')
                 ->orderBy('tahun')
                 ->where('sumber','<>','Siswa')->get();
+        $tanggals = Income::selectRaw('DATE_FORMAT(created_at, "%W, %d-%M-%Y") as tanggal, DATE(created_at) as tanggal_value')
+                ->groupBy('created_at')
+                ->orderBy('created_at','DESC')
+                ->whereNull('payment_detail_id')
+                ->whereNull('cicilan_id')
+                ->get();
         $report['bulan'] = "";
         $report['tahun'] = "";
-        return view('pemasukan.index', compact('datas','no','bulan','tahun', 'report'));
+        return view('pemasukan.index', compact('datas','no','bulan','tahun', 'report','tanggals'));
     }
 
     /**
