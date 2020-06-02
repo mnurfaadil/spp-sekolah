@@ -21,6 +21,15 @@ use PDF;
 use DB; 
 class RekapController extends Controller
 {
+
+    public function ulala()
+    {
+        
+        $pdf = PDF::loadView('export.coba');
+        $pdf->setPaper('A4', 'potrait');
+        return $pdf->stream();
+    }
+
     public function __construct()
     { 
         $this->middleware('auth');

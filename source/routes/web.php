@@ -125,6 +125,8 @@ Route::get('export/sesekali/detail/{nama}/{payment}/{stat?}','RekapController@kw
 //ajax
 Route::get('export/ajax/major/{category}/{kelas?}','RekapController@ajaxMajor')->name('rekap.ajax.major');
 Route::get('export/ajax/kelas/{category}/{major?}','RekapController@ajaxKelas')->name('rekap.ajax.kelas');
+
+Route::get('laporan_bos','RekapController@ulala');
 /**
  * Route Simpanan
  */

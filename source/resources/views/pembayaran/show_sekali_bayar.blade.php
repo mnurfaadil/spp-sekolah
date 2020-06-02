@@ -182,8 +182,6 @@ SPP | Pembayaran {{$financing->nama}}
                                         </td>
                                         <td>
                                             <div style="text-align:center">
-                                                {{$data->jenis_pembayaran}}
-                                                {{$data->detail->first()}}
                                                 @if($data->jenis_pembayaran=="Waiting" || $data->jenis_pembayaran=="Nunggak")
                                                 <button class="btn btn-warning"
                                                     onclick="addConfirm({{$data}},'{{$akumulasi}}')"
