@@ -6,33 +6,38 @@
     <title>Rincian</title>
     <style>
     .text-atas tr td{
-      font-size: 10pt;
+      font-size: 5pt;
     }
 .page_break { page-break-before: always; },
 .garis_dua{ 
   border: 0;
   border-top: 5px double #8c8c8c;
 }
+*{
+  margin:0;
+}
 </style>
   </head>
-  <body>
+  <body width="100%">
+    <div style="border-style: solid;margin:10px">
     <header class="clearfix">
-      <div >
-        <div style="float:left;padding-right:20px;">
-        <br>
-          <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" />
+      
+      <div style="padding-top:10px;">
+        <div style="float:left;padding-right:10px;padding-left:10px;">
+          <img style="hight:30; width:30;" src="{{public_path('assets\img\logo\bbl.png')}}" />
+          <!-- <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" /> -->
         </div>
-        <div style="padding-top:10">
-          <p> <span style="font-size:14pt;font-style:bold">SMK BAABUL KAMIL</span>
-          <br> <span style="font-size:12pt">Terakreditasi 'A' | Program Keahlian : Multimedia, Adm Perkantoran & Perawatan</span>
-          <br> <span style="font-size:10pt">Alamat:Jl. Cikuda No. 08 Jatinangor, Tlp : (022) 7797312 / 085294124866</span>
-          <br> <span style="font-size:10pt">Email: <span style="color:blue; font-style: italic;"> smkbaabulkamil_jatinangor@yahoo.com </span></span>
-          | <span style="font-size:10pt">Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span>
+        <div style="padding-top:5;padding-left:10px;">
+          <p> <span style="font-size:8pt;font-style:bold">SMK BAABUL KAMIL</span>
+          <br> <span style="font-size:6pt">Terakreditasi 'A' | Program Keahlian : Multimedia, Adm Perkantoran & Perawatan</span>
+          <br> <span style="font-size:5pt">Alamat:Jl. Cikuda No. 08 Jatinangor, Tlp : (022) 7797312 / 085294124866</span>
+          <br> <span style="font-size:5pt">Email: <span style="color:blue; font-style: italic;"> smkbaabulkamil_jatinangor@yahoo.com </span></span>
+          | <span style="font-size:5pt">Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span>
           </p>
         </div>
       </div>
         <hr class="garis_dua">
-        <center><h4>BUKTI PEMBAYARAN SISWA</h4></center><hr>
+        <center><p style="font-size:8pt;font-style:bold">BUKTI PEMBAYARAN SISWA</p></center><hr>
         <table width='100%'>
           <tr>
             <td width='50%'>
@@ -77,10 +82,9 @@
         </table>
         
     </header>
-    <br>
     <hr>
     <main style="align-item:center;">
-      <table style="font-size:14px;" width="100%">
+      <table style="font-size:5pt;" width="100%">
         <thead>
           <tr>
             <th width="15%">NO</th>
@@ -126,7 +130,7 @@
               </table>
             </td>
             <td width='50%'>
-            <table width='100%'>
+            <table style='font-size:5pt' width='100%'>
               <tr>
                 <td><strong>Total :</strong></td>
                 <td style="text-align:right"><strong>
@@ -141,7 +145,6 @@
         </table>
     </main>
     <footer>
-    <br>
     <table width='100%'>
       <tr>
         <td width='50%'>
@@ -150,7 +153,7 @@
           </table>
         </td>
         <td width='50%'>
-          <table style="text-align:center" width='100%'>
+          <table style="text-align:center;font-size:5pt" width='100%'>
             <tr>
               <td>Jatinangor, {{$data['tanggal']}}</td>
             </tr>
@@ -161,18 +164,17 @@
         </td>
       </tr>
     </table>
-    <br>
     <table width='100%'>
       <tr>
         <td width='50%'>
-          <table width='100%'>
+          <table style='font-size:5pt' width='100%'>
             <tr>
               <td>Catatan</td>
             </tr>
-            <tr style='font-size:14px'>
+            <tr style='font-size:5pt'>
               <td>- Disimpan sebagai pembayaran bukti yang SAH</td>
             </tr>
-            <tr style='font-size:14px'>
+            <tr style='font-size:5pt'>
               <td>- Uang yang dibayar tidak dapat diminta kembali</td>
             </tr>
           </table>
@@ -180,14 +182,14 @@
         <td width='50%'>
           <table width='100%'>
             <tr><td><br></td></tr>
-            <tr><td><br></td></tr>
             <tr>
-              <td style="text-align:center"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
+              <td style="text-align:center;font-size:6pt"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
             </tr>
           </table>
         </td>
       </tr>
     </table>
     </footer>
+    </div>
   </body>
 </html>

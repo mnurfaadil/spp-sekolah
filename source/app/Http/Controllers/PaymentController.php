@@ -30,7 +30,7 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    { 
         
         $datas = FinancingCategory::selectRaw('financing_categories.*, getJumlahTunggakanKategori(financing_categories.id) as tunggakan, 
         getCountNunggakPeriodeUseKategori(financing_categories.id) as tunggakan_periode')

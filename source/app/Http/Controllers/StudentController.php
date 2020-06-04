@@ -103,13 +103,26 @@ class StudentController extends Controller
     {
         try {
             $req = $request->all();
-
-            $date = $this->convertDateToSQLDate($req['tgl_masuk']);
-            
-            if (strlen($req['phone'])>14) {
+            $cek = Student::where('nis',$req['nis'])
+                ->count();
+                
+            if($cek > 0){
                 return redirect()
-                ->route('students.index')
-                ->with('error', 'Inputan tidak valid!');
+                    ->route('students.index')
+                    ->with('error','Data Sudah Ada!!');
+            }
+            $date = $this->convertDateToSQLDate($req['tgl_masuk']);
+            if ($req['alamat']==null) {
+                $req['alamat'] = '';
+            }
+            if ($req['phone'] == null) {
+                $req['phone'] = '';
+            }
+            if ($req['email'] == null) {
+                $req['email'] = '';
+            }
+            if ($req['simpanan'] == null) {
+                $req['simpanan'] = 0;
             }
             $categories = FinancingCategory::join('financing_periodes','financing_periodes.financing_category_id','=','financing_categories.id')
                             ->where('financing_periodes.major_id', $request->major_id)
@@ -171,12 +184,12 @@ class StudentController extends Controller
                 }
             }
           return redirect()
-              ->route('students.index')
-              ->with('success', 'Data siswa berhasil disimpan!');
+            ->route('students.index')
+            ->with('success', 'Data siswa berhasil disimpan!');
         }catch(Exception $e){
           return redirect()
-              ->route('students.create')
-              ->with('success', 'Data siswa gagal disimpan!');
+            ->route('students.index')
+            ->with('error', 'Data siswa gagal disimpan!');
         }
     }
  
@@ -214,10 +227,17 @@ class StudentController extends Controller
         
         try {
             $req = $request->all();
-            if (strlen($req['phone'])>14) {
-                return redirect()
-                    ->route('students.index')
-                    ->with('error', 'Digit no HP terlalu banyak!');
+            if ($req['alamat']==null) {
+                $req['alamat'] = '';
+            }
+            if ($req['phone'] == null) {
+                $req['phone'] = '';
+            }
+            if ($req['email'] == null) {
+                $req['email'] = '';
+            }
+            if ($req['simpanan'] == null) {
+                $req['simpanan'] = 0;
             }
             $student = Student::findOrFail($id);
             $student->nama = $req['nama'];
@@ -260,7 +280,7 @@ class StudentController extends Controller
   
           } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
             return redirect()
-                ->route('Students.index')
+                ->route('students.index')
                 ->with('error', 'Data siswa gagal diubah!');
           }
     }

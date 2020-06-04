@@ -107,7 +107,7 @@ SPP | Pemasukan
                                             @if($data->tipe=="img")
                                             <img class="rounded-circle" style="width: 100px; height: 100px;"
                                                 src="{{ $url }}" alt="">
-                                            @elseif($data->sumber!="Siswa")
+                                            @elseif($data->sumber!="Siswa" && $data->tipe!='')
                                             <a href="{{ route('income.download',$data->foto) }}" title="Download file"
                                                 style="margin:0;color:blue"><i class="fa fa-download"></i> Download</a>
                                             @endif

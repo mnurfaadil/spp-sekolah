@@ -58,7 +58,7 @@ SPP | Siswa
                                                 <input type="hidden" name='akt' value="{{$fil2}}">
                                                 <input type="hidden" name='kls' value="{{$kls}}">
                                                 <button type='submit' class="btn btn-info" style="color:white; margin-top:0"><i class="fa fa-print"></i>&nbsp; Cetak</button>
-                                            <a @php echo $jml < 1 ? 'onclick="peringatanJurusan()"': $angkatan->count() <1 ? 'onclick="peringatanAngkatan()"' : 'data-toggle="modal" href="#modalAdd"' @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
+                                            <a @php echo ($jml < 1 ? 'onclick="peringatanJurusan()"': $angkatan->count() ) <1 ? 'onclick="peringatanAngkatan()"' : 'data-toggle="modal" href="#modalAdd"' @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
                                             </form>
                                         </div>
                                     </div>
@@ -198,22 +198,22 @@ SPP | Siswa
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-2">Simpanan<kode>*</kode></label>
-                                    <input name='simpanan' placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0" required>
+                                    <label class="control-label col-md-2">Simpanan</label>
+                                    <input name='simpanan' placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0">
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
+                                    <label class="control-label col-md-2">No Telpon</label>
                                     <input name='phone' placeholder="Masukan No Telpon" type='text' class='form-control'
-                                        required>
+                                        >
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-2">Alamat<kode>*</kode></label>
-                                    <textarea name='alamat' placeholder=" Masukan Alamat" required></textarea>
+                                    <label class="control-label col-md-2">Alamat</label>
+                                    <textarea name='alamat' placeholder=" Masukan Alamat"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-md-2">Email</label>
                                     <input name='email' placeholder=" Masukan Email" type='text' class='form-control'
-                                        required>
+                                        >
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Tanggal Masuk<kode>*</kode></label>
@@ -313,22 +313,22 @@ SPP | Siswa
                                 </div>
                             </div>  
                             <div class="form-group">
-                                <label class="control-label col-md-2">Simpanan<kode>*</kode></label>
-                                <input name='simpanan' id="simpanan_edit" placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0" required>
+                                <label class="control-label col-md-2">Simpanan</label>
+                                <input name='simpanan' id="simpanan_edit" placeholder="Masukan Simpanan" type='number'  class='form-control' value="0" min="0" >
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-2">No Telpon<kode>*</kode></label>
+                                <label class="control-label col-md-2">No Telpon</label>
                                 <input name='phone' id='phone' placeholder="Masukan No Telpon" type='number'
-                                    class='form-control' required>
+                                    class='form-control'>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-2">Alamat<kode>*</kode></label>
-                                <textarea name='alamat' id="alamat" placeholder=" Masukan alamat siswa" required></textarea>
+                                <label class="control-label col-md-2">Alamat</label>
+                                <textarea name='alamat' id="alamat" placeholder=" Masukan alamat siswa"></textarea>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">Email</label>
                                 <input name='email' id='email' placeholder=" Masukan Email" type='text'
-                                    class='form-control' required>
+                                    class='form-control'>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2">Tanggal<kode>*</kode></label>

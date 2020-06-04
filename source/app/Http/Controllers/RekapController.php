@@ -331,7 +331,7 @@ class RekapController extends Controller
         
         $pdf = PDF::loadView('export.kwitansi_bulanan_satuan',compact('user','siswa','data','no'));
         //$pdf->setPaper('A4', 'landscape');
-        $pdf->setPaper('A4', 'potrait');
+        $pdf->setPaper(array(0,0,300,500));
         return $pdf->stream();
     }
     

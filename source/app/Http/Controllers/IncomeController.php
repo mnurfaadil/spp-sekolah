@@ -68,21 +68,28 @@ class IncomeController extends Controller
         try {
             $sql_date = $this->convertDateToSQLDate($request->tanggal);
             $req['tanggal'] = $sql_date;
-            $uuid = Uuid::uuid1();
+            # code...
             // menyimpan data file yang diupload ke variabel $file
+            $uuid = Uuid::uuid1();
             $file = $request->file('foto');
             
-            $nama_file = time()."_".$file->getClientOriginalName();
-            
-            //cek type file
-            $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
-
-            // isi dengan nama folder tempat kemana file diupload
-            $tujuan_upload = 'nota';
-            if($tipe=="pdf"){
-                $tujuan_upload = 'source/public/nota/';
+            $hasil = '';
+            $tipe = '';
+            if (isset($file)) {
+                
+                $nama_file = time()."_".$file->getClientOriginalName();
+                
+                //cek type file
+                $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
+                
+                // isi dengan nama folder tempat kemana file diupload
+                $tujuan_upload = 'nota';
+                if($tipe=="pdf"){
+                    $tujuan_upload = 'source/public/nota/';
+                }
+                $file->move($tujuan_upload,$uuid.$nama_file);
+                $hasil = $uuid.$nama_file;
             }
-            $file->move($tujuan_upload,$uuid.$nama_file);
             
             Income::create([
                 'id' => null,
@@ -91,7 +98,7 @@ class IncomeController extends Controller
                 'description' => $req['description'],
                 'sumber' => $req['sumber' ],
                 'nominal' => $req['nominal'],
-                'foto' => $uuid.$nama_file,
+                'foto' => $hasil,
                 'tipe' => $tipe,
             ]);
             $id = DB::getPdo()->lastInsertId();
