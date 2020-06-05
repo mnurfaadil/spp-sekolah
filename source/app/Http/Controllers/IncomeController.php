@@ -38,11 +38,10 @@ class IncomeController extends Controller
                 // ->get();
                 ->where('sumber','<>','Siswa')->get();
         $tanggals = Income::selectRaw('DATE_FORMAT(created_at, "%W, %d-%M-%Y") as tanggal, DATE(created_at) as tanggal_value')
-                ->groupBy('created_at')
+                ->groupBy('tanggal_value')
                 ->orderBy('created_at','DESC')
                 // ->whereNull('payment_detail_id')
                 // ->whereNull('cicilan_id')
-                ->groupBy('created_at')
                 ->get();
         $report['bulan'] = "";
         $report['tahun'] = "";
