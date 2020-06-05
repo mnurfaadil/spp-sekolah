@@ -135,12 +135,23 @@ class RekapController extends Controller
 
         $user= Auth::user()->nama;
         if($request->id=="pemasukan"){ 
-            $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
+            if($request->tanggal)
+            {
+                $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
+                    ->join('incomes','incomes.id','=','pencatatans.income_id')
+                    ->where([
+                        ['debit','<>','0'],
+                        ['incomes.created_at','=', $request->tanggal]
+                    ])->get();
+            }
+            else
+            {
+                $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
                         ->join('incomes','incomes.id','=','pencatatans.income_id')
                         ->where([
                             ['debit','<>','0'],
-                            ['incomes.created_at','=', $request->tanggal]
                         ])->get();
+            }
             $rincian = "Pemasukan";
             $title = "Laporan Pemasukan";
             $pdf = PDF::loadView('export.pemasukan',compact('tanggal','user','rincian','datas','no','title'));
