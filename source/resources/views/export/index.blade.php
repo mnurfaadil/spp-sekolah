@@ -18,15 +18,18 @@ SPP | Rekap
                             <i class="educate-icon educate-department" style="color:#27ae60"></i>
                         </div>
                         <div class="m-t-xl widget-cl-1">
-                            <form action="{{route('pdf.print')}}" method="post" target="_blank">
+                            <h1 class="text-success" style="color:#27ae60">Rp. {{number_format($rekap->pemasukan,0,',','.')}}</h1>
+                            <!-- <form action="{{route('pdf.print')}}" method="post" target="_blank">
                                 @csrf
                                 <input type="hidden" name="id" value="pemasukan">
-                            <h1 class="text-success" style="color:#27ae60">Rp. {{number_format($rekap->pemasukan,0,',','.')}}</h1>
-                            <button type="submit" class="btn btn-block loginbtn" style="background-color:#27ae60;color:white">
-                            <i class="fa fa-print"></i>
-                                {{ __('Cetak') }}
-                            </button>
-                            </form>
+                            
+                            </form> -->
+                            <!-- <button type="submit" class="btn btn-block loginbtn" style="background-color:#27ae60;color:white">
+                            </button> -->
+                            <a href="{{route('rekap.pemasukan')}}" class="btn btn-block loginbtn" style="background-color:#27ae60;color:white">
+                                <i class="fa fa-eye"></i>
+                                {{ __('Detail') }}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -42,14 +45,18 @@ SPP | Rekap
                         </div>
                             <div class="m-t-xl widget-cl-2">
                             <h1 class="text-info" style="color:#f39c12">Rp. {{number_format($rekap->pengeluaran,0,',','.')}}</h1>
-                            <form action="{{route('pdf.print')}}" method="post" target="_blank">
+                            <!-- <form action="{{route('pdf.print')}}" method="post" target="_blank">
                                 @csrf
                                 <input type="hidden" name="id" value="pengeluaran">
                             <button type="submit" class="btn btn-block loginbtn" style="background-color:#f39c12;color:white">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
                             </button>
-                            </form>
+                            </form> -->
+                            <a href="{{route('rekap.pengeluaran')}}" class="btn btn-block loginbtn" style="background-color:#f39c12;color:white">
+                                <i class="fa fa-eye"></i>
+                                {{ __('Detail') }}
+                            </a>
                         </div>
                     </div>
                 </div> 
@@ -65,14 +72,18 @@ SPP | Rekap
                         </div>
                         <div class="m-t-xl widget-cl-3">
                             <h1 class="text-success" style="color:#2980b9">Rp. {{number_format($rekap->saldo,0,',','.')}}</h1>
-                            <form action="{{route('pdf.print')}}" method="post" target="_blank">
+                            <!-- <form action="{{route('pdf.print')}}" method="post" target="_blank">
                                 @csrf
                                 <input type="hidden" name="id" value="BukuBesar">
                             <button type="submit" class="btn btn-block loginbtn" style="background-color:#2980b9;color:white">
                             <i class="fa fa-print"></i>
                                 {{ __('Cetak') }}
                             </button>
-                            </form>
+                            </form> -->
+                            <a href="{{route('rekap.bukbes')}}" class="btn btn-block loginbtn" style="background-color:#2980b9;color:white">
+                                <i class="fa fa-eye"></i>
+                                {{ __('Detail') }}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -89,8 +100,8 @@ SPP | Rekap
                         <div class="m-t-xl widget-cl-4">
                             <h1 class="text-danger">Rp. {{number_format($rekap->tunggakan,0,',','.')}}</h1>
                             <a class="btn btn-block loginbtn" data-toggle="modal" href="#modalAdd" style="background-color:#e74c3c;color:white">
-                          <i class="fa fa-print"></i>
-                                {{ __('Cetak') }}
+                            <i class="fa fa-eye"></i>
+                                {{ __('Detail') }}
                             </a>
                         </div>
                     </div>
@@ -111,32 +122,14 @@ SPP | Rekap
             </div>
             <div class="modal-body">
                 <div class="basic-login-form-ad">
-                    <form action="{{route('rekap.store')}}" role="form" method="post" target='_blank'>
+                    <form action="{{route('rekap.store')}}" role="form" method="post" >
                         {{csrf_field()}}
                         <div class="form-group">
-                            <label class="control-label col-md-2">Jenis Kategori<kode>*</kode></label>
+                            <label class="control-label col-md-4">Lihat berdasarkan<kode>*</kode></label>
                             <div class="chosen-select-single mg-b-20">
                                 <select class="chosen-select" name="jenis_kategori" id="category" required>
-                                    <option value="">-- Pilih Kategori --</option>
-                                    @foreach($categorys as $d)
-                                        <option value="{{$d->id}}">{{$d->nama}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-2">Jurusan<kode>*</kode></label>
-                            <div class="chosen-select-single mg-b-20">
-                                <select class="chosen-select" name="major_id" id="major_id_add" required>
-                                    <option value="all">Semua</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-2">Kelas<kode>*</kode></label>
-                            <div class="chosen-select-single mg-b-20">
-                                <select class="chosen-select" name="kelas" id="kelas_add" required>
-                                    <option value="all">Semua</option>
+                                    <option value="Kategori">Kategori</option>
+                                    <option value="Siswa">Siswa</option>
                                 </select>
                             </div>
                         </div>
@@ -144,7 +137,7 @@ SPP | Rekap
                 </div>
                 <div class="modal-footer">
                     <input type="reset" class="btn btn-danger" data-dismiss="modal" tabindex="-1" value="Close">
-                    <button type='submit' class="btn btn-primary"><i class="fa fa-print"></i> Cetak</button>
+                    <button type='submit' class="btn btn-primary"><i class="fa fa-eye"></i> {{ __('Detail') }}</button>
                 </div>
             </form>
         </div>
@@ -168,6 +161,11 @@ SPP | Rekap
 <!-- normalize CSS -->
 <link rel="stylesheet" href="{{ asset('assets/css/data-table/bootstrap-table.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/data-table/bootstrap-editable.css') }}">
+<style>
+    kode {
+        color: red;
+    }
+</style>
 @endpush
 
 @push('scripts')
@@ -232,6 +230,8 @@ SPP | Rekap
             var temp = {major_id: "all", nama: "Semua"};
             $('#kelas_add').empty()
             data.unshift(temp);
+            console.log(data);
+            
             $.each(data, function (i, val) {
                 if(i === 0)
                 {

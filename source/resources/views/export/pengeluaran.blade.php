@@ -22,7 +22,7 @@ $total = 0;
 @endphp
 @foreach($datas as $data)
 @php
-    $total =$total + intval($data->kredit); 
+    $total =$total + intval($data->nominal); 
     $url = "nota/{$data->foto}";
     $url = asset('').$url;
     $temp = strtotime($data->created_at);
@@ -31,8 +31,8 @@ $total = 0;
     <tr>
         <td>{{$no++}}</td>
         <td>
-            @if($data->tipe=="img")
-            <img style="height:70; width:70;" src="{{$url}}" alt="Foto Bukti"/>
+            @if($data->tipe=="img" && false)
+            <img style="height:10px; width:10px;" src="{{$url}}" alt="Foto Bukti"/>
             @else
             &nbsp;
             {{$data->tipe}}
@@ -40,7 +40,7 @@ $total = 0;
         </td>
         <td style="text-align:left;">{{$tanggal}}</td>
         <td style="text-align:left;word-wrap:break-word;">{{$data->description}}</td>
-        <td style="text-align:right">{{number_format($data->kredit,0,',','.')}}</td>
+        <td style="text-align:right">{{number_format($data->nominal,0,',','.')}}</td>
     </tr>
 @endforeach
     <tr class="footer-section">

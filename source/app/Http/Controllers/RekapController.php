@@ -398,12 +398,16 @@ class RekapController extends Controller
     public function store(Request $request)
     {
 
-        if (!isset($request->jenis_kategori) || !isset($request->major_id) || !isset($request->kelas)) {
+        if (!isset($request->jenis_kategori)) {
             return redirect()
                 ->route('rekap.index')
                 ->with('error', 'Filter data ada yang kosong');
         }
 
+        return redirect()
+                ->route('rekap.tunggakan', $request->jenis_kategori);
+
+        //Its Useless
         $req = $request->all(); 
 
         $kategori = FinancingCategory::findOrFail($request->jenis_kategori);
