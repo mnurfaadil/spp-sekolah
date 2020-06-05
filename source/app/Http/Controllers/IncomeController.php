@@ -30,16 +30,18 @@ class IncomeController extends Controller
         $bulan = Income::selectRaw('MONTH(created_at) AS bulan')
                 ->groupBy('bulan')
                 ->orderBy('bulan')
-                ->where('sumber','<>','Siswa')->get();
+                ->get();
+                // ->where('sumber','<>','Siswa')->get();
         $tahun = Income::selectRaw('YEAR(created_at) AS tahun')
                 ->groupBy('tahun')
                 ->orderBy('tahun')
-                ->where('sumber','<>','Siswa')->get();
+                ->get();
+                // ->where('sumber','<>','Siswa')->get();
         $tanggals = Income::selectRaw('DATE_FORMAT(created_at, "%W, %d-%M-%Y") as tanggal, DATE(created_at) as tanggal_value')
                 ->groupBy('created_at')
                 ->orderBy('created_at','DESC')
-                ->whereNull('payment_detail_id')
-                ->whereNull('cicilan_id')
+                // ->whereNull('payment_detail_id')
+                // ->whereNull('cicilan_id')
                 ->get();
         $report['bulan'] = "";
         $report['tahun'] = "";
