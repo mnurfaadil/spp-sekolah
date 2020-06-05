@@ -843,4 +843,26 @@ class PaymentController extends Controller
         ->route('payment.monthly.show.detail',[$req['payment_id'],$req['student_id'],$req['category_id']])
         ->with('success', 'Periode pembayaran ditambah!');
     }
+    public function deletePeriodeBulanan($id)
+    {
+        $data = PaymentDetail::find($id);
+        $payment_id = $data->payment_id;
+        $category_id = $data->periode->financing_category_id;
+        $student_id = $data->payment->student->id;
+
+        $data->status = 'Waiting';
+        $data->user_id = '0';
+        $data->tgl_dibayar = null;
+        $data->nominal = null;
+        $data->save();
+
+        Cicilan::where('payment_detail_id', $id)->delete();
+        $income = Income::where('payment_detail_id', $id)->first();
+        Pencatatan::where('income_id', $income->id)->delete();
+        Income::where('payment_detail_id', $id)->delete();
+
+        return redirect()
+            ->route('payment.monthly.show.detail',[$payment_id,$student_id,$category_id])
+            ->with('success', 'Periode pembayaran ditambah!');
+    }
 }

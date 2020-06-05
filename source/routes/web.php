@@ -80,6 +80,7 @@ Route::get('payment/perbulan/detail/{payment}/{student}/{category}', 'PaymentCon
 Route::post('payment/perbulan/detail/','PaymentController@bulananStore')->name('payment.monthly.detail.store')->middleware('cekstatus');
 Route::put('payment/perbulan/detail/update','PaymentController@updateStatusBulanan')->name('payment.monthly.detail.update')->middleware('cekstatus');
 Route::post('payment/perbulan/detail/add','PaymentController@addPeriodeBulanan')->name('payment.monthly.detail.add')->middleware('cekstatus');
+Route::get('payment/perbulan/detail/delete/{id}','PaymentController@deletePeriodeBulanan')->name('payment.monthly.detail.delete')->middleware('cekstatus');
 /**
  * Route resource untuk Pengeluaran 
  */
