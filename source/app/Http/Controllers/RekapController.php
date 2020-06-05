@@ -141,8 +141,9 @@ class RekapController extends Controller
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->where([
                         ['debit','<>','0'],
-                        ['incomes.created_at','=', $request->tanggal]
-                    ])->get();
+                        // ['incomes.created_at','=', $request->tanggal]
+                    ])
+                    ->whereDate('created_at', '=', $request->tanggal)->get();
             }
             else
             {
