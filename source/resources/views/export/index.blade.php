@@ -200,11 +200,12 @@ SPP | Rekap
     {
         var category = $('#category').val() == "" ? "NULL" : $('#category').val();
         $.get('{{ url('') }}/export/ajax/major/' + category, function(data){
-            $('#major_id_add').empty()
+            var t = $('#major_id_add').empty();
             var temp = {major_id: "all", nama: "Semua"};
             data.unshift(temp);
             $.each(data, function (i, val) {
-                $("#major_id_add").append(`<option value="${val.major_id}">${val.nama}</option>`); 
+                // $("#major_id_add").append(`<option value="${val.major_id}">${val.nama}</option>`); 
+                // $("#major_id_add").append(`<option value="cek">cek sound</option>`); 
             });
         });
         $.get('{{ url('') }}/export/ajax/kelas/' + category, function(data){
@@ -244,10 +245,12 @@ SPP | Rekap
         });
     }
 
-    $('document').ready(function () {
+    // $('document').ready(function () {
         $('#category').change(change_category);
         $('#major_id_add').change(change_major);
-    });
+        var cek = $('#major_id_add');
+        console.log(cek);
+    // });
 </script>
 @endpush
 
