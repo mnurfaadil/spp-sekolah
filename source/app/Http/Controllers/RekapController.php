@@ -143,7 +143,7 @@ class RekapController extends Controller
                         ['debit','<>','0'],
                         // ['incomes.created_at','=', $request->tanggal]
                     ])
-                    ->whereDate('created_at', '=', $request->tanggal)->get();
+                    ->whereDate('incomes.created_at', '=', $request->tanggal)->get();
             }
             else
             {
