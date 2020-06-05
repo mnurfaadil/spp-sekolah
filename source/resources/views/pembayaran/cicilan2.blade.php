@@ -25,11 +25,12 @@ SPP | Cicilan Pembayaran
                             <input type="hidden" name="payment_detail_id" value="{{$payments->detail[0]->id}}">
                             <input type="hidden" name="sisa" value="{{$footer['sisa']}}">
                             <input type="hidden" name="set_simpanan" value="0">
-                            <div class="form-group data-custon-pick" id="data_4">
-                                <label>Tanggal Pembayaran</label>
+                            
+                            <div class="form-group data-custon-pick" id="data_2">
+                                <label>Tanggal Pembayaran<kode>*</kode></label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" name="calendar" value="{{$date}}" >
+                                    <input type="text" class="form-control" required placeholder="Tanggal Pembayaran" name="calendar">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -166,6 +167,10 @@ SPP | Cicilan Pembayaran
                                                 </td>
                                                 <td>
                                                     <div style="text-align: center">
+                                                        @php
+                                                            $temp = explode("-",$cicilan->tgl_dibayar);
+                                                            $cicilan->tgl_dibayar = $temp[2]."/".$temp[1]."/".$temp[0];
+                                                        @endphp
                                                     {{$cicilan->tgl_dibayar}}
                                                     </div>
                                                 </td>

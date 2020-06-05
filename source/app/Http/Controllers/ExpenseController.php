@@ -60,20 +60,27 @@ class ExpenseController extends Controller
             $req = $request->all();
             $sql_date = $this->convertDateToSQLDate($request->tanggal);
             $req['tanggal'] = $sql_date;
+
             $uuid = Uuid::uuid1();
-            // menyimpan data file yang diupload ke variabel $file
             $file = $request->file('foto');
             
-            $nama_file = time()."_".$file->getClientOriginalName();
+            $hasil = '';
+            $tipe = '';
+            if (isset($file)) {
+                // menyimpan data file yang diupload ke variabel $file
+                
+                $nama_file = time()."_".$file->getClientOriginalName();
 
-            $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
-    
-            // isi dengan nama folder tempat kemana file diupload$tujuan_upload = 'nota';
-            $tujuan_upload = 'nota';
-            if($tipe=="pdf"){
-                $tujuan_upload = 'source/public/nota/';
+                $tipe = $file->getMimeType()=="application/pdf"?"pdf":"img";
+        
+                // isi dengan nama folder tempat kemana file diupload$tujuan_upload = 'nota';
+                $tujuan_upload = 'nota';
+                if($tipe=="pdf"){
+                    $tujuan_upload = 'source/public/nota/';
+                }
+                $file->move($tujuan_upload,$uuid.$nama_file);
+                $hasil = $uuid.$nama_file;
             }
-            $file->move($tujuan_upload,$uuid.$nama_file);
             
             Expense::create([
                 'id' => null,
@@ -82,7 +89,7 @@ class ExpenseController extends Controller
                 'sumber' => $req['sumber'],
                 'description' => $req['description'],
                 'nominal' => $req['nominal'],
-                'foto' => $uuid.$nama_file,
+                'foto' => $hasil,
                 'tipe' => $tipe,
             ]);
             $id = DB::getPdo()->lastInsertId();
@@ -251,6 +258,6 @@ class ExpenseController extends Controller
     public function convertDateToSQLDate($date)
     {
         $temp = explode("/",$date);
-        return $temp[2]."-".$temp[0]."-".$temp[1];
+        return $temp[2]."-".$temp[1]."-".$temp[0];
     }
 }

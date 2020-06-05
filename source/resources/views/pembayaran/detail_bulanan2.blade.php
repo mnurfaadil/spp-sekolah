@@ -136,6 +136,10 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                             $sisa = $total-$terbayar;
                                             @endphp
                                             @foreach($payment_details as $data)
+                                                @php
+                                                    $temp = explode("-",$data->bulan);
+                                                    $data->bulan = $temp[2]."/".$temp[1]."/".$temp[0];
+                                                @endphp
                                             <tr>
                                                 <td>
                                                     <div style="text-align: center">
@@ -145,6 +149,10 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                                 <td>
                                                     <div style="text-align: center">
                                                     @if($data->status=="Lunas")
+                                                        @php
+                                                            $temp = explode("-",$data->tgl_dibayar);
+                                                            $data->tgl_dibayar = $temp[2]."/".$temp[1]."/".$temp[0];
+                                                        @endphp
                                                     {{$data->tgl_dibayar}}
                                                     @elseif($data->status=="Waiting")
                                                     <span class="badge" style="background-color:yellow;color:black">Waiting</span>
@@ -307,12 +315,11 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                     </div>
                 </div>
                 <div id="form">
-                
-                            <div class="form-group data-custon-pick" id="data_4">
-                                <label>Tanggal Pembayaran</label>
-                                <div class="input-group date" id="data_3">
+                            <div class="form-group data-custon-pick" id="data_2">
+                                <label>Tanggal Pembayaran<kode>*</kode></label>
+                                <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" name="calendar" value="{{$date}}" >
+                                    <input type="text" class="form-control" required placeholder="Tanggal Pembayaran" name="calendar">
                                 </div>
                             </div>
                             <div class="form-group">

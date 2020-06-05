@@ -266,13 +266,14 @@ SPP | Pembayaran {{$financing->nama}}
                                 </select>
                             </div>
                             </div>
+                            
                         <div id="tanggal">
                             <input type="hidden" name="set_simpanan" value="0">
-                            <div class="form-group data-custon-pick" id="data_3">
-                                <label><strong>Tanggal Pembayaran</strong></label>
+                            <div class="form-group data-custon-pick" id="data_2">
+                                <label>Tanggal Pembayaran<kode>*</kode></label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" name="tanggal_bayar" id="tanggal_bayar_add" value="" placeholder="Masukan tanggal pembayaran">
+                                    <input type="text" class="form-control" required placeholder="Tanggal Pembayaran" name="tanggal_bayar" id="tanggal_bayar_add">
                                 </div>
                             </div>
                             <div class="form-group">

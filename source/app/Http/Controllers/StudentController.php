@@ -239,6 +239,7 @@ class StudentController extends Controller
             if ($req['simpanan'] == null) {
                 $req['simpanan'] = 0;
             }
+            $date = $this->convertDateToSQLDate($req['tgl_masuk']);
             $student = Student::findOrFail($id);
             $student->nama = $req['nama'];
             $student->nis = $req['nis'];
@@ -249,7 +250,7 @@ class StudentController extends Controller
             $student->email = $req['email'];
             $student->alamat = $req['alamat'];
             $student->simpanan = $req['simpanan'];
-            $student->tgl_masuk = $req['tgl_masuk'];
+            $student->tgl_masuk = $date;
             $student->save();
 
           return redirect()
@@ -288,6 +289,6 @@ class StudentController extends Controller
     public function convertDateToSQLDate($date)
     {
         $temp = explode("/",$date);
-        return $temp[2]."-".$temp[0]."-".$temp[1];
+        return $temp[2]."-".$temp[1]."-".$temp[0];
     }
 }

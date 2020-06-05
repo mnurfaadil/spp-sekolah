@@ -89,6 +89,10 @@ SPP | Siswa
                                 <tbody>
                                 @if(isset($students))
                                 @foreach($students as $data)
+                                    @php
+                                        $temp = explode("-",$data->tgl_masuk);
+                                        $date = $temp[2]."/".$temp[1]."/".$temp[0];
+                                    @endphp
                                     <tr>
                                         <td>{{$no++}}</td>
                                         <td>{{$data->nis}}</td>
@@ -101,11 +105,11 @@ SPP | Siswa
                                         <td><div style="text-align:center;">{{$data->phone}}</div></td>
                                         <td>
                                         <div style="text-align:center;">
-                                          <a href="#" class="btn btn-info" onclick="detailConfirm({{$data}})"title="Detail">
+                                          <a href="#" class="btn btn-info" onclick="detailConfirm({{$data}},'{{$date}}')"title="Detail">
                                             <i class="fa fa-eye"> Detail</i>
                                           </a>
                                         <a href="#" class="btn btn-warning"
-                                            onclick="editConfirm({{$data}})"
+                                            onclick="editConfirm({{$data}},'{{$date}}')"
                                             title="Edit"><i class="fa fa-edit"> Edit</i></a>
                                         <a href="{{ route('students.destroy',$data->id) }}" class="btn btn-danger"
                                             onclick="event.preventDefault();destroy('{{ route('students.destroy',$data->id) }}');"
@@ -215,20 +219,13 @@ SPP | Siswa
                                     <input name='email' placeholder=" Masukan Email" type='text' class='form-control'
                                         >
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Tanggal Masuk<kode>*</kode></label>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group data-custon-pick" id="data_3">
-                                                <div class="input-group date">
-                                                    <span class="input-group-addon"><i
-                                                            class="fa fa-calendar"></i></span>
-                                                    <input type="text" name='tgl_masuk' class="form-control" required autocomplete="off">
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="form-group data-custon-pick" id="data_2">
+                                    <label>Tanggal Masuk<kode>*</kode></label>
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" class="form-control" required placeholder="Tanggal" name="tgl_masuk">
                                     </div>
-                                </div>
+                                </div> 
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -330,20 +327,14 @@ SPP | Siswa
                                 <input name='email' id='email' placeholder=" Masukan Email" type='text'
                                     class='form-control'>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-2">Tanggal<kode>*</kode></label>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group data-custon-pick" id="data_3">
-                                            <div class="input-group date">
-                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                <input type="text" name='tgl_masuk' id='tgl_masuk' class="form-control" required>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="form-group data-custon-pick" id="data_2">
+                                <label>Tanggal Masuk<kode>*</kode></label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" id='tgl_masuk' required placeholder="Tanggal" name="tgl_masuk">
                                 </div>
                             </div>
-                    </div>
+                        </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                         <button type='submit' class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
@@ -441,18 +432,11 @@ SPP | Siswa
                                 <input name='email' id='email3' placeholder=" Masukan Email" type='text'
                                     class='form-control' disabled>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-2">Tanggal<kode>*</kode></label>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group data-custon-pick" id="data_3">
-                                            <div class="input-group date">
-                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                <input type="text" name='tgl_masuk' id='tgl_masuk3' class="form-control"
-                                                    disabled>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="form-group data-custon-pick" id="data_2">
+                                <label>Tanggal Masuk<kode>*</kode></label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id='tgl_masuk3' class="form-control" disabled placeholder="Tanggal" name="tgl_masuk">
                                 </div>
                             </div>
                     </div>
@@ -517,10 +501,10 @@ SPP | Siswa
                 document.getElementById('display').innerHTML = value;
             }
 
-            function editConfirm(data) {
+            function editConfirm(data,date) {
                 $('#nis').attr('value', data.nis);
                 $('#nama').attr('value', data.nama);
-                $('#tgl_masuk').attr('value', data.tgl_masuk);
+                $('#tgl_masuk').attr('value', date);
                 $('#email').attr('value', data.email);
                 $('#phone').attr('value', data.phone);
                 $('#alamat').html(data.alamat);
@@ -540,10 +524,10 @@ SPP | Siswa
                 $('#modalUpdate').modal();
             }
             
-            function detailConfirm(data) {
+            function detailConfirm(data,date) {
                 $('#nis3').attr('value', data.nis);
                 $('#nama3').attr('value', data.nama);
-                $('#tgl_masuk3').attr('value', data.tgl_masuk);
+                $('#tgl_masuk3').attr('value', date);
                 $('#email3').attr('value', data.email);
                 $('#phone3').attr('value', data.phone);
                 $('#alamat3').html(data.alamat);

@@ -96,9 +96,13 @@ SPP | Pemasukan
                                 <tbody>
                                     @foreach($datas as $data)
                                     @php
-                                    $temp = strtotime($data->created_at);
-                                    $tanggal = date('j - M - Y', $temp);
-                                    $url = asset('nota')."/".$data->foto;
+
+                                        $temp = strtotime($data->created_at);   
+                                        
+                                        $tanggal2 = date('d/m/Y', $temp);
+
+                                        $tanggal = date('j - M - Y', $temp);
+                                        $url = asset('nota')."/".$data->foto;
                                     @endphp
                                     <tr>
                                         <td>{{$no++}}</td>
@@ -122,7 +126,7 @@ SPP | Pemasukan
                                         </td>
                                         <td>
                                             <a href="#" class="btn btn-warning"
-                                                onclick="editConfirm( '{{$data->created_at}}','{{$data->id}}','{{$data->title}}','{{$data->description}}','{{$data->sumber}}','{{$data->nominal}}')"
+                                                onclick="editConfirm( '{{$tanggal2}}','{{$data->id}}','{{$data->title}}','{{$data->description}}','{{$data->sumber}}','{{$data->nominal}}')"
                                                 title="Edit Data"><i class="fa fa-edit"></i></a>
                                             <a href="{{ route('income.destroy',$data) }}" class="btn btn-danger"
                                                 onclick="event.preventDefault();destroy('{{ route('income.destroy',$data) }}');"
@@ -156,21 +160,7 @@ SPP | Pemasukan
                 <div class="basic-login-form-ad">
                     <form action="{{ route('income.store') }}" role="form" method="post" enctype="multipart/form-data">
                         {{csrf_field()}}
-                        <div class="form-group">
-                            <label class="control-label col-md-6">Tanggal<kode>*</kode></label>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group data-custon-pick" id="data_3">
-                                        <div class="input-group date">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" name='tanggal' id='tanggal' class="form-control"
-                                                placeholder="Tanggal Pemasukan" autocomplete="off" required>
-                                        </div>
-                                        <span class="help-block">bulan/tanggal/tahun</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        w
                         <div class="form-group">
                             <label class="control-label col-md-2">Judul<kode>*</kode></label>
                             <input name='title' placeholder=" Masukan Title" type='text' class='form-control' required>
@@ -243,19 +233,11 @@ SPP | Pemasukan
                     <form action="" id='editPemasukan' role="form" method="post" enctype="multipart/form-data">
                         @method('PUT')
                         {{csrf_field()}}
-                        <div class="form-group">
-                            <label class="control-label col-md-6">Tanggal<kode>*</kode></label>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group data-custon-pick" id="data_3">
-                                        <div class="input-group date">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" name='tanggal' id='tanggal_edit' class="form-control"
-                                                placeholder="Tanggal Pemasukan" autocomplete="off" required>
-                                        </div>
-                                        <span class="help-block">bulan/tanggal/tahun</span>
-                                    </div>
-                                </div>
+                        <div class="form-group data-custon-pick" id="data_2">
+                            <label>Tanggal<kode>*</kode></label>
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" class="form-control" autocomplete="off" required placeholder="Tanggal Pemasukan" name='tanggal' id='tanggal_edit'>
                             </div>
                         </div>
                         <div class="form-group">
@@ -386,11 +368,10 @@ SPP | Pemasukan
 
     <script>
         function editConfirm(tanggal, id, title, description, sumber, nominal) {
-            let date = convertDate(tanggal);
             $('#title').attr('value', title);
             $('#description').html(description);
             $('#nominal').attr('value', nominal);
-            $('#tanggal_edit').attr('value', date);
+            $('#tanggal_edit').attr('value', tanggal);
 
             $('#sumber_edit').val(sumber);
             $('#sumber_edit_chosen .chosen-single span').html(sumber);

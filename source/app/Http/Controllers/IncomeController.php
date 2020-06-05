@@ -273,6 +273,6 @@ class IncomeController extends Controller
     public function convertDateToSQLDate($date)
     {
         $temp = explode("/",$date);
-        return $temp[2]."-".$temp[0]."-".$temp[1];
+        return $temp[2]."-".$temp[1]."-".$temp[0];
     }
 }
