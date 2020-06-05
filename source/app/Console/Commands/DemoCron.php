@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-
+use DB;
 class DemoCron extends Command
 {
     /**
@@ -37,8 +37,14 @@ class DemoCron extends Command
      */
     public function handle()
     {
+        $date = date('Y-m-01');
+        DB::table('payment_details')
+            ->where('bulan','<=',$date)
+            ->where('status','Waiting')
+            ->update(['status' =>'Nunggak']);
+
         \Log::info("Masuk test");
-     
+        
         /*
            Write your database logic we bellow:
            Item::create(['name'=>'hello new']);
