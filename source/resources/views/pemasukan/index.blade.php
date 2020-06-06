@@ -160,11 +160,18 @@ SPP | Pemasukan
                 <div class="basic-login-form-ad">
                     <form action="{{ route('income.store') }}" role="form" method="post" enctype="multipart/form-data">
                         {{csrf_field()}}
-                        w
+                        <div class="form-group data-custon-pick" id="data_2">
+                            <label>Tanggal<kode>*</kode></label>
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" class="form-control" autocomplete="off" required placeholder="Tanggal Pemasukan" name='tanggal' id='tanggal'>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="control-label col-md-2">Judul<kode>*</kode></label>
                             <input name='title' placeholder=" Masukan Title" type='text' class='form-control' required>
                         </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-2">Deskripsi<kode>*</kode></label>
                             <textarea name='description' placeholder=" Masukan Deskripsi" required></textarea>

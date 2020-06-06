@@ -237,6 +237,7 @@ SPP | Kategori Pembayaran
                     <div class="form-group">
                         <label class="control-label col-md-4">Besaran Nominal (Rp.)</label>
                         <input name='besaran_old' type='hidden' min="0" class='form-control' id="edit-besaran-hidden" required>
+                        <input name='edit_jenis' type='hidden' min="0" class='form-control' id="edit-jenis-hidden" required>
                         <input name='besaran' placeholder="Masukan nominal pembayaran" type='number' min="0" class='form-control' id="edit-besaran" required>
                     </div>
                     <div class="form-group">
@@ -333,11 +334,11 @@ SPP | Kategori Pembayaran
 
 <script>
     function editConfirm(data, besaran, jurusan, angkatan) {
-        console.log(data);
         $('#edit-nama').val(data.nama);
         $('#edit-jurusan').val((jurusan > 1) ? "all" : data.periode[0].major.id);
         $('#edit-angkatan').val((angkatan > 1) ? "all" : data.periode[0].angkatan.id);
         $('#edit-besaran-hidden').attr('value', besaran);
+        $('#edit-jenis-hidden').attr('value', data.jenis);
         $('#edit-besaran').attr('value', besaran);
         $('#edit-jenis').attr('value', data.jenis);
         $('#editForm').attr('action', "{{ url('financing') }}/" + data.id);
