@@ -165,6 +165,7 @@ class MenuRekapController extends Controller
         }
         else
         {
+            $filter = 'all';
             $datas = DB::table('payment_details')
                     ->select(DB::raw('financing_categories.id as financing_category_id,
                     payment_details.id, 
@@ -864,8 +865,8 @@ class MenuRekapController extends Controller
             }
 
             $pdf = PDF::loadView('export.rekap_tunggakan_siswa',compact('no','title','datas'));
-            //$pdf->setPaper('A4', 'landscape');
-            $pdf->setPaper('A4', 'potrait');
+            $pdf->setPaper('A4', 'landscape');
+            // $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }
         else
@@ -938,8 +939,8 @@ class MenuRekapController extends Controller
                         ->get();
             }
             $pdf = PDF::loadView('export.rekap_tunggakan_kategori',compact('no','title','datas'));
-            //$pdf->setPaper('A4', 'landscape');
-            $pdf->setPaper('A4', 'potrait');
+            $pdf->setPaper('A4', 'landscape');
+            // $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }
     }

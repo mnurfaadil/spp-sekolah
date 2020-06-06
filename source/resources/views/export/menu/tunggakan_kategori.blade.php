@@ -261,7 +261,6 @@ SPP | Laporan Pengeluaran
                         $('#filter').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
                     });
                 });
-                $('input[type=hidden][name=filter]').val("all");
             }
             function validate() {
                 var filter = $('input[type=hidden][name=filter]').val();
