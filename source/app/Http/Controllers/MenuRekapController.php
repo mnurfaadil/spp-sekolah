@@ -864,8 +864,8 @@ class MenuRekapController extends Controller
             }
 
             $pdf = PDF::loadView('export.rekap_tunggakan_siswa',compact('no','title','datas'));
-            //$pdf->setPaper('A4', 'landscape');
-            $pdf->setPaper('A4', 'potrait');
+            $pdf->setPaper('A4', 'landscape');
+            // $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }
         else
@@ -938,8 +938,8 @@ class MenuRekapController extends Controller
                         ->get();
             }
             $pdf = PDF::loadView('export.rekap_tunggakan_kategori',compact('no','title','datas'));
-            //$pdf->setPaper('A4', 'landscape');
-            $pdf->setPaper('A4', 'potrait');
+            $pdf->setPaper('A4', 'landscape');
+            // $pdf->setPaper('A4', 'potrait');
             return $pdf->stream();
         }
     }
