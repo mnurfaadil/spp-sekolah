@@ -136,7 +136,6 @@ Route::get('laporan_bos','RekapController@ulala');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-
 Route::get('/rekap_Pemasukan', 'MenuRekapController@indexPemasukan')->name('rekap.pemasukan');
 Route::get('/rekap_Pengeluaran', 'MenuRekapController@indexPengeluaran')->name('rekap.pengeluaran');
 Route::get('/rekap_bukbes', 'MenuRekapController@indexBB')->name('rekap.bukbes');
@@ -156,5 +155,3 @@ Route::post('/rekap_Pemasukan/export', 'MenuRekapController@pemasukan')->name('r
 Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->name('rekap.pengeluaran.export');
 Route::post('/rekap_bukbes/export', 'MenuRekapController@bukuBesar')->name('rekap.bukbes.export');
 Route::post('/rekap_tunggakan/export', 'MenuRekapController@tunggakan')->name('rekap.tunggakan.export');
-
-

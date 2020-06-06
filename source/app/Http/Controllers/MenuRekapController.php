@@ -578,6 +578,9 @@ class MenuRekapController extends Controller
         $rincian = "Tunggakan";
         $title = "Laporan Tunggakan";
 
+        echo '<pre>';
+        var_dump($request->all());die;
+
         if ($stat == 'Siswa')
         {
             $kelas = $request->kelas;
