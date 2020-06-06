@@ -50,6 +50,7 @@ class RekapController extends Controller
         $rekap = DB::table('rekap_view')->first();
         $sum = 0;
         
+        
         $payments = PaymentDetail::where('status','Nunggak')->get();
 
         $filter = true;

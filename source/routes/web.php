@@ -145,13 +145,16 @@ Route::get('/rekap_tunggakan/{stat?}', 'MenuRekapController@indexTunggakan')->na
 Route::post('/rekap_Pemasukan', 'MenuRekapController@indexPemasukanFilter')->name('rekap.pemasukan.filter');
 Route::post('/rekap_Pengeluaran', 'MenuRekapController@indexPengeluaranFilter')->name('rekap.pengeluaran.filter');
 Route::post('/rekap_bukbes', 'MenuRekapController@indexBukuBesarFilter')->name('rekap.bukbes.filter');
+Route::post('/rekap_tunggakan/{stat?}', 'MenuRekapController@indexTunggakanFilter')->name('rekap.tunggakan.filter');
 
 Route::get('/rekap_Pemasukan/ajax/{stat}', 'MenuRekapController@ajaxPemasukan')->name('rekap.pemasukan.ajax');
 Route::get('/rekap_Pengeluaran/ajax/{stat}', 'MenuRekapController@ajaxPengeluaran')->name('rekap.pengeluaran.ajax');
 Route::get('/rekap_bukbes/ajax/{stat}', 'MenuRekapController@ajaxBukuBesar')->name('rekap.bukbes.ajax');
+Route::get('/rekap_tunggakan/ajax/{stat?}/{filter?}', 'MenuRekapController@ajaxTunggakan')->name('rekap.tunggakan.ajax');
 
 Route::post('/rekap_Pemasukan/export', 'MenuRekapController@pemasukan')->name('rekap.pemasukan.export');
 Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->name('rekap.pengeluaran.export');
 Route::post('/rekap_bukbes/export', 'MenuRekapController@bukuBesar')->name('rekap.bukbes.export');
+Route::post('/rekap_tunggakan/export', 'MenuRekapController@tunggakan')->name('rekap.tunggakan.export');
 
 

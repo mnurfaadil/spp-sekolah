@@ -20,14 +20,7 @@ SPP | Laporan Pengeluaran
                                             @csrf
                                             <input type="hidden" name="stat" value="{{$stat}}">
                                             <div style="float:left; display:flex; flex-direction:row; max-height:55">
-                                                <select class="form-control" style="margin-right:5px; width:150px" name="kelas" id="kelas" required>
-                                                    <option value="all">Semua Kelas</option>
-                                                </select>
-                                                <select class="form-control" style="margin-right:5px; width:150px" name="jurusan" id="jurusan" required>
-                                                    <option value="all">Semua Jurusan</option>
-                                                </select>
-                                                <select class="form-control" style="margin-right:5px; width:150px" name="angkatan" id="angkatan" required>
-                                                    <option value="all">Semua Angkatan<option>
+                                                <select class="form-control" style="margin-right:5px; width:150px" name="filter" id="filter" required>
                                                 </select>
                                                 <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
                                             </div>
@@ -37,9 +30,7 @@ SPP | Laporan Pengeluaran
                                         <form action="{{route('rekap.tunggakan.export')}}" target="_blank" role="form" id="cetak" method="post">
                                             @csrf
                                             <input type="hidden" name="stat" value="{{$stat}}">
-                                            <input type="hidden" name="kelas" value="{{$kelas}}">
-                                            <input type="hidden" name="jurusan" value="{{$jurusan}}">
-                                            <input type="hidden" name="angkatan" value="{{$angkatan}}">
+                                            <input type="hidden" name="filter" value="{{$filter}}">
                                             <button type='button' onclick="validate()" class="btn btn-primary pull-right" style="margin-left:5px;"><i class="fa fa-print" ></i> Cetak</button>
                                         </form>
                                     </div>
@@ -57,11 +48,11 @@ SPP | Laporan Pengeluaran
                                 <thead>
                                     <tr>
                                         <th data-field="no"><div style="text-align:center;">No</div></th>
+                                        <th data-field="kategori"><div style="text-align:center;">Kategori</div></th>
                                         <th data-field="tanggal"><div style="text-align:center;">Nama</div></th>
                                         <th data-field="deskripsi"><div style="text-align:center;">Kelas</div></th>
                                         <th data-field="jurusan"><div style="text-align:center;">Jurusan</div></th>
                                         <th data-field="angkatan"><div style="text-align:center;">Angkatan</div></th>
-                                        <th data-field="kategori"><div style="text-align:center;">Kategori</div></th>
                                         <th data-field="besaran"><div style="text-align:center;">Besaran</div></th>
                                         <th data-field="potongan"><div style="text-align:center;">Potongan</div></th>
                                         <th data-field="terbayar"><div style="text-align:center;">Terbayar</div></th>
@@ -88,7 +79,7 @@ SPP | Laporan Pengeluaran
                                             $potongan = (int) (((int)$data->persentase * (int) $data->nominal)/100);
                                         }
                                         $sisa = $besaran - ( $terbayar + $potongan );
-                                        
+
                                         $total[0] += (int) $besaran;
                                         $total[1] += (int) $potongan;
                                         $total[2] += (int) $terbayar;
@@ -96,11 +87,11 @@ SPP | Laporan Pengeluaran
                                     @endphp
                                         <tr>
                                             <td>{{$no++}}</td>
+                                            <td ><div style="text-align:center;">{{$data->nama}}</div></td>
                                             <td >{{$data->nama_murid}}</td>
                                             <td ><div style="text-align:center;">{{$data->kelas}}</div></td>
                                             <td ><div style="text-align:center;">{{$data->inisial}}</div></td>
                                             <td ><div style="text-align:center;">{{$data->angkatan}} ({{$data->tahun_angkatan}})</div></td>
-                                            <td ><div style="text-align:center;">{{$data->nama}}</div></td>
                                             <td ><div style="text-align:right;">{{number_format($besaran,0,',','.')}}</div></td>
                                             <td ><div style="text-align:right;">{{number_format($potongan,0,',','.')}}</div></td>
                                             <td ><div style="text-align:right;">{{number_format($terbayar,0,',','.')}}</div></td>
@@ -118,7 +109,6 @@ SPP | Laporan Pengeluaran
                                                     <div class="row">
                                                         <table>
                                                             <tbody>
-                                                                <tr>
                                                                 <tr>
                                                                     <td>Besaran </td>
                                                                     <td>:</td>
@@ -258,60 +248,24 @@ SPP | Laporan Pengeluaran
         <!-- Custom Script -->
         <!-- ============================================ -->
         <script>
-            function change_kelas() {
-                var kelas = $('#kelas').val();
-                var pilihan = $('input[type=hidden][name=kelas]').val(kelas);
+            function change_filter() {
+                var filter = $('#filter').val();
+                var pilihan = $('input[type=hidden][name=filter]').val(filter);
             }
-            function change_jurusan() {
-                var jurusan = $('#jurusan').val();
-                var pilihan = $('input[type=hidden][name=jurusan]').val(jurusan);
-            }
-            function change_angkatan() {
-                var angkatan = $('#angkatan').val();
-                var pilihan = $('input[type=hidden][name=angkatan]').val(angkatan);
-            }
-            function load_kelas() {
-                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}/Kelas`, function(data){
-                    var temp = {kategori: "Semua Kelas", kategori_value: "all"};
+            function load_filter() {
+                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}`, function(data){
+                    var temp = {kategori: "Semua", kategori_value: "all"};
                     data.unshift(temp);
-                    $('#kelas').empty();
+                    $('#filter').empty();
                     $.each(data, function (i, val){
-                        $('#kelas').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
+                        $('#filter').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
                     });
                 });
-            }
-            function load_jurusan() {
-                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}/Jurusan`, function(data){
-                    var temp = {kategori: "Semua Jurusan", kategori_value: "all"};
-                    data.unshift(temp);
-                    $('#jurusan').empty();
-                    $.each(data, function (i, val){
-                        $('#jurusan').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
-                    });
-                });
-            }
-            function load_angkatan() {
-                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}/Angkatan`, function(data){
-                    var temp = {kategori: "Semua Angkatan", tahun: "", kategori_value: "all"};
-                    data.unshift(temp);
-                    $('#angkatan').empty();
-                    $.each(data, function (i, val){
-                        if (i === 0)
-                        {
-                            $('#angkatan').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
-                        }
-                        else
-                        {
-                            $('#angkatan').append(`<option value="${val.kategori_value}">${val.kategori} (${val.tahun})</option>`);
-                        }
-                    });
-                });
+                $('input[type=hidden][name=filter]').val("all");
             }
             function validate() {
-                var kelas = $('input[type=hidden][name=kelas]').val();
-                var jurusan = $('input[type=hidden][name=jurusan]').val();
-                var angkatan = $('input[type=hidden][name=angkatan]').val();
-                if (kelas === '' || jurusan === '' || angkatan === '' )
+                var filter = $('input[type=hidden][name=filter]').val();
+                if (filter === '')
                 {
                     swal({
                         title: 'Peringatan',
@@ -324,13 +278,9 @@ SPP | Laporan Pengeluaran
                     $('#cetak').submit();
                 }
             }
-            $('#kelas').change(change_kelas);
-            $('#jurusan').change(change_jurusan);
-            $('#angkatan').change(change_angkatan);
+            $('#filter').change(change_filter);
             $(document).ready(function(){
-                load_kelas();
-                load_jurusan();
-                load_angkatan();
+                load_filter();
             });
         </script>
         @endpush
