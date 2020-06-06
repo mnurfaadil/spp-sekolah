@@ -51,15 +51,56 @@ class RekapController extends Controller
         $sum = 0;
         
         
-        $payments = PaymentDetail::where('status','Nunggak')->get();
+        $payments = DB::table('payment_details')
+                        ->select(DB::raw('financing_categories.id as financing_category_id,
+                        payment_details.id, 
+                        payment_details.payment_id,
+                        payment_details.payment_periode_id,
+                        angkatans.id as angkatan_id,
+                        majors.id as major_id,
+                        students.nama as nama_murid,
+                        students.kelas,
+                        angkatans.angkatan,
+                        angkatans.tahun as tahun_angkatan,
+                        majors.inisial as inisial,
+                        majors.nama as jurusan,
+                        financing_categories.nama, 
+                        count(payment_details.status) as banyak_tunggakan,
+                        financing_periodes.nominal,
+                        getNominalCicilan(payment_details.id) as cicilan_dibayar,
+                        payments.jenis_pembayaran,
+                    payments.persentase,
+                        payment_details.status'))
+                        ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+                        ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
+                        ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+                        ->join('students', 'students.id', '=', 'payments.student_id')
+                        ->join('majors', 'majors.id', '=', 'students.major_id')
+                        ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+                        ->orderBy('students.id')
+                        ->groupBy('payment_details.payment_id')
+                        ->where('payment_details.status','<>','Lunas')
+                        ->get();
 
         $filter = true;
+        $sum = 0;
         foreach ($payments as $k) {
-            $nominal = intval($k->periode->nominal);
-            $terbayar = intval($k->cicilan->sum('nominal'));
-            $potongan  = intval($k->payment->persentase)*$nominal/100;
-            $sisa = $nominal - ($terbayar + $potongan);
-            $sum += $sisa;
+            $bulan_spp = 36;
+        if ($data->nama == 'SPP')
+        {
+            $besaran = $bulan_spp * (int) $data->nominal;
+            $terbayar = ($bulan_spp - (int) $data->banyak_tunggakan) * (int)$data->nominal;
+            $potongan = 0;
+        }
+        else
+        {
+            $besaran = (int) $data->nominal;
+            $terbayar = $data->cicilan_dibayar == null ? 0 : (int) $data->cicilan_dibayar;
+            $potongan = (int) (((int)$data->persentase * (int) $data->nominal)/100);
+        }
+        $sisa = $besaran - ( $terbayar + $potongan );
+        
+        $sum += (int) $sisa;
         }
         $rekap->tunggakan = $sum;
         return view('export.index',compact('categorys','rekap'));
