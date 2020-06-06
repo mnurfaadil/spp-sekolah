@@ -578,8 +578,8 @@ class MenuRekapController extends Controller
         $rincian = "Tunggakan";
         $title = "Laporan Tunggakan";
 
-        echo '<pre>';
-        var_dump($request->all());die;
+        // echo '<pre>';
+        // var_dump($request->all());die;
 
         if ($stat == 'Siswa')
         {
@@ -937,7 +937,10 @@ class MenuRekapController extends Controller
                         ->where('financing_categories.id','=', $request->filter)
                         ->get();
             }
-            return view('export.menu.tunggakan_kategori',compact('no','datas','filter','pilihan', 'stat'));
+            $pdf = PDF::loadView('export.rekap_tunggakan_kategori',compact('no','title','datas'));
+            //$pdf->setPaper('A4', 'landscape');
+            $pdf->setPaper('A4', 'potrait');
+            return $pdf->stream();
         }
     }
 

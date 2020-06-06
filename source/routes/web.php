@@ -154,4 +154,4 @@ Route::get('/rekap_tunggakan/ajax/{stat?}/{filter?}', 'MenuRekapController@ajaxT
 Route::post('/rekap_Pemasukan/export', 'MenuRekapController@pemasukan')->name('rekap.pemasukan.export');
 Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->name('rekap.pengeluaran.export');
 Route::post('/rekap_bukbes/export', 'MenuRekapController@bukuBesar')->name('rekap.bukbes.export');
-Route::post('/rekap_tunggakan/export', 'MenuRekapController@tunggakan')->name('rekap.tunggakan.export');
+Route::post('/rekap_tunggakan_export', 'MenuRekapController@tunggakan')->name('rekap.tunggakan.export');
