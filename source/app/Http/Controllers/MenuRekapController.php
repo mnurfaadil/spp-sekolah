@@ -165,6 +165,7 @@ class MenuRekapController extends Controller
         }
         else
         {
+            $filter = 'all';
             $datas = DB::table('payment_details')
                     ->select(DB::raw('financing_categories.id as financing_category_id,
                     payment_details.id, 
