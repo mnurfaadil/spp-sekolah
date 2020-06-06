@@ -114,7 +114,11 @@
             </td>
             <td >
               <div style="word-wrap: break-word;">
-              {{$k->tgl_dibayar}}
+              @php
+                  $temp = explode("-",$k->tgl_dibayar);
+                  $date = $temp[2]."/".$temp[1]."/".$temp[0];
+              @endphp
+              {{$date}}
               </div>
             </td>
             <td >
