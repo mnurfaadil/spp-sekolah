@@ -84,7 +84,7 @@ class RekapController extends Controller
 
         $filter = true;
         $sum = 0;
-        foreach ($payments as $k) {
+        foreach ($payments as $data) {
             $bulan_spp = 36;
         if ($data->nama == 'SPP')
         {
