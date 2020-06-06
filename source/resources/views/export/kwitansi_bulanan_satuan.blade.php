@@ -24,8 +24,8 @@
       
       <div style="padding-top:3px;">
         <div style="float:left;padding-right:3px;padding-left:3px;">
-          <img style="hight:20; width:20;" src="{{public_path('assets\img\logo\bbl.png')}}" />
-          <img style="hight:30; width:30;" src="{{asset('assets/img/logo/bbl.png')}}" />
+          <!-- <img style="hight:20; width:20;" src="{{public_path('assets\img\logo\bbl.png')}}" /> -->
+          <img style="hight:20; width:20;" src="{{asset('assets/img/logo/bbl.png')}}" />
         </div>
         <div style="padding-left:3px;padding-bottom:3px;">
           <p> <span style="font-size:6pt;font-style:bold">SMK BAABUL KAMIL</span></p>
