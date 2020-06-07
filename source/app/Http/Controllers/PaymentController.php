@@ -686,7 +686,7 @@ class PaymentController extends Controller
                 ->route('payment.index')
                 ->with('error', 'Periode pembiayaan kosong. Untuk Pembiayaan dengan jenis per Bulan, periode harus dicantumkan!');
         }
-
+  
         //numbering
         $no = 1;
         //data Pembiayaan
@@ -770,6 +770,11 @@ class PaymentController extends Controller
     public function updateStatusBulanan(Request $request)
     {
         $req = $request->all();
+        if(!isset($req['category_id'])){
+            return redirect()
+                ->route('payment.monthly.show.detail',[$req['payment_id'],$req['student_id'],$req['category_id']])
+                ->with('error', 'Tanggal Pembayaran Kosong!');
+        }
         if($req['status']=="Lunas"){   
             $user = Auth::user()->id;
             $penerima = Auth::user()->name;
