@@ -89,7 +89,7 @@ SPP | Pengeluaran
                                         <td class="avatar text-center">
                                         @if($data->tipe=="img")
                                           <img class="rounded-circle" style="width: 100px; height: 100px;" src="{{ $url }}" alt="">
-                                          @else($data->tipe=="pdf")
+                                          @elseif($data->tipe=="pdf")
                                           <a href="{{ route('expense.download',$data->foto) }}" title="Download file" style="margin:0;color:blue"><i class="fa fa-download"></i> Download</a>
                                           @endif
                                         </td>
