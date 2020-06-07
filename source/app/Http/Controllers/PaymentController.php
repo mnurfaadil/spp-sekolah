@@ -770,7 +770,7 @@ class PaymentController extends Controller
     public function updateStatusBulanan(Request $request)
     {
         $req = $request->all();
-        if(!isset($req['category_id'])){
+        if(!isset($req['calendar'])){
             return redirect()
                 ->route('payment.monthly.show.detail',[$req['payment_id'],$req['student_id'],$req['category_id']])
                 ->with('error', 'Tanggal Pembayaran Kosong!');
