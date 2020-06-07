@@ -27,7 +27,7 @@ SPP | Cicilan Pembayaran
                                 <label>Tanggal Pembayaran</label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" name="calendar" value="{{$date}}" readonly title="Tanggal pembayaran otomatis hari ini">
+                                    <input type="text" class="form-control" autocomplete="off" name="calendar" value="{{$date}}" readonly title="Tanggal pembayaran otomatis hari ini">
                                 </div>
                             </div>
                             <div class="form-group">

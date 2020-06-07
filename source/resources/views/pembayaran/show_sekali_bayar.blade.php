@@ -273,7 +273,7 @@ SPP | Pembayaran {{$financing->nama}}
                                 <label>Tanggal Pembayaran<kode>*</kode></label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" required placeholder="Tanggal Pembayaran" name="tanggal_bayar" id="tanggal_bayar_add">
+                                    <input type="text" autocomplete="off" class="form-control" required placeholder="Tanggal Pembayaran" name="tanggal_bayar" id="tanggal_bayar_add">
                                 </div>
                             </div>
                             <div class="form-group">

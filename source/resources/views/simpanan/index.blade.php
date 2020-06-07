@@ -317,7 +317,7 @@ SPP | Simpanan
                                         <div class="form-group data-custon-pick" id="data_3">
                                             <div class="input-group date">
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                <input type="text" name='tgl_masuk' id='tgl_masuk' class="form-control" required>
+                                                <input type="text" autocomplete="off" name='tgl_masuk' id='tgl_masuk' class="form-control" required>
                                             </div>
                                         </div>
                                     </div>

@@ -223,7 +223,7 @@ SPP | Siswa
                                     <label>Tanggal Masuk<kode>*</kode></label>
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" class="form-control" required placeholder="Tanggal" name="tgl_masuk">
+                                        <input type="text" class="form-control" autocomplete="off" required placeholder="Tanggal" name="tgl_masuk">
                                     </div>
                                 </div> 
                         </div>
@@ -331,7 +331,7 @@ SPP | Siswa
                                 <label>Tanggal Masuk<kode>*</kode></label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" id='tgl_masuk' required placeholder="Tanggal" name="tgl_masuk">
+                                    <input type="text" autocomplete="off" class="form-control" id='tgl_masuk' required placeholder="Tanggal" name="tgl_masuk">
                                 </div>
                             </div>
                         </div>

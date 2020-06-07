@@ -30,7 +30,7 @@ SPP | Cicilan Pembayaran
                                 <label>Tanggal Pembayaran<kode>*</kode></label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" required placeholder="Tanggal Pembayaran" name="calendar">
+                                    <input type="text" class="form-control" autocomplete="off" required placeholder="Tanggal Pembayaran" name="calendar">
                                 </div>
                             </div>
                             <div class="form-group">
