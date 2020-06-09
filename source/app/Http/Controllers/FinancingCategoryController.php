@@ -34,8 +34,7 @@ class FinancingCategoryController extends Controller
         $datas = FinancingCategory::orderBy('updated_at','desc')
             ->get();
         $majors = Major::all();
-        $angkatans = Angkatan::where('status','<>','ALUMNI')
-                    ->orderBy('status')->get();
+        $angkatans = Angkatan::all();
         $no = 1;
         return view('master.financingcategory.index', compact('datas', 'no', 'majors','angkatans'));
     }
