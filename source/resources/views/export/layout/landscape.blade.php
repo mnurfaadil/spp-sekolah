@@ -28,7 +28,7 @@
     }
 
     .table1 tr td{
-        font-size:9pt;
+        font-size:10pt;
     }
 
     .table1 tr th .footer-right{
@@ -44,7 +44,7 @@
     .table1, th, td {
         padding: 8px 14px;
         text-align: center;
-        font-size: 10pt;
+        font-size: 12pt;
     }
     
     .table1 tr:hover {
@@ -59,6 +59,10 @@
     }
     .row-content td{
       font-size: 10pt;
+    }
+
+    .table1 .footer-section {
+
     }
     </style>
   </head>
