@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,34 +5,38 @@
     <title>Rincian</title>
     <style>
     .text-atas tr td{
-      font-size: 10pt;
+      font-size: 3pt;
     }
 .page_break { page-break-before: always; },
 .garis_dua{ 
   border: 0;
   border-top: 5px double #8c8c8c;
 }
+*{
+  margin:0;
+}
 </style>
   </head>
-  <body>
+  <body width="100%">
+    <div style="border-style: solid;margin:3px">
     <header class="clearfix">
-      <div >
-        <div style="float:left;padding-right:20px;">
-        <br>
-          <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" />
+      
+      <div style="padding-top:3px;">
+        <div style="float:left;padding-right:3px;padding-left:3px;">
+          <!-- <img style="hight:20; width:20;" src="{{public_path('assets\img\logo\bbl.png')}}" /> -->
+          <img style="hight:20; width:20;" src="{{asset('assets/img/logo/bbl.png')}}" />
         </div>
-        <div style="padding-top:10">
-          <p> <span style="font-size:14pt;font-style:bold">SMK BAABUL KAMIL</span>
-          <br> <span style="font-size:12pt">Terakreditasi 'A' | Program Keahlian : Multimedia, Adm Perkantoran & Perawatan</span>
-          <br> <span style="font-size:10pt">Alamat:Jl. Cikuda No. 08 Jatinangor, Tlp : (022) 7797312 / 085294124866</span>
-          <br> <span style="font-size:10pt">Email: <span style="color:blue; font-style: italic;"> smkbaabulkamil_jatinangor@yahoo.com </span></span>
-          | <span style="font-size:10pt">Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span>
+        <div style="padding-left:3px;padding-bottom:3px;">
+          <p> <span style="font-size:6pt;font-style:bold">SMK BAABUL KAMIL</span></p>
+          <p><span style="font-size:4pt">Terakreditasi 'A' | Program Keahlian : Multimedia, Adm Perkantoran & Perawatan</span></p>
+          <p><span style="font-size:3pt">Alamat:Jl. Cikuda No. 08 Jatinangor, Tlp : (022) 7797312 / 083294124866</span></p>
+          <p><span style="font-size:3pt">Email: <span style="color:blue; font-style: italic;"> smkbaabulkamil_jatinangor@yahoo.com </span> | Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span></p>
           </p>
         </div>
       </div>
         <hr class="garis_dua">
-        <center><h4>BUKTI PEMBAYARAN SISWA</h4></center><hr>
-        <table width='100%'>
+        <center><p style="font-size:6pt;font-style:bold">BUKTI PEMBAYARAN SISWA</p></center><hr>
+        <table style="font-size:3pt" width='100%'>
           <tr>
             <td width='50%'>
               <table class="text-atas">
@@ -55,7 +58,7 @@
               </table>
             </td>
             <td width='50%'>
-            <table class="text-atas">
+            <table style="font-size:3pt" class="text-atas">
                 <tr>
                   <td>NIS</td>
                   <td>:</td>
@@ -75,12 +78,10 @@
             </td>
           </tr>
         </table>
-        
     </header>
-    <br>
     <hr>
     <main style="align-item:center;">
-      <table style="font-size:14px;" width="100%">
+      <table style="font-size:3pt" width="100%">
         <thead>
           <tr>
             <th width="15%">NO</th>
@@ -113,7 +114,7 @@
           </tr>
         </tbody>
       </table>
-      <table width='100%'>
+      <table style="font-size:3pt" width='100%'>
           <tr>
             <td width='50%'>
               <table>
@@ -141,8 +142,7 @@
         </table>
     </main>
     <footer>
-    <br>
-    <table width='100%'>
+    <table style="font-size:3pt" width='100%'>
       <tr>
         <td width='50%'>
           <table width='100%'>
@@ -150,7 +150,7 @@
           </table>
         </td>
         <td width='50%'>
-          <table style="text-align:center" width='100%'>
+          <table style="font-size:3pt" style="text-align:center" width='100%'>
             <tr>
               <td>Jatinangor, {{$data['tanggal']}}</td>
             </tr>
@@ -161,33 +161,32 @@
         </td>
       </tr>
     </table>
-    <br>
-    <table width='100%'>
+    <table style="font-size:3pt" width='100%'>
       <tr>
         <td width='50%'>
           <table width='100%'>
             <tr>
               <td>Catatan</td>
             </tr>
-            <tr style='font-size:14px'>
+            <tr style='font-size:3px'>
               <td>- Disimpan sebagai pembayaran bukti yang SAH</td>
             </tr>
-            <tr style='font-size:14px'>
+            <tr style='font-size:3px'>
               <td>- Uang yang dibayar tidak dapat diminta kembali</td>
             </tr>
           </table>
         </td>
         <td width='50%'>
-          <table width='100%'>
-            <tr><td><br></td></tr>
+          <table style="font-size:3pt" width='100%'>
             <tr><td><br></td></tr>
             <tr>
-              <td style="text-align:center"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
+              <td style="text-align:center;font-size:4pt"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
             </tr>
           </table>
         </td>
       </tr>
     </table>
     </footer>
+    </div>
   </body>
 </html>

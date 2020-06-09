@@ -648,9 +648,8 @@ class RekapController extends Controller
         $data['desc'] = $d;
 
         $pdf = PDF::loadView('export.kwitansi_sekali_satuan',compact('user','siswa','data','no'));
-        //$pdf->setPaper('A4', 'landscape');
-        // $customPaper = array(0,0,297.64,420.94);
-        $pdf->setPaper('A4', 'potrait');
+        // $pdf->setPaper('A4', 'potrait');
+        $pdf->setPaper(array(0,0,300,500));
         return $pdf->stream();
     }
 
