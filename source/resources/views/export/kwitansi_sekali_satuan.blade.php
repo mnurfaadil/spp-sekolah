@@ -39,7 +39,7 @@
         <table style="font-size:6pt" width='100%'>
           <tr>
             <td width='50%'>
-              <table class="text-atas">
+              <table width="100%" class="text-atas">
                 <tr>
                   <td>DICETAK</td>
                   <td>&nbsp;</td>
@@ -58,7 +58,7 @@
               </table>
             </td>
             <td width='50%'>
-            <table style="font-size:6pt" class="text-atas">
+            <table width="100%" style="font-size:6pt" class="text-atas">
                 <tr>
                   <td>NIS</td>
                   <td>:</td>
@@ -169,10 +169,10 @@
               <td>Catatan</td>
             </tr>
             <tr style='font-size:3px'>
-              <td>- Disimpan sebagai pembayaran bukti yang SAH</td>
+              <td style='font-size:6pt'>- Disimpan sebagai pembayaran bukti yang SAH</td>
             </tr>
             <tr style='font-size:3px'>
-              <td>- Uang yang dibayar tidak dapat diminta kembali</td>
+              <td style='font-size:6pt'>- Uang yang dibayar tidak dapat diminta kembali</td>
             </tr>
           </table>
         </td>
@@ -180,7 +180,7 @@
           <table style="font-size:6pt" width='100%'>
             <tr><td><br></td></tr>
             <tr>
-              <td style="text-align:center;font-size:6pt"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
+              <td style="text-align:center;font-size:7pt"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
             </tr>
           </table>
         </td>
