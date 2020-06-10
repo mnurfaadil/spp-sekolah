@@ -196,7 +196,8 @@ SPP | Pembayaran {{$financing->nama}}
                                                     @if($data->detail->first() !== null)
                                                         <a href="{{ route('pdf.print.sesekali.detail',[$data->student->id,$data->detail->first()->id, 'tunai'])}}"
                                                             class=" btn btn-success" target="_blank" title="Cetak kwitansi">
-                                                        <i class="fa fa-print"></i>&nbsp;Cetak</a>
+                                                        <i class="fa fa-print"></i></a>
+                                                    <a href="{{route('payment.detail.delete',$data->detail->first()->id)}}" class="btn btn-danger" style="color:white;margin-top:0" title="Delete"><i class="fa fa-close"></i></a>
                                                     @endif
                                                 @endif
                                             </div>
