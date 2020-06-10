@@ -68,7 +68,7 @@ SPP | Laporan Pengeluaran
                                         <th data-field="sisa"><div style="text-align:center;">Sisa</div></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody">
                                     @php
                                         $total = [0,0,0,0];
                                     @endphp
@@ -327,10 +327,39 @@ SPP | Laporan Pengeluaran
             $('#kelas').change(change_kelas);
             $('#jurusan').change(change_jurusan);
             $('#angkatan').change(change_angkatan);
+            function change_search() {
+                let val = $(this).val();
+                let screen = [0,0,0,0];
+                $('#table tr').each(function(){
+                    let i = 0;
+                    $(this).find('td').each(function(){
+                        i += 1;
+                        try {
+                            if ($(this).text()) {
+                                if ( i===7 || i===8 || i===9 || i===10) {
+                                    let raw = $(this).text();
+                                    let value = raw.replace(/\./g,'');
+                                    screen[i-7] += parseInt(value);
+                                }
+                            }
+                        } catch (error) {
+                            //
+                        }
+                    })
+                });
+                console.log(screen);
+            }
+            
             $(document).ready(function(){
                 load_kelas();
                 load_jurusan();
                 load_angkatan();
+                let search = document.getElementsByClassName('search');
+                let form = search[0].lastChild;
+                form.addEventListener("keyup", change_search);
+                form.addEventListener("drop", change_search);
+                form.addEventListener("blur", change_search);
+                form.addEventListener("focusin", change_search);
             });
         </script>
         @endpush

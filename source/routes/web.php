@@ -150,6 +150,7 @@ Route::get('/rekap_Pemasukan/ajax/{stat}', 'MenuRekapController@ajaxPemasukan')-
 Route::get('/rekap_Pengeluaran/ajax/{stat}', 'MenuRekapController@ajaxPengeluaran')->name('rekap.pengeluaran.ajax');
 Route::get('/rekap_bukbes/ajax/{stat}', 'MenuRekapController@ajaxBukuBesar')->name('rekap.bukbes.ajax');
 Route::get('/rekap_tunggakan/ajax/{stat?}/{filter?}', 'MenuRekapController@ajaxTunggakan')->name('rekap.tunggakan.ajax');
+Route::get('/rekap_tunggakan/ajax/{id_siswa}', 'MenuRekapController@ajaxTunggakanSiswa')->name('rekap.tunggakan.ajax.siswa');
 
 Route::post('/rekap_Pemasukan/export', 'MenuRekapController@pemasukan')->name('rekap.pemasukan.export');
 Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->name('rekap.pengeluaran.export');

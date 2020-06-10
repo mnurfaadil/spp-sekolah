@@ -5,7 +5,7 @@
     <title>Rincian</title>
     <style>
     .text-atas tr td{
-      font-size: 3pt;
+      font-size: 6pt;
     }
 .page_break { page-break-before: always; },
 .garis_dua{ 
@@ -28,15 +28,15 @@
         </div>
         <div style="padding-left:3px;padding-bottom:3px;">
           <p> <span style="font-size:6pt;font-style:bold">SMK BAABUL KAMIL</span></p>
-          <p><span style="font-size:4pt">Terakreditasi 'A' | Program Keahlian : Multimedia, Adm Perkantoran & Perawatan</span></p>
-          <p><span style="font-size:3pt">Alamat:Jl. Cikuda No. 08 Jatinangor, Tlp : (022) 7797312 / 083294124866</span></p>
-          <p><span style="font-size:3pt">Email: <span style="color:blue; font-style: italic;"> smkbaabulkamil_jatinangor@yahoo.com </span> | Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span></p>
+          <p><span style="font-size:6pt">Terakreditasi 'A' | Program Keahlian : Multimedia, Adm Perkantoran & Perawatan</span></p>
+          <p><span style="font-size:6pt">Alamat:Jl. Cikuda No. 08 Jatinangor, Tlp : (022) 7797312 / 083294124866</span></p>
+          <p><span style="font-size:6pt">Email: <span style="color:blue; font-style: italic;"> smkbaabulkamil_jatinangor@yahoo.com </span> | Website : <span style="color:blue;font-style: italic;">www.smkbaabulkamil.sch.id</span></span></p>
           </p>
         </div>
       </div>
         <hr class="garis_dua">
         <center><p style="font-size:6pt;font-style:bold">BUKTI PEMBAYARAN SISWA</p></center><hr>
-        <table style="font-size:3pt" width='100%'>
+        <table style="font-size:6pt" width='100%'>
           <tr>
             <td width='50%'>
               <table class="text-atas">
@@ -58,7 +58,7 @@
               </table>
             </td>
             <td width='50%'>
-            <table style="font-size:3pt" class="text-atas">
+            <table style="font-size:6pt" class="text-atas">
                 <tr>
                   <td>NIS</td>
                   <td>:</td>
@@ -81,7 +81,7 @@
     </header>
     <hr>
     <main style="align-item:center;">
-      <table style="font-size:3pt" width="100%">
+      <table style="font-size:6pt" width="100%">
         <thead>
           <tr>
             <th width="15%">NO</th>
@@ -114,7 +114,7 @@
           </tr>
         </tbody>
       </table>
-      <table style="font-size:3pt" width='100%'>
+      <table style="font-size:6pt" width='100%'>
           <tr>
             <td width='50%'>
               <table>
@@ -142,7 +142,7 @@
         </table>
     </main>
     <footer>
-    <table style="font-size:3pt" width='100%'>
+    <table style="font-size:6pt" width='100%'>
       <tr>
         <td width='50%'>
           <table width='100%'>
@@ -150,7 +150,7 @@
           </table>
         </td>
         <td width='50%'>
-          <table style="font-size:3pt" style="text-align:center" width='100%'>
+          <table style="font-size:6pt" style="text-align:center" width='100%'>
             <tr>
               <td>Jatinangor, {{$data['tanggal']}}</td>
             </tr>
@@ -161,7 +161,7 @@
         </td>
       </tr>
     </table>
-    <table style="font-size:3pt" width='100%'>
+    <table style="font-size:6pt" width='100%'>
       <tr>
         <td width='50%'>
           <table width='100%'>
@@ -177,10 +177,10 @@
           </table>
         </td>
         <td width='50%'>
-          <table style="font-size:3pt" width='100%'>
+          <table style="font-size:6pt" width='100%'>
             <tr><td><br></td></tr>
             <tr>
-              <td style="text-align:center;font-size:4pt"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
+              <td style="text-align:center;font-size:6pt"><span style="text-decoration: underline; font-weight:bold"> {{$user}} </span></td>
             </tr>
           </table>
         </td>
