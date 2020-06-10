@@ -872,23 +872,30 @@ class PaymentController extends Controller
     }
     public function deletePeriode($id)
     {
+        //Get data detail payment
         $data = PaymentDetail::find($id);
         $payment_id = $data->payment_id;
         $category_id = $data->periode->financing_category_id;
         $student_id = $data->payment->student->id;
-        $data->status = 'Waiting';
-        $data->user_id = '0';
-        $data->tgl_dibayar = null;
-        $data->nominal = null;
-        $data->save();
-
-        Cicilan::where('payment_detail_id', $id)->delete();
+        
+        //Ubah status payment dari tunai ke waiting
+        $data_payment = Payment::find($payment_id);
+        $data_payment->jenis_pembayaran = 'Waiting';
+        $data_payment->persentase = 0;
+        $data_payment->save();
+        
+        //Hapus data pembayaran pada pencatatan
         $income = Income::where('payment_detail_id', $id)->first();
         Pencatatan::where('income_id', $income->id)->delete();
         Income::where('payment_detail_id', $id)->delete();
+        Cicilan::where('payment_detail_id', $id)->delete();
 
+        //Hapus data detail pembayaran
+        $data->delete();
+
+        //Redirect ke halaman pembayaran berdasarkan kategori
         return redirect()
-            ->route('payment.show',$category_id)
-            ->with('success', 'Periode pembayaran ditambah!');
+            ->route('payment.show', $category_id)
+            ->with('success', 'Pembayaran dibatalkan!');
     }
 }
