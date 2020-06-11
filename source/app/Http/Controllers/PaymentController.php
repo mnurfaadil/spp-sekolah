@@ -890,8 +890,10 @@ class PaymentController extends Controller
         Income::where('payment_detail_id', $id)->delete();
         Cicilan::where('payment_detail_id', $id)->delete();
 
-        //Hapus data detail pembayaran
-        $data->delete();
+        $data->status = "Waiting";
+        $data->user_id = null;
+        $data->nominal = null;
+        $data->save();
 
         //Redirect ke halaman pembayaran berdasarkan kategori
         return redirect()
