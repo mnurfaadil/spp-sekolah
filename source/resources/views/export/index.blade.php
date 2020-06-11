@@ -128,8 +128,8 @@ SPP | Rekap
                             <label class="control-label col-md-4">Lihat berdasarkan<kode>*</kode></label>
                             <div class="chosen-select-single mg-b-20">
                                 <select class="chosen-select" name="jenis_kategori" id="category" required>
-                                    <option value="Kategori">Kategori</option>
                                     <option value="Siswa">Siswa</option>
+                                    <option value="Kategori">Kategori</option>
                                 </select>
                             </div>
                         </div>
@@ -230,8 +230,6 @@ SPP | Rekap
             var temp = {major_id: "all", nama: "Semua"};
             $('#kelas_add').empty()
             data.unshift(temp);
-            console.log(data);
-            
             $.each(data, function (i, val) {
                 if(i === 0)
                 {
@@ -245,12 +243,11 @@ SPP | Rekap
         });
     }
 
-    // $('document').ready(function () {
+    $('document').ready(function () {
         $('#category').change(change_category);
         $('#major_id_add').change(change_major);
         var cek = $('#major_id_add');
-        console.log(cek);
-    // });
+    });
 </script>
 @endpush
 

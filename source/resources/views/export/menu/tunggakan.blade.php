@@ -37,6 +37,7 @@ SPP | Laporan Pengeluaran
                                         <form action="{{route('rekap.tunggakan.export')}}" target="_blank" role="form" id="cetak" method="post">
                                             @csrf
                                             <input type="hidden" name="stat" value="{{$stat}}">
+                                            <input type="hidden" name="keyword" value="">
                                             <input type="hidden" name="kelas" value="{{$kelas}}">
                                             <input type="hidden" name="jurusan" value="{{$jurusan}}">
                                             <input type="hidden" name="angkatan" value="{{$angkatan}}">
@@ -119,14 +120,13 @@ SPP | Laporan Pengeluaran
                                                         <table>
                                                             <tbody>
                                                                 <tr>
-                                                                <tr>
                                                                     <td>Besaran </td>
                                                                     <td>:</td>
                                                                     <td>Rp.</td>
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong>{{number_format($total[0],0,',','.')}}</strong>
+                                                                                <strong id="besaran_view">{{number_format($total[0],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -138,7 +138,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong>{{number_format($total[1],0,',','.')}}</strong>
+                                                                                <strong id="potongan_view">{{number_format($total[1],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -150,7 +150,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong>{{number_format($total[2],0,',','.')}}</strong>
+                                                                                <strong id="terbayar_view">{{number_format($total[2],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -162,7 +162,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:24px;color:red">
-                                                                                <strong>{{number_format($total[3],0,',','.')}}</strong>
+                                                                                <strong id="sisa_view">{{number_format($total[3],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -327,27 +327,17 @@ SPP | Laporan Pengeluaran
             $('#kelas').change(change_kelas);
             $('#jurusan').change(change_jurusan);
             $('#angkatan').change(change_angkatan);
+            
             function change_search() {
                 let val = $(this).val();
-                let screen = [0,0,0,0];
-                $('#table tr').each(function(){
-                    let i = 0;
-                    $(this).find('td').each(function(){
-                        i += 1;
-                        try {
-                            if ($(this).text()) {
-                                if ( i===7 || i===8 || i===9 || i===10) {
-                                    let raw = $(this).text();
-                                    let value = raw.replace(/\./g,'');
-                                    screen[i-7] += parseInt(value);
-                                }
-                            }
-                        } catch (error) {
-                            //
-                        }
-                    })
+                var pilihan = $('input[type=hidden][name=keyword]').val(val);
+                $.get(`{{ url('') }}/rekap_tunggakan/_ajax/data/${val}`, function(data){
+                    data = JSON.parse(data);
+                    $('#besaran_view').text(data.besaran);
+                    $('#potongan_view').text(data.potongan);
+                    $('#terbayar_view').text(data.terbayar);
+                    $('#sisa_view').text(data.sisa);
                 });
-                console.log(screen);
             }
             
             $(document).ready(function(){
@@ -357,9 +347,6 @@ SPP | Laporan Pengeluaran
                 let search = document.getElementsByClassName('search');
                 let form = search[0].lastChild;
                 form.addEventListener("keyup", change_search);
-                form.addEventListener("drop", change_search);
-                form.addEventListener("blur", change_search);
-                form.addEventListener("focusin", change_search);
             });
         </script>
         @endpush

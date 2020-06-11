@@ -30,6 +30,7 @@ SPP | Laporan Pengeluaran
                                         <form action="{{route('rekap.tunggakan.export')}}" target="_blank" role="form" id="cetak" method="post">
                                             @csrf
                                             <input type="hidden" name="stat" value="{{$stat}}">
+                                            <input type="hidden" name="keyword" value="">
                                             <input type="hidden" name="filter" value="{{$filter}}">
                                             <button type='button' onclick="validate()" class="btn btn-primary pull-right" style="margin-left:5px;"><i class="fa fa-print" ></i> Cetak</button>
                                         </form>
@@ -43,8 +44,11 @@ SPP | Laporan Pengeluaran
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
                             </div>
-                            <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
-                                data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
+                            <table id="table" data-toggle="table" data-pagination="true" data-search="true" 
+                            data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" 
+                            data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
+                            data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" 
+                            data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
                                         <th data-field="no"><div style="text-align:center;">No</div></th>
@@ -116,7 +120,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong>{{number_format($total[0],0,',','.')}}</strong>
+                                                                                <strong id="besaran_view">{{number_format($total[0],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -128,7 +132,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong>{{number_format($total[1],0,',','.')}}</strong>
+                                                                                <strong id="potongan_view">{{number_format($total[1],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -140,7 +144,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong>{{number_format($total[2],0,',','.')}}</strong>
+                                                                                <strong id="terbayar_view">{{number_format($total[2],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -152,7 +156,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:24px;color:red">
-                                                                                <strong>{{number_format($total[3],0,',','.')}}</strong>
+                                                                                <strong id="sisa_view">{{number_format($total[3],0,',','.')}}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -277,9 +281,27 @@ SPP | Laporan Pengeluaran
                     $('#cetak').submit();
                 }
             }
+            
+            function change_search() {
+                let val = $(this).val();
+                var pilihan = $('input[type=hidden][name=keyword]').val(val);
+                
+                $.get(`{{ url('') }}/rekap_tunggakan/_ajax_kategori/data/${val}`, function(data){
+                    data = JSON.parse(data);
+                    
+                    $('#besaran_view').text(data.besaran);
+                    $('#potongan_view').text(data.potongan);
+                    $('#terbayar_view').text(data.terbayar);
+                    $('#sisa_view').text(data.sisa);
+                });
+            }
+
             $('#filter').change(change_filter);
             $(document).ready(function(){
                 load_filter();
+                let search = document.getElementsByClassName('search');
+                let form = search[0].lastChild;
+                form.addEventListener("keyup", change_search);
             });
         </script>
         @endpush

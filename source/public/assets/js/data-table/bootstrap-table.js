@@ -1798,7 +1798,6 @@
         var that = this,
             html = [],
             data = this.getData();
-
         this.trigger('pre-body', data);
 
         this.$body = this.$el.find('>tbody');
