@@ -56,6 +56,7 @@ SPP | Laporan Pengeluaran
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
+                                        <th data-field="#"><div style="text-align:center;">#</div></th>
                                         <th data-field="no"><div style="text-align:center;">No</div></th>
                                         <th data-field="tanggal"><div style="text-align:center;">Nama</div></th>
                                         <th data-field="deskripsi"><div style="text-align:center;">Kelas</div></th>
@@ -95,6 +96,7 @@ SPP | Laporan Pengeluaran
                                         $total[3] += (int) $sisa;
                                     @endphp
                                         <tr>
+                                            <td><input type="checkbox" name="check[]" id=""></td>
                                             <td>{{$no++}}</td>
                                             <td >{{$data->nama_murid}}</td>
                                             <td ><div style="text-align:center;">{{$data->kelas}}</div></td>
