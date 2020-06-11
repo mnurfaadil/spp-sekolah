@@ -117,7 +117,7 @@ SPP | Cicilan Pembayaran
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                             <div class="sparkline13-graph">
                                 <div class="datatable-dashv1-list custom-datatable-overright">
                                     <div id="toolbar">
@@ -187,7 +187,8 @@ SPP | Cicilan Pembayaran
                                                 <td>
                                                     <div style="text-align: center;">
                                                     <a href="{{ route('pdf.print.sesekali.detail',[$payments->student->id,$cicilan->id]) }}" style="color:white;margin-top:0"class=" btn btn-success" target="_blank" title="Cetak bukti pembayaran">
-                                                <i class="fa fa-print"></i></a>
+                                                    <i class="fa fa-print"></i></a>
+                                                    <a href="{{route('payment.cicilan.delete',$cicilan->id)}}" class="btn btn-danger" style="color:white;margin-top:0" title="Delete"><i class="fa fa-close"></i></a>
                                                     </div>
                                                 </td>
                                                 </tr>
