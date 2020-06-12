@@ -37,6 +37,11 @@ Route::post('students_filter', 'StudentController@filter')->name('students.filte
 Route::resource('user', 'UserController');
 
 /**
+ * Route resource untuk User
+ */
+Route::resource('history', 'historyController');
+
+/**
  * Route resource untuk Kategori Pembiayaan
  */
 Route::resource('financing', 'FinancingCategoryController')->middleware('cekstatus');
