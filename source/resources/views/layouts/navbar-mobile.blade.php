@@ -22,6 +22,12 @@
             </li>
             <li>
                 <a title="Data Pembayaran" class="" href="{{ route('payment.index') }}" aria-expanded="false">
+                    <span class="educate-icon educate-library icon-wrap" aria-hidden="true"></span>
+                    <span class="mini-click-non ">Histori</span>
+                </a>
+            </li>
+            <li>
+                <a title="Data Pembayaran" class="" href="{{ route('history.index') }}" aria-expanded="false">
                     <span class="fa fa-credit-card sub-icon-mg" aria-hidden="true"></span>
                     <span class="mini-click-non ">Pembayaran</span>
                 </a>
