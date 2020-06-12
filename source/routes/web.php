@@ -39,7 +39,7 @@ Route::resource('user', 'UserController');
 /**
  * Route resource untuk User
  */
-Route::resource('history', 'historyController');
+Route::resource('history', 'HistoryController');
 
 /**
  * Route resource untuk Kategori Pembiayaan
