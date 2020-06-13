@@ -37,6 +37,11 @@ Route::post('students_filter', 'StudentController@filter')->name('students.filte
 Route::resource('user', 'UserController');
 
 /**
+ * Route resource untuk User
+ */
+Route::resource('history', 'HistoryController');
+
+/**
  * Route resource untuk Kategori Pembiayaan
  */
 Route::resource('financing', 'FinancingCategoryController')->middleware('cekstatus');
@@ -82,6 +87,7 @@ Route::put('payment/perbulan/detail/update','PaymentController@updateStatusBulan
 Route::post('payment/perbulan/detail/add','PaymentController@addPeriodeBulanan')->name('payment.monthly.detail.add')->middleware('cekstatus');
 Route::get('payment/perbulan/detail/delete/{id}','PaymentController@deletePeriodeBulanan')->name('payment.monthly.detail.delete')->middleware('cekstatus');
 Route::get('payment/detail/delete/{id}','PaymentController@deletePeriode')->name('payment.detail.delete')->middleware('cekstatus');
+Route::get('payment/cicilan/delete/{id}','PaymentController@deleteCicilan')->name('payment.cicilan.delete')->middleware('cekstatus');
 /**
  * Route resource untuk Pengeluaran 
  */

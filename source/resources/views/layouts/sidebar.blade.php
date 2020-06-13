@@ -33,6 +33,16 @@
                         </a>
                     </li>
                     <li>
+                        @if(Request::is('histori'))
+                        <a title="Histori" class="" href="{{ route('history.index') }}" aria-expanded="false" style="background-color:#d35400;color:white">
+                        @else
+                        <a title="Histori" class="" href="{{ route('history.index') }}" aria-expanded="false" style="color:#d35400;">
+                        @endif
+                            <span class="educate-icon educate-library icon-wrap" aria-hidden="true"></span>
+                            <span class="mini-click-non ">Histori</span>
+                        </a>
+                    </li>
+                    <li>
                         @if(Request::is('income'))
                         <a title="Data Pemasukan" class="" href="{{ route('income.index') }}" aria-expanded="false" style="background-color:#27ae60;color:white">
                         @else

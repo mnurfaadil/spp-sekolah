@@ -548,8 +548,12 @@ class PaymentController extends Controller
      */
     public function cicilanStore(Request $request)
     {
-
         $request = $request->all();
+        if (!isset($request['calendar'])) {
+            return redirect()
+                ->route('payment.details.cicilan', [$request['financing_category_id'], $request['student_id'], $request['payment_id']])
+                ->with('error', 'Tanggal tidak boleh kosong!');
+        }
         
         $sudah_dibayar = Cicilan::where('payment_detail_id', $request['payment_detail_id'])->sum('nominal');
         $tamp = Cicilan::where('payment_detail_id', $request['payment_detail_id'])->count();
@@ -890,12 +894,19 @@ class PaymentController extends Controller
         Income::where('payment_detail_id', $id)->delete();
         Cicilan::where('payment_detail_id', $id)->delete();
 
-        //Hapus data detail pembayaran
-        $data->delete();
+        $data->status = "Waiting";
+        $data->user_id = null;
+        $data->nominal = null;
+        $data->save();
 
         //Redirect ke halaman pembayaran berdasarkan kategori
         return redirect()
             ->route('payment.show', $category_id)
             ->with('success', 'Pembayaran dibatalkan!');
+    }
+
+    public function deleteCicilan($id){
+        echo '<pre>';
+        var_dump($id);die;
     }
 }
