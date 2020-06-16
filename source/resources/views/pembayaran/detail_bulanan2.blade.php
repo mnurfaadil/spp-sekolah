@@ -319,7 +319,8 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                 <label>Tanggal Pembayaran<kode>*</kode></label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" autocomplete="off" required placeholder="Tanggal Pembayaran" name="calendar">
+                                    <input type="text" class="form-control" autocomplete="off" 
+                                    required placeholder="Tanggal Pembayaran" name="calendar">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -462,12 +463,12 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
 $('select[name=status]').change(function(){
     var cek = $('select[name=status]').val();
     if(cek=="Lunas"){
-        $('input[name=tanggal_bayar]').attr('required', true);
+        $('input[name=calendar]').attr('required', true);
         $('input[name=nominal_bayar]').attr('required', true);
         $('#form').show();
     }else{
-        $('input[name=tanggal_bayar]').attr('required', false);
-        $('input[name=nominal_bayar]').attr('required', false);
+        $('input[name=calendar]').removeAttr('required');
+        $('input[name=nominal_bayar]').removeAttr('required');
         $('#form').hide();
     }
 });

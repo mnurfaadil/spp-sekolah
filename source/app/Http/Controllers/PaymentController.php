@@ -144,9 +144,9 @@ class PaymentController extends Controller
             //                 ->groupBy('students.id')
             //                 ->where('financing_categories.id',$cek->id)->get();
 
-            $payments = Payment::where('financing_category_id', $id)->orderBy('updated_at','desc')->get();
+            // $payments = Payment::where('financing_category_id', $id)->orderBy('updated_at','desc')->get();
             
-            $datas = $payments;
+            // $datas = $payments;
 
             $financing = $cek;
             
@@ -154,7 +154,7 @@ class PaymentController extends Controller
             
             $payments = Payment::where('financing_category_id', $id)->get();
             
-            return view('pembayaran.show2', compact('datas','financing','periode','no'));
+            return view('pembayaran.show', compact('financing','periode','no'));
         }else{
 
             $financing = $cek;
@@ -199,6 +199,43 @@ class PaymentController extends Controller
                 ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
                 ->where('financing_categories.id',$id)
                 ->orderBy('payments.updated_at','desc')
+                ->get();
+    }
+
+    public function ajaxIndexPerbulan($id)
+    {
+        return Payment::
+                selectRaw('
+                    payments.id,
+                    payments.student_id,
+                    payments.financing_category_id,
+                    students.nama,
+                    students.kelas,
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    (SELECT count(*) 
+                    from payment_details
+                    where payment_details.payment_id = payments.id
+                    and status <> "Lunas"
+                    ) as sisa_bulan,
+                    (SELECT count(*) 
+                    from payment_details
+                    where payment_details.payment_id = payments.id
+                    and status = "Nunggak"
+                    ) as spp_nunggak,
+                    (SELECT count(*) 
+                    from payment_details
+                    where payment_details.payment_id = payments.id
+                    and status = "Waiting"
+                    ) as spp_waiting
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('payments.financing_category_id',$id)
+                ->orderBy('payments.updated_at','desc')
+                ->groupBy('students.id')
                 ->get();
     }
 
@@ -797,10 +834,13 @@ class PaymentController extends Controller
     public function updateStatusBulanan(Request $request)
     {
         $req = $request->all();
-        if(!isset($req['calendar'])){
-            return redirect()
+        if ($req['status'] == 'Lunas')
+        {
+            if(!isset($req['calendar'])){
+                return redirect()
                 ->route('payment.monthly.show.detail',[$req['payment_id'],$req['student_id'],$req['category_id']])
                 ->with('error', 'Tanggal Pembayaran Kosong!');
+            }
         }
         if($req['status']=="Lunas"){   
             $user = Auth::user()->id;

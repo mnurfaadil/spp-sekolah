@@ -33,11 +33,6 @@ SPP | Pembayaran
                     <div class="sparkline13-graph">
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
-                                <select class="form-control dt-tb">
-                                    <option value="">Export Basic</option>
-                                    <option value="all">Export All</option>
-                                    <option value="selected">Export Selected</option>
-                                </select>
                             </div>
                             <table id="table" data-toggle="table" data-pagination="true" data-search="true"
                                 data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
@@ -46,96 +41,17 @@ SPP | Pembayaran
                                 data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="state" data-checkbox="true"></th>
-                                        <th data-field="id">No</th>
+                                        <th data-field="no">No</th>
                                         <th data-field="name">Nama</th>
                                         <th data-field="kelas">Kelas</th>
                                         <th data-field="total">Akumulasi Biaya</th>
                                         <th data-field="terbayar">Sudah dibayar</th>
-                                        <th data-field="tunggakan">Sisa Pembayaran</th>
-                                        <th data-field="banyak">Tunggakan</th>
+                                        <th data-field="sisa">Sisa Pembayaran</th>
+                                        <th data-field="tunggakan">Tunggakan</th>
                                         <th data-field="status">Status</th>
                                         <th data-field="action">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                @foreach($datas as $siswa)
-                                        @php
-                                            $besaran = intval($siswa->akumulasi);
-                                            $terbayar = intval(($siswa->terbayar!=0)?$siswa->terbayar:0);
-                                            $sisa = $besaran - $terbayar;
-                                        
-                                        @endphp
-                                    <tr>
-                                        <td></td>
-                                        <td>{{$no++}}</td>
-                                        <td>{{$siswa->nama}}</td>
-                                        <td>{{$siswa->kelas}} - {{$siswa->major->nama}}</td>
-                                        <td>
-                                            <div style="text-align:right">
-                                                {{number_format($siswa->akumulasi,0,',','.')}}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="text-align:right">
-                                                {{number_format($siswa->terbayar,0,',','.')}}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="text-align:right">
-                                                {{number_format($sisa,0,',','.')}}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="text-align:center">
-                                                @if($siswa->bulan_tidak_bayar!=0)
-                                                <span class="badge" style="background-color:red">{{$siswa->bulan_tidak_bayar}} Bulan</span>
-                                                @else
-                                                {{$siswa->bulan_tidak_bayar}} Bulan
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="text-align:center">
-                                            @if($siswa->cekWaiting==0 && $siswa->bulan_tidak_bayar==0 && $sisa==0 && $siswa->akumulasi!=0)
-                                                <span class="badge" style="background-color:green">Lunas</span>
-                                            @else
-                                                @if($siswa->cekWaiting!=0 || $siswa->akumulasi==0)
-                                                    <span class="badge" style="background-color:yellow;color:black">Waiting</span>
-                                                @endif
-                                                @if($siswa->bulan_tidak_bayar!=0 )
-                                                    <span class="badge" style="background-color:red">Nunggak</span>
-                                                @endif
-                                            @endif
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @if($financing->jenis=="Sekali Bayar")
-                                                @if($financing->jenis=="Sekali Bayar" && $siswa->jenis_pembayaran=="Waiting")
-                                                    <button class="btn btn-primary" onclick="addConfirm('{{$siswa->id}}','{{$siswa->nama}}')" title="Pilih Metode Pembayaran">
-                                                        <i class="fa fa-info-circle"> Metode</i>
-                                                    </button>
-                                                @elseif($periode==0 && $financing->jenis=="Bayar per Bulan")
-                                                    <a href="" class="btn btn-danger"
-                                                    title="Harap isi periode" disabled><i class="fa fa-times"> Process</i></a>
-                                                @elseif(true)
-                                                    <a href="{{ route('payment.monthly.show.detail',[$siswa->payment_id,$siswa->id, $financing->id]) }}" class="btn btn-success"
-                                                    title="Detail Pembayaran" style="color:white; background-color:green"><i class="fa fa-eye"> Detail</i></a>
-                                                @elseif($siswa->jenis_pembayaran=="Cicilan" && $sisa!=0)
-                                                    <a href="{{ route('payment.show',1) }}" class="btn btn-warning"
-                                                    title="Cetak Bukti Pembayaran" style="color:black; background-color:orange"><i class="fa fa-eye"> Rincian</i></a>
-                                                @else
-                                                    <a href="{{ route('payment.show',1) }}" class="btn btn-success"
-                                                    title="Cetak Bukti Pembayaran" style="color:white; background-color:green"><i class="fa fa-print"> Invoice</i></a>
-                                                @endif
-                                            @else
-                                                <a href="{{ route('payment.monthly.show.detail',[$siswa->payment_id,$siswa->id,$financing->id]) }}" class="btn btn-success"
-                                                title="Detail Pembayaran" style="color:white; background-color:green"><i class="fa fa-eye"> Detail</i></a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -343,6 +259,149 @@ SPP | Pembayaran
             }
         });
     }
+
+    
+    var $table = $('#table');
+    var selections = [];
+    
+    function getIdSelections() {
+        return $.map($table.bootstrapTable('getSelections'), function (row) {
+            console.log(' row select ');
+            console.log(row);
+            console.log('selections row');
+            console.log(selections);
+            
+            return row.id
+        })
+    }
+
+    function parseRupiah (bilangan)
+    {
+        var	number_string = bilangan.toString(),
+            sisa 	= number_string.length % 3,
+            rupiah 	= number_string.substr(0, sisa),
+            ribuan 	= number_string.substr(sisa).match(/\d{3}/g);
+                
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+
+        return rupiah;
+    }
+
+    $(function () {
+        var content = [];
+        $.get('{{ url('') }}/payment/ajax_perbulan/{{$financing->id}}', function(data){
+            $.each(data, function(i, v){
+                var nominal = parseInt(v.nominal);
+                var sisa = parseInt(v.sisa_bulan);
+                var nunggak = parseInt(v.spp_nunggak);
+                
+                //Total Biaya
+                var total = 36 * nominal;
+                var total_ = parseRupiah(total);
+
+                //Terbayar
+                var terbayar = (36 - sisa) * nominal;
+                var terbayar_ = parseRupiah(terbayar);
+
+                //Sisa Pembayaran
+                var tersisa = sisa * nominal;
+                var tersisa_ = parseRupiah(tersisa);
+
+                //Tunggakan
+                if (nunggak != 0)
+                {
+                    var tunggakan = 
+                    `
+                    <div style="text-align:center">
+                        <span class="badge" style="background-color:red">${nunggak} Bulan</span>
+                    </div>
+                    `;
+                }
+                else
+                {
+                    var tunggakan = 
+                    `
+                    <div style="text-align:center">
+                        ${nunggak} Bulan
+                    </div>
+                    `;
+                }
+
+                //Status
+                if (tersisa == 0) {
+                    var status =
+                    `
+                    <div style="text-align:center">
+                        <span class="badge" style="background-color:green">Lunas</span>
+                    </div>
+                    `;
+                } else {
+                    var status = 
+                    `
+                    <div style="text-align:center">
+                    `;
+                    if (sisa != 0) {
+                        status += '<span class="badge" style="background-color:yellow;color:black">Waiting</span>';
+                    }
+                    if (nunggak != 0) {
+                        status += '<span class="badge" style="background-color:red">Nunggak</span>';
+                    }
+                    status += '</div>';
+                }
+                
+                //Action
+                var link_detail = `{{ url('payment/perbulan/detail/') }}/${v.id}/${v.student_id}/${v.financing_category_id}`;
+                var action =
+                `
+                    <a href="${link_detail}" 
+                    class="btn btn-success"
+                    title="Detail Pembayaran" 
+                    style="color:white; background-color:green">
+                        <i class="fa fa-eye"> Detail</i>
+                    </a>
+                `;
+
+
+                var temp = {
+                    no: (i+1),
+                    name : `${v.nama}`,
+                    kelas : `${v.kelas} - ${v.jurusan}`,
+                    total : 
+                    `
+                    <div style="text-align:right">
+                        ${total_}
+                    </div>
+                    `,
+                    terbayar : 
+                    `
+                    <div style="text-align:right">
+                        ${terbayar_}
+                    </div>
+                    `,
+                    sisa : 
+                    `
+                    <div style="text-align:right">
+                        ${tersisa_}
+                    </div>
+                    `,
+                    tunggakan : 
+                    tunggakan,
+                    status : status,
+                    action : action
+                };
+
+                content.push(temp);
+            });
+            $table.bootstrapTable('destroy').bootstrapTable({
+                exportTypes: ['excel', 'pdf'],
+                data: content
+            });
+        });
+    });
 
 </script>
 <!-- data table JS

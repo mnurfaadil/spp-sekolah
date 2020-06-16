@@ -41,13 +41,13 @@ SPP | Pembayaran
                                 data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="id">No</th>
+                                        <th data-field="no">No</th>
                                         <th data-field="name">Nama</th>
                                         <th data-field="kelas">Kelas</th>
                                         <th data-field="total">Akumulasi Biaya</th>
                                         <th data-field="terbayar">Sudah dibayar</th>
-                                        <th data-field="tunggakan">Sisa Pembayaran</th>
-                                        <th data-field="banyak">Tunggakan</th>
+                                        <th data-field="sisa">Sisa Pembayaran</th>
+                                        <th data-field="tunggakan">Tunggakan</th>
                                         <th data-field="status">Status</th>
                                         <th data-field="action">Action</th>
                                     </tr>
@@ -85,9 +85,9 @@ SPP | Pembayaran
                                         <td>
                                             <div style="text-align:center">
                                                 @if($detail_nunggak!=0)
-                                                <span class="badge" style="background-color:red">{{$detail_nunggak}} Bulan</span>
+                                                    <span class="badge" style="background-color:red">{{$detail_nunggak}} Bulan</span>
                                                 @else
-                                                {{$detail_nunggak}} Bulan
+                                                    {{$detail_nunggak}} Bulan
                                                 @endif
                                             </div>
                                         </td>

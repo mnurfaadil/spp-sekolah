@@ -369,7 +369,6 @@ SPP | Pembayaran {{$financing->nama}}
     }
 
     $(function () {
-        var $table = $('#table');
         var content = [];
         $.get('{{ url('') }}/payment/ajax/{{$financing->id}}', function(data){
             var no = 0;
