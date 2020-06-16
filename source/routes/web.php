@@ -71,6 +71,7 @@ Route::delete('financing/periode/destroy/{id}/{kategori}', 'FinancingCategoryCon
 Route::resource('payment', 'PaymentController')->middleware('cekstatus');
 Route::post('payment/filter', 'PaymentController@showFilter')->name('payment.filter')->middleware('cekstatus');
 Route::get('payment/category/{id}', 'PaymentController@indexKategori2')->name('payment.category')->middleware('cekstatus');
+Route::get('payment/ajax/{id}', 'PaymentController@ajaxIndex')->name('payment.category.ajax')->middleware('cekstatus');
 /**
  * Route pembayaran jenis "sekali bayar"
  */

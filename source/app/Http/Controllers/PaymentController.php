@@ -160,10 +160,6 @@ class PaymentController extends Controller
             $financing = $cek;
 
             $periode = PaymentPeriode::where('financing_category_id',$id)->count(); 
-            
-            $payments = Payment::where('financing_category_id', $id)->orderBy('updated_at','desc')->get();
-            
-            $datas = $payments;
 
             $payment_details = PaymentDetail::all();
             $cicilans = Cicilan::all();
@@ -175,8 +171,35 @@ class PaymentController extends Controller
             $majors = PaymentPeriode::select('major_id')->where('financing_category_id',$id)->groupBy('major_id')->get();
             $angkatan = PaymentPeriode::select('angkatan_id')->where('financing_category_id',$id)->groupBy('angkatan_id')->get();
 
-            return view('pembayaran.show_sekali_bayar', compact('datas','financing','periode','no','payment_details','cicilans','majors','angkatan','fil','fil2','kls'));
+            return view('pembayaran.show_sekali_bayar_2', compact('financing','periode','no','payment_details','cicilans','majors','angkatan','fil','fil2','kls'));
         }
+    }
+    public function ajaxIndex($id)
+    {
+        return Payment::
+                selectRaw('
+                    students.nama, 
+                    students.kelas, 
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    financing_categories.jenis, 
+                    payments.persentase,
+                    payments.jenis_pembayaran,
+                    getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                    getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                    students.id as student_id,
+                    financing_categories.id as financing_category_id,
+                    payments.id
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('financing_categories.id',$id)
+                ->orderBy('payments.updated_at','desc')
+                ->get();
     }
 
     //Show filter Data 

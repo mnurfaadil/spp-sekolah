@@ -12,7 +12,8 @@
         "barryvdh/laravel-dompdf": "^0.8.6",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.0",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "yajra/laravel-datatables": "^1.5"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
