@@ -332,7 +332,7 @@ SPP | Pembayaran
                 }
 
                 //Status
-                if (tersisa == 0 && nunggak==0) {
+                if (tersisa == 0 && nunggak == 0) {
                     var status =
                     `
                     <div style="text-align:center">
