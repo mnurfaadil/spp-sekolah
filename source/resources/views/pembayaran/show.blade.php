@@ -276,11 +276,6 @@ SPP | Pembayaran
     
     function getIdSelections() {
         return $.map($table.bootstrapTable('getSelections'), function (row) {
-            console.log(' row select ');
-            console.log(row);
-            console.log('selections row');
-            console.log(selections);
-            
             return row.id
         })
     }

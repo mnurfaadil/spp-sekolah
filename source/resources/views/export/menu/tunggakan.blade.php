@@ -53,11 +53,24 @@ SPP | Laporan Pengeluaran
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
                             </div>
-                            <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
-                                data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
+                            <table id="table" 
+                            data-toggle="table" 
+                            data-pagination="true" 
+                            data-search="true" 
+                            data-show-columns="true" 
+                            data-show-pagination-switch="true" 
+                            data-show-refresh="true" 
+                            data-key-events="true" 
+                            data-show-toggle="true" 
+                            data-resizable="true" 
+                            data-cookie="true"
+                            data-cookie-id-table="saveId" 
+                            data-show-export="true" 
+                            data-click-to-select="true" 
+                            data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <!-- <th data-field="#"><div style="text-align:center;">#</div></th> -->
+                                        <th data-checkbox="true"></th>
                                         <th data-field="no"><div style="text-align:center;">No</div></th>
                                         <th data-field="tanggal"><div style="text-align:center;">Nama</div></th>
                                         <th data-field="deskripsi"><div style="text-align:center;">Kelas</div></th>
@@ -97,7 +110,6 @@ SPP | Laporan Pengeluaran
                                         $total[3] += (int) $sisa;
                                     @endphp
                                         <tr>
-                                            <!-- <td><input type="checkbox" name="check[]" id=""></td> -->
                                             <td>{{$no++}}</td>
                                             <td >{{$data->nama_murid}}</td>
                                             <td ><div style="text-align:center;">{{$data->kelas}}</div></td>
@@ -350,6 +362,31 @@ SPP | Laporan Pengeluaran
                 let form = search[0].lastChild;
                 form.addEventListener("keyup", change_search);
             });
+        </script>
+
+        <script>
+            var $table = $('#table');
+            var selections = [];
+            function getIdSelections() {
+            return $.map($table.bootstrapTable('getSelections'), function (row) {
+                console.log(' row select ');
+                console.log(row);
+                console.log('selections row');
+                console.log(selections);
+                
+                return row.id
+            })
+
+            $(function () {
+                $table.on(
+                    'check.bs.table uncheck.bs.table ' +
+                    'check-all.bs.table uncheck-all.bs.table',
+                    function () {
+                        selections = getIdSelections()
+                    }
+                );
+            });
+        }
         </script>
         @endpush
 

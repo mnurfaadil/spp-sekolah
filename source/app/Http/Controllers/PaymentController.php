@@ -557,6 +557,10 @@ class PaymentController extends Controller
 
     /**
      * @description me
+     * 
+     * @param id id dari kategori pembayaran
+     * @param id_siswa id dari siswa bersangkutan
+     * @param id_payment id dari payment siswa bersangkutan
      */
     public function details($id, $id_siswa, $id_payment)
     {
@@ -968,8 +972,10 @@ class PaymentController extends Controller
             ->with('success', 'Pembayaran dibatalkan!');
     }
 
-    public function deleteCicilan($id){
+    public function deleteCicilan($id, $payment){
+        $data_payment = Payment::find($payment);
         echo '<pre>';
-        var_dump($id);die;
+        var_dump($id);
+        var_dump($data_payment);die;
     }
 }

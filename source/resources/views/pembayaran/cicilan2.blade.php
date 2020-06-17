@@ -54,6 +54,7 @@ SPP | Cicilan Pembayaran
                                 <label>Simpanan Siswa</label>
                                 <div class="input-group date">
                                     <span class="input-group-addon">Rp.</span>
+                                    <input type="hidden" name="uang_simpanan" value="$payments->student->simpanan">
                                     <input type="number" min="0" class="form-control" name="simpanan"
                                         value="{{ number_format($payments->student->simpanan,0,',','.') }}" title="Simpanan siswa" readonly>
                                 </div>
@@ -188,7 +189,7 @@ SPP | Cicilan Pembayaran
                                                     <div style="text-align: center;">
                                                     <a href="{{ route('pdf.print.sesekali.detail',[$payments->student->id,$cicilan->id]) }}" style="color:white;margin-top:0"class=" btn btn-success" target="_blank" title="Cetak bukti pembayaran">
                                                     <i class="fa fa-print"></i></a>
-                                                    <a href="{{route('payment.cicilan.delete',$cicilan->id)}}" class="btn btn-danger" style="color:white;margin-top:0" title="Delete"><i class="fa fa-close"></i></a>
+                                                    <a href="{{route('payment.cicilan.delete',[$cicilan, $payments]) }}" class="btn btn-danger" style="color:white;margin-top:0" title="Delete"><i class="fa fa-close"></i></a>
                                                     </div>
                                                 </td>
                                                 </tr>
@@ -248,7 +249,7 @@ SPP | Cicilan Pembayaran
                                                                             @else
                                                                             <span class="" style="font-size:24px;color:green">
                                                                             @endif
-                                                                                <strong>{{ number_format($footer['sisa'],0,',','.') }}</strong>
+                                                                                <strong id="tunggakan">{{ number_format($footer['sisa'],0,',','.') }}</strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -362,28 +363,33 @@ SPP | Cicilan Pembayaran
             });
         });
     });
-    $( "input[name=uang]").keyup(function() {
-        var simpanan = parseInt($('input[name=simpanan]').val());
+
+    $( "input[name=uang]").keyup(getNominalBayar);
+    
+    $('select[name=gunakan_simpanan]').change(getNominalBayar);
+
+    function getNominalBayar ()
+    {
+        //Simpanan Siswa
+        var simpanan_ = $('input[name=simpanan]').val();
+        var temp = simpanan_.replace(".", "");
+        var simpanan = parseInt(temp);
+        
+        //Uang Bayar hari Ini
         var tunai = parseInt($('input[name=uang]').val());
         tunai =(Number.isNaN(tunai))?0:tunai;
+        
+        //TUnggakan
+        var tunggakan_ = $('#tunggakan').html();
+        temp = tunggakan_.replace(".","");
+        var tunggakan = parseInt(temp);
+
+        var nominal = tunai >= tunggakan ? tunggakan : tunai;
         if($('select[name=gunakan_simpanan]').val()==1){
-            var nominal = simpanan + tunai;
-        }else{
-            var nominal = tunai;
+            nominal = simpanan + tunai >= tunggakan ? tunggakan : simpanan + tunai;
         }
         $('input[name=nominal]').val(nominal);
-    });
-    $('select[name=gunakan_simpanan]').change(function(){
-        var simpanan = parseInt($('input[name=simpanan]').val());
-        var tunai = parseInt($('input[name=uang]').val());
-        tunai =(Number.isNaN(tunai))?0:tunai;
-        if($('select[name=gunakan_simpanan]').val()==1){
-            var nominal = simpanan + tunai;
-        }else{
-            var nominal = tunai;
-        }
-        $('input[name=nominal]').val(nominal);
-    });
+    }
 </script>
 @endpush
 

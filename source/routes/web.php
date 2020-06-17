@@ -77,7 +77,7 @@ Route::get('payment/ajax_perbulan/{id}', 'PaymentController@ajaxIndexPerbulan')-
  * Route pembayaran jenis "sekali bayar"
  */
 Route::post('payment/metode','PaymentController@storeMetodePembayaran')->name('payment.storeMethod')->middleware('cekstatus');
-Route::get('payment/details/{id}/{id_siswa}/{id_payment}','PaymentController@details')->name('payment.details.cicilan')->middleware('cekstatus');
+Route::get('payment/details/{id_category}/{id_siswa}/{id_payment}','PaymentController@details')->name('payment.details.cicilan')->middleware('cekstatus');
 Route::post('payment/details/store','PaymentController@cicilanStore')->name('payment.details.cicilan.store')->middleware('cekstatus');
 /**
  * Route pembayaran jenis "per bulan"
@@ -89,7 +89,7 @@ Route::put('payment/perbulan/detail/update','PaymentController@updateStatusBulan
 Route::post('payment/perbulan/detail/add','PaymentController@addPeriodeBulanan')->name('payment.monthly.detail.add')->middleware('cekstatus');
 Route::get('payment/perbulan/detail/delete/{id}','PaymentController@deletePeriodeBulanan')->name('payment.monthly.detail.delete')->middleware('cekstatus');
 Route::get('payment/detail/delete/{id}','PaymentController@deletePeriode')->name('payment.detail.delete')->middleware('cekstatus');
-Route::get('payment/cicilan/delete/{id}','PaymentController@deleteCicilan')->name('payment.cicilan.delete')->middleware('cekstatus');
+Route::get('payment/cicilan/delete/{id}/{payment}','PaymentController@deleteCicilan')->name('payment.cicilan.delete')->middleware('cekstatus');
 /**
  * Route resource untuk Pengeluaran 
  */

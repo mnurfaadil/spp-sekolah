@@ -375,11 +375,15 @@ SPP | Pembayaran {{$financing->nama}}
             $.each(data, function(i, v){
                 no += 1;
 
-                //nominal
+                var nominal = parseInt(v.nominal);
+                var persentase = parseFloat(v.persentase);
+
+             //nominal
                 var nominal_ = parseRupiah(v.nominal);
                 
                 //Potongan
-                var potongan = parseInt((parseInt(v.nominal)/parseInt(v.persentase))*100);
+                var potongan = nominal * (persentase/100);
+                
                 var potongan_ = parseRupiah(potongan);
 
                 //Terbayar
@@ -522,7 +526,7 @@ SPP | Pembayaran {{$financing->nama}}
                     </div>`,
                     potongan :
                     `<div style="text-align:right">
-                        ${potongan_} %
+                        ${potongan_}
                     </div>`,
                     terbayar :
                     `<div style="text-align:right">
