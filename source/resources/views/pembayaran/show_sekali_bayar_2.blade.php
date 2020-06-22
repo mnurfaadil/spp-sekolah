@@ -395,7 +395,7 @@ SPP | Pembayaran {{$financing->nama}}
                 var terbayar_ = parseRupiah(terbayar);
 
                 //Sisa
-                var sisa = parseInt(v.nominal) - terbayar;
+                var sisa = parseInt(v.nominal) - terbayar - potongan;
                 var sisa_ = parseRupiah(sisa);
 
                 //Metode

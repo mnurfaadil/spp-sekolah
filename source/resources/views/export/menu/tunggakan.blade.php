@@ -41,6 +41,7 @@ SPP | Laporan Pengeluaran
                                             <input type="hidden" name="kelas" value="{{$kelas}}">
                                             <input type="hidden" name="jurusan" value="{{$jurusan}}">
                                             <input type="hidden" name="angkatan" value="{{$angkatan}}">
+                                            <input type="hidden" name="check_options" value="">
                                             <button type='button' onclick="validate()" class="btn btn-primary pull-right" style="margin-left:5px;"><i class="fa fa-print" ></i> Cetak</button>
                                         </form>
                                     </div>
@@ -71,6 +72,7 @@ SPP | Laporan Pengeluaran
                                 <thead>
                                     <tr>
                                         <th data-checkbox="true"></th>
+                                        <th data-field="id" data-visible="false">Id</th>
                                         <th data-field="no"><div style="text-align:center;">No</div></th>
                                         <th data-field="tanggal"><div style="text-align:center;">Nama</div></th>
                                         <th data-field="deskripsi"><div style="text-align:center;">Kelas</div></th>
@@ -110,6 +112,8 @@ SPP | Laporan Pengeluaran
                                         $total[3] += (int) $sisa;
                                     @endphp
                                         <tr>
+                                            <td></td>
+                                            <td>{{$data->detail_id}}</td>
                                             <td>{{$no++}}</td>
                                             <td >{{$data->nama_murid}}</td>
                                             <td ><div style="text-align:center;">{{$data->kelas}}</div></td>
@@ -367,26 +371,47 @@ SPP | Laporan Pengeluaran
         <script>
             var $table = $('#table');
             var selections = [];
+
             function getIdSelections() {
-            return $.map($table.bootstrapTable('getSelections'), function (row) {
-                console.log(' row select ');
-                console.log(row);
-                console.log('selections row');
-                console.log(selections);
-                
-                return row.id
-            })
+                return $.map($table.bootstrapTable('getSelections'), function (row) {
+                    return row.id
+                })
+            }
+
+            function getAllIdSelections() {
+                return $.map($table.bootstrapTable('getData'), function (row) {
+                    return row.id
+                })
+            }
 
             $(function () {
+                $table.bootstrapTable('getAllSelections');
+                
                 $table.on(
-                    'check.bs.table uncheck.bs.table ' +
-                    'check-all.bs.table uncheck-all.bs.table',
-                    function () {
-                        selections = getIdSelections()
-                    }
-                );
+                'check.bs.table uncheck.bs.table check-all.bs.table',
+                function () {
+                    // save your data, here just save the current page
+                    selections = getIdSelections();
+                    console.log(selections);
+                    $('input[type=hidden][name=check_options]').val(JSON.stringify(selections));
+                    // push or splice the selections if you want to save all data selections
+                })
+
+                $table.on(
+                ' uncheck-all.bs.table',
+                function () {
+                    // save your data, here just save the current page
+                    selections = getIdSelections();
+                    console.log(selections);
+                    
+                    $('input[type=hidden][name=check_options]').val(JSON.stringify(selections));
+                    // push or splice the selections if you want to save all data selections
+                })
+                $table.on('all.bs.table', function (e, name, args) {
+                    console.log('name, args')
+                    console.log(name, args)
+                })
             });
-        }
         </script>
         @endpush
 

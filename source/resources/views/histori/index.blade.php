@@ -58,33 +58,33 @@ SPP | Histori
                                 </tbody>
                             </table>
                             <div class="container-sm" style="margin-top:10px">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div style="float:right; margin-right:20%">
-                                                    <div class="row">
-                                                        <table>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>Total Pembayaran</td>
-                                                                    <td>:</td>
-                                                                    <td>Rp.</td>
-                                                                    <td>
-                                                                        <div style="text-align: right">
-                                                                            <span class="" style="font-size:24px;color:red">
-                                                                                <strong>{{ number_format($sum,0,',','.') }}</strong>
-                                                                            </span>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div style="float:right; margin-right:20%">
+                                            <div class="row">
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Total Pembayaran</td>
+                                                            <td>:</td>
+                                                            <td>Rp.</td>
+                                                            <td>
+                                                                <div style="text-align: right">
+                                                                    <span class="" style="font-size:24px;color:red">
+                                                                        <strong>{{ number_format($sum,0,',','.') }}</strong>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ SPP | Histori
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#table_history tbody tr').remove();">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="title_modal_history">History Pembayaran Hari Ini</h4>

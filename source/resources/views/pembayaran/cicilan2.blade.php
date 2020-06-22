@@ -54,7 +54,7 @@ SPP | Cicilan Pembayaran
                                 <label>Simpanan Siswa</label>
                                 <div class="input-group date">
                                     <span class="input-group-addon">Rp.</span>
-                                    <input type="hidden" name="uang_simpanan" value="$payments->student->simpanan">
+                                    <input type="hidden" name="uang_simpanan" value="{{$payments->student->simpanan}}">
                                     <input type="number" min="0" class="form-control" name="simpanan"
                                         value="{{ number_format($payments->student->simpanan,0,',','.') }}" title="Simpanan siswa" readonly>
                                 </div>
@@ -331,8 +331,7 @@ SPP | Cicilan Pembayaran
             }).then(function (value) {
                 if (value) {
                     let form = $('#form-bayar').serializeArray();
-                    console.log(form);
-                    if (parseInt(form[11].value) > 0) {
+                    if (parseInt(form[12].value) > 0) {
                         if(parseInt(form[11].value) > parseInt(form[5].value)){
                             swal({
                                 title : 'Konfirmasi',

@@ -17,6 +17,8 @@ class Cicilan extends Model
     protected $fillable = [
         "payment_detail_id", 
         "user_id", 
+        "simpanan", 
+        "tunai", 
         "nominal", 
         "created_at",
         "tgl_dibayar",

@@ -618,6 +618,9 @@ class PaymentController extends Controller
                 ->route('payment.details.cicilan', [$request['financing_category_id'], $request['student_id'], $request['payment_id']])
                 ->with('error', 'Tanggal tidak boleh kosong!');
         }
+
+        $uang_tunai = intval($request['uang']);
+        $uang_simpanan = $request['gunakan_simpanan']=="1" ? intval($request['nominal']) - $uang_tunai : 0;
         
         $sudah_dibayar = Cicilan::where('payment_detail_id', $request['payment_detail_id'])->sum('nominal');
         $tamp = Cicilan::where('payment_detail_id', $request['payment_detail_id'])->count();
@@ -654,6 +657,8 @@ class PaymentController extends Controller
             'payment_detail_id' => $request['payment_detail_id'],
             'tgl_dibayar' => $date,
             'nominal' => $nominal,
+            'simpanan' => $uang_simpanan,
+            'tunai' => $uang_tunai,
             'user_id' => Auth::user()->id,
         ]);
 
@@ -678,6 +683,8 @@ class PaymentController extends Controller
             $siswa['simpanan'] = $siswa['simpanan'] + $simpan;
             $siswa->save();
         }
+
+
         if($status=="Lunas"){
             $details = PaymentDetail::where('payment_id', $request['payment_id'])->get();
             foreach ($details as $d) {
@@ -973,9 +980,30 @@ class PaymentController extends Controller
     }
 
     public function deleteCicilan($id, $payment){
+        $status = "Waiting";
         $data_payment = Payment::find($payment);
-        echo '<pre>';
-        var_dump($id);
-        var_dump($data_payment);die;
+        $details = PaymentDetail::where('payment_id', $payment)->get();
+        
+        foreach ($details as $detail) {
+            $detail->status = $status;
+            $detail->save();
+        }
+
+        $income = Income::where('cicilan_id', $id)->first();
+        $pencatatan = Pencatatan::where('income_id', $income->id)->delete();
+        $income->delete();
+        
+        $cicilan = Cicilan::find($id);
+        
+        $siswa = Student::find($data_payment->student_id);
+        $siswa->simpanan = intval($siswa->simpanan) + intval($cicilan->simpanan);
+        $siswa->save();
+
+        Cicilan::find($id)->delete();
+        
+        //Redirect ke halaman pembayaran berdasarkan kategori
+        return redirect()
+            ->route('payment.details.cicilan', [$data_payment->financing_category_id, $data_payment->student_id, $data_payment->id])
+            ->with('success', 'Cicilan dibatalkan!');
     }
 }
