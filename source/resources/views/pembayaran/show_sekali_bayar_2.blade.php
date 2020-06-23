@@ -364,7 +364,6 @@ SPP | Pembayaran {{$financing->nama}}
             rupiah += separator + ribuan.join('.');
         }
 
-
         return rupiah;
     }
 

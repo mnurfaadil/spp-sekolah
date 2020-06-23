@@ -162,6 +162,7 @@ Route::get('/rekap_tunggakan/ajax/{stat?}/{filter?}', 'MenuRekapController@ajaxT
 Route::get('/rekap_tunggakan/ajax/{id_siswa}', 'MenuRekapController@ajaxTunggakanSiswa')->name('rekap.tunggakan.ajax.siswa');
 Route::get('/rekap_tunggakan/_ajax/data/{keyword?}', 'MenuRekapController@ajaxTunggakanView')->name('rekap.tunggakan.ajax.view');
 Route::get('/rekap_tunggakan/_ajax_kategori/data/{keyword?}', 'MenuRekapController@ajaxTunggakanKategoriView')->name('rekap.tunggakan.ajax.view');
+Route::get('/rekap_tunggakan/data_master/{stat?}', 'MenuRekapController@ajaxTunggakanMaster')->name('rekap.tunggakan.ajax.master');
 
 Route::post('/rekap_Pemasukan/export', 'MenuRekapController@pemasukan')->name('rekap.pemasukan.export');
 Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->name('rekap.pengeluaran.export');
