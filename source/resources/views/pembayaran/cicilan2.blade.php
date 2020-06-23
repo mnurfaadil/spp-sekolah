@@ -371,18 +371,17 @@ SPP | Cicilan Pembayaran
     {
         //Simpanan Siswa
         var simpanan_ = $('input[name=simpanan]').val();
-        var temp = simpanan_.replace(".", "");
+        var temp = simpanan_.replace(/\./g, '');
         var simpanan = parseInt(temp);
         
         //Uang Bayar hari Ini
         var tunai = parseInt($('input[name=uang]').val());
         tunai =(Number.isNaN(tunai))?0:tunai;
-        
         //TUnggakan
         var tunggakan_ = $('#tunggakan').html();
-        temp = tunggakan_.replace(".","");
+        temp = tunggakan_.replace(/\./g, '');
         var tunggakan = parseInt(temp);
-
+        
         var nominal = tunai >= tunggakan ? tunggakan : tunai;
         if($('select[name=gunakan_simpanan]').val()==1){
             nominal = simpanan + tunai >= tunggakan ? tunggakan : simpanan + tunai;
