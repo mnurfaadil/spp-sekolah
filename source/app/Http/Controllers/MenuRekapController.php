@@ -567,6 +567,7 @@ class MenuRekapController extends Controller
         }
     }
 
+    //Tunggakan
     public function tunggakan(Request $request)
     {
         $stat = $request->stat;

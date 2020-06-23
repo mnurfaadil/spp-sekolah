@@ -145,8 +145,7 @@ Route::get('laporan_bos','RekapController@ulala');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/rekap_Pemasukan', 'MenuRekapControlle
-r@indexPemasukan')->name('rekap.pemasukan');
+Route::get('/rekap_Pemasukan', 'MenuRekapController@indexPemasukan')->name('rekap.pemasukan');
 Route::get('/rekap_Pengeluaran', 'MenuRekapController@indexPengeluaran')->name('rekap.pengeluaran');
 Route::get('/rekap_bukbes', 'MenuRekapController@indexBB')->name('rekap.bukbes');
 Route::get('/rekap_tunggakan/{stat?}', 'MenuRekapController@indexTunggakan')->name('rekap.tunggakan');
