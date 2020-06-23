@@ -44,6 +44,28 @@ class HistoryController extends Controller
                 ->whereDate('incomes.created_at', $today)
                 ->groupBy('students.id')
                 ->get();
+        $students_per_bulan = Income::join('payment_details', 'payment_details.id', '=', 'incomes.payment_detail_id')
+                ->select(DB::raw('
+                incomes.created_at,
+                students.id,
+                students.nama,
+                students.kelas,
+                majors.nama as jurusan,
+                majors.inisial,
+                angkatans.angkatan,
+                angkatans.tahun as tahun_angkatan,
+                getNominalPembayaranHariIni(students.id, "'.$today.'") as total_pembayaran
+                '))
+                ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+                ->join('students', 'students.id', '=', 'payments.student_id')
+                ->join('majors', 'majors.id', '=', 'students.major_id')
+                ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+                ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+                ->where('sumber', 'Siswa')
+                ->whereDate('incomes.created_at', $today)
+                ->groupBy('students.id')
+                ->get();
+        $students = $students->merge($students_per_bulan);
         return view('histori.index',compact('no','students'));
     }
 

@@ -264,7 +264,7 @@ SPP | Laporan Pengeluaran
             }
             function load_filter() {
                 $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}`, function(data){
-                    var temp = {kategori: "Semua", kategori_value: "all"};
+                    var temp = {kategori: "Semua Kategori", kategori_value: "all"};
                     data.unshift(temp);
                     $('#filter').empty();
                     $.each(data, function (i, val){
