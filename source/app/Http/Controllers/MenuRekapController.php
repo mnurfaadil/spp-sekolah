@@ -235,7 +235,7 @@ class MenuRekapController extends Controller
             $kelas = 'all';
             $jurusan = 'all';
             $angkatan = 'all';
-            return view('export.menu.tunggakan',compact('no','datas','filter','pilihan', 'stat', 'kelas', 'jurusan', 'angkatan'));
+            return view('export.menu.tunggakan2',compact('no','datas','filter','pilihan', 'stat', 'kelas', 'jurusan', 'angkatan'));
         }
         else
         {

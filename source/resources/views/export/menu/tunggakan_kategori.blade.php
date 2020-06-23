@@ -22,6 +22,12 @@ SPP | Laporan Pengeluaran
                                             <div style="float:left; display:flex; flex-direction:row; max-height:55">
                                                 <select class="form-control" style="margin-right:5px; width:150px" name="filter" id="filter" required>
                                                 </select>
+                                                <select class="form-control" style="margin-right:5px; width:150px" name="kelas" id="kelas" required>
+                                                    <option value="all">Semua Kelas</option>
+                                                </select>
+                                                <select class="form-control" style="margin-right:5px; width:150px" name="jurusan" id="jurusan" required>
+                                                    <option value="all">Semua Jurusan</option>
+                                                </select>
                                                 <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
                                             </div>
                                         </form>
