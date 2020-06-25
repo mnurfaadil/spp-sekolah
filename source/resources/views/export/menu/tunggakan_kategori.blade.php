@@ -23,8 +23,10 @@ SPP | Laporan Pengeluaran
                                                 <select class="form-control" style="margin-right:5px; width:150px" name="filter" id="filter" required>
                                                 </select>
                                                 <select class="form-control" style="margin-right:5px; width:150px" name="kelas" id="kelas" required>
+                                                    <option value="all">Semua Kelas</option>
                                                 </select>
                                                 <select class="form-control" style="margin-right:5px; width:150px" name="jurusan" id="jurusan" required>
+                                                    <option value="all">Semua Jurusan</option>
                                                 </select>
                                                 <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
                                             </div>
@@ -35,8 +37,6 @@ SPP | Laporan Pengeluaran
                                             @csrf
                                             <input type="hidden" name="stat" value="{{$stat}}">
                                             <input type="hidden" name="keyword" value="">
-                                            <input type="hidden" name="kelas" value="{{$kelas}}">
-                                            <input type="hidden" name="jurusan" value="{{$jurusan}}">
                                             <input type="hidden" name="filter" value="{{$filter}}">
                                             <button type='button' onclick="validate()" class="btn btn-primary pull-right" style="margin-left:5px;"><i class="fa fa-print" ></i> Cetak</button>
                                         </form>
@@ -263,39 +263,12 @@ SPP | Laporan Pengeluaran
                 var pilihan = $('input[type=hidden][name=filter]').val(filter);
             }
             function load_filter() {
-                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}/Kategori`, function(data){
+                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}`, function(data){
                     var temp = {kategori: "Semua Kategori", kategori_value: "all"};
                     data.unshift(temp);
                     $('#filter').empty();
                     $.each(data, function (i, val){
                         $('#filter').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
-                    });
-                });
-            }function change_kelas() {
-                var kelas = $('#kelas').val();
-                var pilihan = $('input[type=hidden][name=kelas]').val(kelas);
-            }
-            function change_jurusan() {
-                var jurusan = $('#jurusan').val();
-                var pilihan = $('input[type=hidden][name=jurusan]').val(jurusan);
-            }
-            function load_kelas() {
-                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}/Kelas`, function(data){
-                    var temp = {kategori: "Semua Kelas", kategori_value: "all"};
-                    data.unshift(temp);
-                    $('#kelas').empty();
-                    $.each(data, function (i, val){
-                        $('#kelas').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
-                    });
-                });
-            }
-            function load_jurusan() {
-                $.get(`{{ url('') }}/rekap_tunggakan/ajax/{{$stat}}/Jurusan`, function(data){
-                    var temp = {kategori: "Semua Jurusan", kategori_value: "all"};
-                    data.unshift(temp);
-                    $('#jurusan').empty();
-                    $.each(data, function (i, val){
-                        $('#jurusan').append(`<option value="${val.kategori_value}">${val.kategori}</option>`);
                     });
                 });
             }
@@ -330,12 +303,8 @@ SPP | Laporan Pengeluaran
             }
 
             $('#filter').change(change_filter);
-            $('#kelas').change(change_kelas);
-            $('#jurusan').change(change_jurusan);
             $(document).ready(function(){
                 load_filter();
-                load_kelas();
-                load_jurusan();
                 let search = document.getElementsByClassName('search');
                 let form = search[0].lastChild;
                 form.addEventListener("keyup", change_search);
