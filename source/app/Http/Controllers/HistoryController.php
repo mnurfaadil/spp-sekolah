@@ -67,19 +67,18 @@ class HistoryController extends Controller
     {
         $no =1;
         $today = date("Y-m-d");
-        $bigDatas = Income::join('cicilans', 'cicilans.id', '=', 'incomes.cicilan_id')
-                ->join('payment_details', 'payment_details.id', '=', 'cicilans.payment_detail_id')
-                ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
-                ->join('students', 'students.id', '=', 'payments.student_id')
-                ->select(DB::raw('
-                incomes.created_at,
-                incomes.nominal,
-                incomes.title
-                '))
-                ->where('sumber', 'Siswa')
-                ->where('students.id', $request->data)
-                ->whereDate('incomes.created_at', $today)
-                ->get();
+        $bigDatas = Income::join('payment_details', 'payment_details.id', '=', 'incomes.payment_detail_id')
+                    ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+                    ->join('students', 'students.id', '=', 'payments.student_id')
+                    ->select(DB::raw('
+                    incomes.created_at,
+                    incomes.nominal,
+                    incomes.title
+                    '))
+                    ->where('sumber', 'Siswa')
+                    ->where('students.id', $id)
+                    ->whereDate('incomes.created_at', $today)
+                    ->get();
         $datas = [$request->tanggal,$request->nama,$request->kelas,$request->angkatan];
         $pdf = PDF::loadView('export.history',compact('bigDatas','no','datas'));
         $pdf->setPaper('A4', 'potrait');
