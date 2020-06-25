@@ -140,7 +140,16 @@ SPP | Pembayaran {{$financing->nama}}
                         </div>
                         <hr>
                         <div class="form-group">
-                            <label class="control-label col-md-4">Persentase Potongan Biaya (%)<kode>*</kode></label>
+                            <label class="control-label col-md-4">Jenis Potongan<kode>*</kode></label>
+                            <div class="chosen-select-single mg-b-20">
+                                <select class="chosen-select" name="jenis_potongan" id="jenis_potongan_add" autofocus>
+                                    <option value="persentase">Persentase</option>
+                                    <option value="nominal">Nominal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" id="label_potongan">Persentase Potongan Biaya (%)<kode>*</kode></label>
                             <input name='persentase' id='persentase_add' placeholder="Masukan persentase potongan biaya" type='number'
                                     min="0" max="100" class='form-control' value="0" required>
                         </div>
@@ -153,12 +162,11 @@ SPP | Pembayaran {{$financing->nama}}
                                     <option value="Nunggak">Nunggak</option>
                                 </select>
                             </div>
-                            </div>
-                            
+                        </div>
                         <div id="tanggal">
                             <input type="hidden" name="set_simpanan" value="0">
                             <div class="form-group data-custon-pick" id="data_2">
-                                <label>Tanggal Pembayaran<kode>*</kode></label>
+                                <label class="control-label">Tanggal Pembayaran<kode>*</kode></label>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" autocomplete="off" class="form-control" required placeholder="Tanggal Pembayaran" name="tanggal_bayar" id="tanggal_bayar_add">
@@ -261,19 +269,40 @@ SPP | Pembayaran {{$financing->nama}}
         }
     });
 
+    $('select[name=jenis_potongan]').change(function(){
+        var val = $(this).val();
+        if (val === "persentase") {
+            $('#label_potongan').html('Persentase Potongan Biaya (%)<kode>*</kode>');
+            $('#persentase_add').attr('max','100');
+        } else {
+            $('#label_potongan').html('Nominal Potongan Biaya (Rp)<kode>*</kode>');
+            $('#persentase_add').removeAttr('max');
+        }
+        $('#persentase_add').val("0");
+        change_persentase();
+    });
+
     function change_persentase()
     {
-        var temp = parseInt($('#dump').val());
-        var pers = parseInt($('#persentase_add').val());
-        var potongan = temp * ( pers / 100 );
-        potongan = potongan.toString() == 'NaN' ? 0 : potongan;
-        var number = temp
-        if(pers <= 100 && pers >= 0){
-            number = temp - potongan;
+        var val = $('select[name=jenis_potongan]').val();
+        var number = parseInt($('#dump').val());
+        if (val === "persentase") {
+            var pers = parseInt($('#persentase_add').val()) > 100 ? 100 : parseInt($('#persentase_add').val());
+            var potongan = number * ( pers / 100 );
+            potongan = potongan.toString() == 'NaN' ? 0 : potongan;
+            if(pers <= 100 && pers >= 0){
+                number = number - potongan;
+            }
+        } else {
+            var potongan = parseInt($('#persentase_add').val());
+            potongan = potongan.toString() == 'NaN' ? 0 : potongan;
+            potongan = potongan > number ? number : potongan;
+            number = number - potongan;
         }
+        var format = new Intl.NumberFormat(['ban', 'id']).format(number);
         $('input[name=nominal]').val(number);
         $('input[name=nominal_bayar]').attr('min',number);
-        var format = new Intl.NumberFormat(['ban', 'id']).format(number);
+        $('input[name=nominal_bayar]').val(number);
         $('#nominal_show').html(format);
     }
     $('#persentase_add').change(change_persentase);
@@ -290,25 +319,43 @@ SPP | Pembayaran {{$financing->nama}}
         }).then(function (value) {
             if (value) {
                 var metode = $('select[name=metode_pembayaran]').val();
+                var val = $('select[name=jenis_potongan]').val();
+                var per = $('#persentase_add').val();
+                var nom = parseInt($('#dump').val());
+                if (val === "persentase" && per > 100) {
+                    return swal({
+                            title : "Error",
+                            text : "Silahkan masukan persentase dengan benar!",
+                            icon : "warning",
+                        });
+                }
+                if (val === "nominal" && per > nom) {
+                    return swal({
+                            title : "Error",
+                            text : "Silahkan masukan nominal potongan dengan benar!",
+                            icon : "warning",
+                        });
+                }
                 if(metode=="Tunai") 
                 {
                     var form = $('#store').serializeArray();
-                    if(form[12].value==""){
+                    
+                    if(form[13].value==""){
                         swal("Tanggal pembayaran kosong!");
                         bind();
                         return false;
                     }
-                    if(form[13].value==""){
+                    if(form[14].value==""){
                         swal("Uang pembayaran kosong!");
                         bind();
                         return false;
                     }
-                    if(parseInt(form[5].value) > parseInt(form[13].value)){
+                    if(parseInt(form[5].value) > parseInt(form[14].value)){
                         swal("Uang pembayaran kurang!");
                         bind();
                         return false;
                     }
-                    if(parseInt(form[5].value) < parseInt(form[13].value)){
+                    if(parseInt(form[5].value) < parseInt(form[14].value)){
                         swal({
                             title : 'Konfirmasi',
                             text : 'Uang bayar lebih, masuk simpanan siswa ?',
@@ -377,19 +424,19 @@ SPP | Pembayaran {{$financing->nama}}
                 var nominal = parseInt(v.nominal);
                 var persentase = parseFloat(v.persentase);
 
-             //nominal
+                //nominal
                 var nominal_ = parseRupiah(v.nominal);
                 
                 //Potongan
                 var potongan = nominal * (persentase/100);
-                
                 var potongan_ = parseRupiah(potongan);
 
                 //Terbayar
-                var terbayar = v.cicilan ? v.cicilan : 0;
-                if (v.jenis_pembayaran == "Tunai")
+                var terbayar = v.cicilan ? parseInt(v.cicilan) : 0;
+                
+                if (v.jenis_pembayaran === "Tunai")
                 {
-                    terbayar = v.nominal;
+                    terbayar = parseInt(v.nominal);
                 }
                 var terbayar_ = parseRupiah(terbayar);
 
@@ -510,6 +557,15 @@ SPP | Pembayaran {{$financing->nama}}
                     </div>
                     `;
                 }
+                var persentase = v.persentase;
+                if (v.jenis_potongan === "nominal") {
+                    persentase = (parseInt(v.nominal_potongan)/nominal * 100).toFixed(2);
+                    potongan_ = parseRupiah(v.nominal_potongan);
+                    potongan = parseInt(v.nominal_potongan);
+                    terbayar = parseInt(v.cicilan);
+                    terbayar_ = parseRupiah(terbayar);
+                    sisa_ = parseRupiah(nominal - (potongan + terbayar));
+                }
 
                 var temp = {
                     no : no,
@@ -521,9 +577,9 @@ SPP | Pembayaran {{$financing->nama}}
                     </div>`,
                     persentase :
                     `<div style="text-align:right">
-                        ${v.persentase} %
+                        ${persentase} %
                     </div>`,
-                    potongan :
+                    potongan : 
                     `<div style="text-align:right">
                         ${potongan_}
                     </div>`,
@@ -540,6 +596,7 @@ SPP | Pembayaran {{$financing->nama}}
                     action : action
                 }
                 content .push(temp);
+                
             });
             $table.bootstrapTable('destroy').bootstrapTable({
                 exportTypes: ['excel', 'pdf'],

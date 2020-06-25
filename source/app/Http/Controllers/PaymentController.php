@@ -22,6 +22,7 @@ class PaymentController extends Controller
 {
     public function __construct()
     {
+        set_time_limit(300);
         $this->middleware('auth');
     }
     /**
@@ -189,7 +190,9 @@ class PaymentController extends Controller
                     getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
                     students.id as student_id,
                     financing_categories.id as financing_category_id,
-                    payments.id
+                    payments.id,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
                 ->join('majors','majors.id','=','students.major_id')
@@ -456,6 +459,28 @@ class PaymentController extends Controller
     public function storeMetodePembayaran(Request $request)
     {
         $req = $request->all();
+        $payment = Payment::findOrFail($req['payment_id']);
+        // echo '<pre>';
+        // var_dump($payment);
+        // echo "<hr>";
+        if ($request->jenis_potongan == "nominal")
+        {
+            $payment->jenis_potongan = "nominal";
+            $payment->persentase = 0;
+            $payment->nominal_potongan = $request->persentase;
+            // echo "nominal, update jenis potongan dengan nominal, persentase jadi nol dan isi field nominal_potongan dengan isi persentase ";
+        }
+        else
+        {
+            $payment->jenis_potongan = "persentase";
+            $payment->persentase = $request->persentase;
+            $payment->nominal_potongan = 0;
+            // echo "persentase, update jenis potongan dengan persentase, nominal_potongan jadi nol dan isi field persentase dengan isi persentase ";
+        }
+        $payment->save();
+        // echo "<hr>";
+        // var_dump($payment);
+        // die;
         $req['date'] = date('Y-m-d', time());
         $req['user_id'] = Auth::user()->id;
         $obj = Student::where('id',$req['student_id'])->first();
@@ -463,6 +488,10 @@ class PaymentController extends Controller
         $nominal = intval($req['dump'])-((intval($req['dump'])*$percent)/100);
         if($req['metode_pembayaran']=='Tunai')
         {
+            if ($request->jenis_potongan == "nominal")
+            {
+                $nominal = intval($request->nominal_bayar);
+            }
             $cek = json_decode($req['data']);
             $date = $this->convertToCorrectDateValue($request->tanggal_bayar);
             $penerima = Auth::user()->name;
@@ -541,7 +570,7 @@ class PaymentController extends Controller
         }else
         {
             $cek = Payment::where('id',$req['payment_id'])->first();
-            if($cek->jenis_pembayaran!="Tunai"){
+            if($cek->jenis_pembayaran != "Tunai"){
                 $cek->jenis_pembayaran="Cicilan";
                 $cek->persentase = $percent;
                 $cek->save();
@@ -591,7 +620,14 @@ class PaymentController extends Controller
 
         $footer['total'] = $payments->periode[0]->nominal;
         $footer['terbayar'] = $cicilans->sum('nominal');
-        $footer['potongan'] = floor(intval($payments->periode[0]->nominal)*intval($payments->persentase)/100);
+        if ($payments->jenis_potongan == "persentase")
+        {
+            $footer['potongan'] = floor(intval($payments->periode[0]->nominal)*intval($payments->persentase)/100);
+        }
+        else
+        {
+            $footer['potongan'] = floor($payments->persentase);
+        }
         $footer['sisa'] = $footer['total'] - $footer['potongan'] - $footer['terbayar'];
         if ($periode==0 && $financing->nama=="Bayar per Bulan") {
             return redirect()
@@ -959,7 +995,9 @@ class PaymentController extends Controller
         //Ubah status payment dari tunai ke waiting
         $data_payment = Payment::find($payment_id);
         $data_payment->jenis_pembayaran = 'Waiting';
+        $data_payment->jenis_potongan = 'persentase';
         $data_payment->persentase = 0;
+        $data_payment->nominal_potongan = 0;
         $data_payment->save();
         
         //Hapus data pembayaran pada pencatatan
