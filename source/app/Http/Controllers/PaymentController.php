@@ -478,6 +478,7 @@ class PaymentController extends Controller
             // echo "persentase, update jenis potongan dengan persentase, nominal_potongan jadi nol dan isi field persentase dengan isi persentase ";
         }
         $payment->save();
+        // var_dump($req);
         // echo "<hr>";
         // var_dump($payment);
         // die;

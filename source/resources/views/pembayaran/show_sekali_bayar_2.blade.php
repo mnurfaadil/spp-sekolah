@@ -436,7 +436,7 @@ SPP | Pembayaran {{$financing->nama}}
                 
                 if (v.jenis_pembayaran === "Tunai")
                 {
-                    terbayar = parseInt(v.nominal);
+                    terbayar = parseInt(v.nominal) - potongan;
                 }
                 var terbayar_ = parseRupiah(terbayar);
 
@@ -557,6 +557,7 @@ SPP | Pembayaran {{$financing->nama}}
                     </div>
                     `;
                 }
+
                 var persentase = v.persentase;
                 if (v.jenis_potongan === "nominal") {
                     persentase = (parseInt(v.nominal_potongan)/nominal * 100).toFixed(2);
