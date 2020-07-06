@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Routing\Redirector;
 use App\FinancingCategory;
 use App\Payment;
@@ -177,7 +178,24 @@ class PaymentController extends Controller
     }
     public function ajaxIndex($id)
     {
-        return Payment::
+        $cek = $_GET;
+        try {
+            $kelas = $cek['kelas'] == "all" ? "" : $cek['kelas'];
+        } catch (\Throwable $th) {
+            $kelas = "";
+        }
+        try {
+            $jurusan = $cek['jurusan'] == "all" ? "" : $cek['jurusan'];
+        } catch (\Throwable $th) {
+            $jurusan = "";
+        }
+        try {
+            $angkatan = $cek['angkatan'] == "all" ? "" : $cek['angkatan'];
+        } catch (\Throwable $th) {
+            $angkatan = "";
+        }
+        if ($kelas != "" && $jurusan != "" && $angkatan != "") {
+            $datas = Payment::
                 selectRaw('
                     students.nama, 
                     students.kelas, 
@@ -201,8 +219,366 @@ class PaymentController extends Controller
                 ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
                 ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
                 ->where('financing_categories.id',$id)
+                ->where('students.kelas', $kelas)
+                ->where('students.major_id', $jurusan)
+                ->where('students.angkatan_id', $angkatan)
+                ->groupBy('students.id')
                 ->orderBy('payments.updated_at','desc')
                 ->get();
+        } 
+        elseif ($kelas == "" && $jurusan != "" && $angkatan != "") {
+            $datas = Payment::
+                selectRaw('
+                    students.nama, 
+                    students.kelas, 
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    financing_categories.jenis, 
+                    payments.persentase,
+                    payments.jenis_pembayaran,
+                    getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                    getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                    students.id as student_id,
+                    financing_categories.id as financing_category_id,
+                    payments.id,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('financing_categories.id',$id)
+                ->where('students.major_id', $jurusan)
+                ->where('students.angkatan_id', $angkatan)
+                ->groupBy('students.id')
+                ->orderBy('payments.updated_at','desc')
+                ->get();
+        } 
+        elseif ($kelas == "" && $jurusan != "" && $angkatan == "") {
+            $datas = Payment::
+                selectRaw('
+                    students.nama, 
+                    students.kelas, 
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    financing_categories.jenis, 
+                    payments.persentase,
+                    payments.jenis_pembayaran,
+                    getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                    getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                    students.id as student_id,
+                    financing_categories.id as financing_category_id,
+                    payments.id,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('financing_categories.id',$id)
+                ->where('students.major_id', $jurusan)
+                ->groupBy('students.id')
+                ->orderBy('payments.updated_at','desc')
+                ->get();
+        } 
+        elseif ($kelas != "" && $jurusan == "" && $angkatan != "") {
+            $datas = Payment::
+                selectRaw('
+                    students.nama, 
+                    students.kelas, 
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    financing_categories.jenis, 
+                    payments.persentase,
+                    payments.jenis_pembayaran,
+                    getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                    getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                    students.id as student_id,
+                    financing_categories.id as financing_category_id,
+                    payments.id,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('financing_categories.id',$id)
+                ->where('students.kelas', $kelas)
+                ->where('students.angkatan_id', $angkatan)
+                ->groupBy('students.id')
+                ->orderBy('payments.updated_at','desc')
+                ->get();
+        } 
+        elseif ($kelas != "" && $jurusan == "" && $angkatan == "") {
+            $datas = Payment::
+                selectRaw('
+                    students.nama, 
+                    students.kelas, 
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    financing_categories.jenis, 
+                    payments.persentase,
+                    payments.jenis_pembayaran,
+                    getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                    getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                    students.id as student_id,
+                    financing_categories.id as financing_category_id,
+                    payments.id,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('financing_categories.id',$id)
+                ->where('students.kelas', $kelas)
+                ->groupBy('students.id')
+                ->orderBy('payments.updated_at','desc')
+                ->get();
+
+        } 
+        elseif ($kelas != "" && $jurusan != "" && $angkatan == "") {
+            $datas = Payment::
+                selectRaw('
+                    students.nama, 
+                    students.kelas, 
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    financing_categories.jenis, 
+                    payments.persentase,
+                    payments.jenis_pembayaran,
+                    getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                    getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                    students.id as student_id,
+                    financing_categories.id as financing_category_id,
+                    payments.id,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('financing_categories.id',$id)
+                ->where('students.kelas', $kelas)
+                ->where('students.major_id', $jurusan)
+                ->groupBy('students.id')
+                ->orderBy('payments.updated_at','desc')
+                ->get();
+        }
+        else {
+            $datas = Payment::
+                selectRaw('
+                    students.nama, 
+                    students.kelas, 
+                    majors.inisial as jurusan,
+                    financing_periodes.nominal,
+                    financing_categories.jenis, 
+                    payments.persentase,
+                    payments.jenis_pembayaran,
+                    getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                    getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                    students.id as student_id,
+                    financing_categories.id as financing_category_id,
+                    payments.id,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan
+                ')
+                ->join('students','payments.student_id','=','students.id')
+                ->join('majors','majors.id','=','students.major_id')
+                ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                ->join('payment_details','payment_details.payment_id','=','payments.id')
+                ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                ->where('financing_categories.id',$id)
+                ->groupBy('students.id')
+                ->orderBy('payments.updated_at','desc')
+                ->get();
+        }
+        $result = array();
+        foreach ($datas as $i => $data) {
+            //Main
+            $persentase = $data->persentase;
+            $_besaran = intval($data->nominal);
+            $_persentase = intval($data->persentase);
+            $_nominal_potongan = intval($data->nominal_potongan);
+
+            //Besaran
+            $besaran = number_format($_besaran,0,',','.');
+
+            //Persentase
+            //Potongan
+            if ($data->jenis_potongan != "persentase") {
+                $_persentase = ($_nominal_potongan/$_besaran)*100;
+            }
+            else
+            {
+                $_nominal_potongan = $_besaran * ($persentase / 100);    
+            }
+            $persentase = number_format($_persentase,0,',','.');
+            $potongan = number_format($_nominal_potongan,0,',','.');
+            
+            //Terbayar
+            $_terbayar = intval($data->cicilan);
+            $terbayar = number_format($_terbayar,0,',','.');
+            
+            //Sisa
+            $_sisa = $_besaran - $_nominal_potongan - $_terbayar;
+            $sisa = number_format($_sisa,0,',','.');
+            
+            //Metode
+            if ($data->jenis_pembayaran == "Waiting")
+            {
+                $metode =
+                '
+                <div style="text-align:center">
+                    <span class="badge"
+                        style="background-color:yellow;color:black">
+                        Waiting
+                    </span>
+                </div>
+                ';
+            }
+            else
+            {
+                $metode =
+                '
+                <div style="text-align:center">
+                    '.$data->jenis_pembayaran.'
+                </div>
+                ';
+            }
+
+            //Status
+            if( $data->jenis_pembayaran=="Waiting")
+            {
+                $status =
+                '
+                <div style="text-align:center">
+                    <span class="badge"
+                    style="background-color:yellow;color:black">
+                    Waiting
+                    </span>
+                </div>
+                ';
+            }
+            else if($data->jenis_pembayaran=="Nunggak")
+            {
+                $status =
+                '
+                <div style="text-align:center">
+                    <span class="badge" style="background-color:red">Nunggak</span>
+                </div>
+                ';
+            }
+            else if($data->jenis_pembayaran=="Cicilan" && $_sisa != 0)
+            {
+                $status =
+                '
+                <div style="text-align:center">
+                    <span class="badge" style="background-color:yellow;color:black">
+                        Belum Lunas
+                    </span>
+                </div>
+                ';
+            }
+            else
+            {
+                $status =
+                '
+                <div style="text-align:center">
+                    <span class="badge" style="background-color:green">Lunas</span>
+                </div>
+                ';
+            }
+
+            //Action
+            $obj = json_encode($data);
+            $link_rincian = url('payment/details')."/{$data->financing_category_id}/{$data->student_id}/{$data->id}";
+            $link_print = url('export/sesekali/detail')."/{$data->student_id}/{$data->payment_detail_tunai}/tunai";
+            $link_delete = url('payment/detail/delete')."/{$data->payment_detail_tunai}";
+            $action =
+            '
+            <div style="text-align:center">
+                <a href="'.$link_print.'"
+                class=" btn btn-success" target="_blank" title="Cetak kwitansi">
+                    <i class="fa fa-print"></i>
+                </a>
+                <a href="'.$link_delete.'" 
+                class="btn btn-danger" style="color:white;margin-top:0" title="Delete">
+                    <i class="fa fa-close"></i>
+                </a> 
+            </div>
+            ';
+            if($data->jenis_pembayaran=="Waiting" || $data->jenis_pembayaran=="Nunggak")
+            {
+                $action =
+                '
+                <div style="text-align:center">
+                    <button class="btn btn-warning"
+                        onclick=\'addConfirm('.$obj.',"'.$besaran.'")\'
+                        title="Pilih Metode Pembayaran" style="color:black;  ">
+                        <i class="fa fa-info-circle"> Metode</i>
+                    </button>
+                </div>
+                ';
+            }
+            else if($data->jenis_pembayaran=="Cicilan")
+            {
+                $action =
+                '
+                <div style="text-align:center">
+                    <a href="'.$link_rincian.'"
+                    class="btn btn-primary" title="Rincian Cicilan Siswa"
+                    style="color:white;">
+                        <i class="fa fa-eye"> Rincian</i>
+                    </a>
+                </div>
+                ';
+            }
+            
+            $temp = (object) array(
+                "no" => $i + 1,
+                "nama" => $data->nama,
+                "kelas" => "{$data->kelas} - {$data->jurusan}",
+                "besaran" => $besaran,
+                "persentase" => $persentase,
+                "potongan" => $potongan,
+                "terbayar" => $terbayar,
+                "sisa" => $sisa,
+                "metode" => $metode,
+                "status" => $status,
+                "action" => $action
+            );
+
+            
+            // echo "<pre>";
+            // var_dump ($data); 
+            // echo "{$data->nominal} | {$data->nominal_potongan} | {$data->nominal} | {$data->nominal} | {$action}";
+            // dd($temp);
+            // echo "</pre>";
+            // echo"<hr>";
+            $result[] = $temp;
+        }
+        // echo '<pre>';
+        // var_dump(json_encode($result));
+        // dd(json_encode($result[0]));
+        // die;
+        return json_encode($result);
     }
 
     public function ajaxIndexPerbulan($id)

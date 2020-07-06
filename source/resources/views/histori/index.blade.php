@@ -105,7 +105,7 @@ SPP | Histori
                 </button>
                 <h4 class="modal-title" id="title_modal_history">History Pembayaran Hari Ini</h4>
             </div>
-            <form action="{{ route('history.store') }}" role="form" method="post">
+            <form action="{{ route('history.store') }}" role="form" method="post" target="_blank">
                 {{csrf_field()}}
                 <div class="modal-body">
                     <div class="row mb-3">

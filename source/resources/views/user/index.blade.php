@@ -68,9 +68,9 @@ SPP | Change Password
     <button class="btn btn-success btn-block loginbtn" type="submit">
         {{ __('Change Password') }}
     </button>
-    <button class="btn btn-danger btn-block loginbtn" onclick="history.back()">
+    <a title="Kembali" class="btn btn-danger btn-block loginbtn" style="background-color:red" href="{{url('')}}">
         {{ __('Batal') }}
-    </button>
+    </a>
 </form>
 @endsection
 

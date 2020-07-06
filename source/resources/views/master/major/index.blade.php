@@ -150,11 +150,11 @@ SPP | Jurusan
                                                             onclick="editConfirm({{$data}})"
                                                             title="Edit" style="margin-top:0;"><i
                                                                 class="fa fa-edit"></i></a>
-                                                        <a href="{{ route('majors.destroy',$data) }}"
+                                                        <!-- <a href="{{ route('majors.destroy',$data) }}"
                                                             class="btn btn-danger"
                                                             onclick="event.preventDefault();destroy('{{ route('majors.destroy',$data) }}');"
                                                             title="Hapus" style="margin-top:0;"><i
-                                                                class="fa fa-trash"></i></a>
+                                                                class="fa fa-trash"></i></a> -->
                                                     </div>
                                                 </td>
                                             </tr>

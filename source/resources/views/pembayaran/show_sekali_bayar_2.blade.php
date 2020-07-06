@@ -47,9 +47,11 @@ SPP | Pembayaran {{$financing->nama}}
                                                         @endforeach
                                                     @endif
                                                 </select>
-                                                <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button>
+                                                
+                                                <!-- <button type='submit' class="btn btn-info" style="margin-left:5px;">Filter</button> -->
                                             </div>
                                         </form>
+                                                <button onclick="changeData()" class="btn btn-info" style="margin-left:5px;padding-vertical:2px;">Filter</button>
                                     </div>
                                     <div class="col-md-6">
                                         <div style="float:right; margin-right:15px">
@@ -72,7 +74,11 @@ SPP | Pembayaran {{$financing->nama}}
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
                             </div>
-                            <table id="table" data-toggle="table" data-pagination="true" data-search="true"
+                            <table id="table" 
+                                data-toggle="table" 
+                                data-pagination="true" 
+                                data-url="{{ url('') }}/payment/ajax/{{$financing->id}}"
+                                data-search="true"
                                 data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
                                 data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
                                 data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true"
@@ -80,7 +86,7 @@ SPP | Pembayaran {{$financing->nama}}
                                 <thead>
                                     <tr>
                                         <th data-field="no">No</th>
-                                        <th data-field="name">Nama</th>
+                                        <th data-field="nama">Nama</th>
                                         <th data-field="kelas">Kelas</th>
                                         <th data-field="besaran">Akumulasi Biaya</th>
                                         <th data-field="persentase">Persentase Potongan</th>
@@ -384,241 +390,30 @@ SPP | Pembayaran {{$financing->nama}}
             }
         });
     }
-
     var $table = $('#table');
-    var selections = [];
-    
-    function getIdSelections() {
-        return $.map($table.bootstrapTable('getSelections'), function (row) {
-            console.log(' row select ');
-            console.log(row);
-            console.log('selections row');
-            console.log(selections);
-            
-            return row.id
-        })
-    }
-
-    function parseRupiah (bilangan)
-    {
-        var	number_string = bilangan.toString(),
-            sisa 	= number_string.length % 3,
-            rupiah 	= number_string.substr(0, sisa),
-            ribuan 	= number_string.substr(sisa).match(/\d{3}/g);
-                
-        if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
-        }
-
-        return rupiah;
-    }
-
-    $(function () {
-        var content = [];
-        $.get('{{ url('') }}/payment/ajax/{{$financing->id}}', function(data){
-            var no = 0;
-            $.each(data, function(i, v){
-                no += 1;
-
-                var nominal = parseInt(v.nominal);
-                var persentase = parseFloat(v.persentase);
-
-                //nominal
-                var nominal_ = parseRupiah(v.nominal);
-                
-                //Potongan
-                var potongan = nominal * (persentase/100);
-                var potongan_ = parseRupiah(potongan);
-
-                //Terbayar
-                var terbayar = v.cicilan ? parseInt(v.cicilan) : 0;
-                
-                if (v.jenis_pembayaran === "Tunai")
-                {
-                    terbayar = parseInt(v.nominal) - potongan;
-                }
-                var terbayar_ = parseRupiah(terbayar);
-
-                //Sisa
-                var sisa = parseInt(v.nominal) - terbayar - potongan;
-                var sisa_ = parseRupiah(sisa);
-
-                //Metode
-                if (v.jenis_pembayaran === "Waiting")
-                {
-                    var metode =
-                    `
-                    <div style="text-align:center">
-                        <span class="badge"
-                            style="background-color:yellow;color:black">
-                            Waiting
-                        </span>
-                    </div>
-                    `;
-                }
-                else
-                {
-                    var metode =
-                    `
-                    <div style="text-align:center">
-                        ${v.jenis_pembayaran}
-                    </div>
-                    `;
-                }
-
-                //Status
-                if(v.jenis_pembayaran=="Waiting")
-                {
-                    var status =
-                    `
-                    <div style="text-align:center">
-                        <span class="badge"
-                        style="background-color:yellow;color:black">
-                        Waiting
-                        </span>
-                    </div>
-                    `;
-                }
-                else if(v.jenis_pembayaran=="Nunggak")
-                {
-                    var status =
-                    `
-                    <div style="text-align:center">
-                        <span class="badge" style="background-color:red">Nunggak</span>
-                    </div>
-                    `;
-                }
-                else if(v.jenis_pembayaran=="Cicilan" && sisa !== 0)
-                {
-                    var status =
-                    `
-                    <div style="text-align:center">
-                        <span class="badge" style="background-color:yellow;color:black">
-                            Belum Lunas
-                        </span>
-                    </div>
-                    `;
-                }
-                else
-                {
-                    var status =
-                    `
-                    <div style="text-align:center">
-                        <span class="badge" style="background-color:green">Lunas</span>
-                    </div>
-                    `;
-                }
-
-                //Action
-                var obj = JSON.stringify(v);
-                var link_rincian = `{{ url('payment/details') }}/${v.financing_category_id}/${v.student_id}/${v.id}`;
-                var link_print = `{{ url('export/sesekali/detail') }}/${v.student_id}/${v.payment_detail_tunai}/tunai`;
-                var link_delete = `{{ url('payment/detail/delete') }}/${v.payment_detail_tunai}`;
-                if(v.jenis_pembayaran=="Waiting" || v.jenis_pembayaran=="Nunggak")
-                {
-                    var action =
-                    `
-                    <div style="text-align:center">
-                        <button class="btn btn-warning"
-                            onclick='addConfirm(${obj},"${nominal_}")'
-                            title="Pilih Metode Pembayaran" style="color:black;  ">
-                            <i class="fa fa-info-circle"> Metode</i>
-                        </button>
-                    </div>
-                    `;
-                }
-                else if(v.jenis_pembayaran=="Cicilan")
-                {
-                    var action =
-                    `
-                    <div style="text-align:center">
-                        <a href="${link_rincian}"
-                        class="btn btn-primary" title="Rincian Cicilan Siswa"
-                        style="color:white;">
-                            <i class="fa fa-eye"> Rincian</i>
-                        </a>
-                    </div>
-                    `;
-                }
-                else
-                {
-                    var action =
-                    `
-                    <div style="text-align:center">
-                        <a href="${link_print}"
-                        class=" btn btn-success" target="_blank" title="Cetak kwitansi">
-                            <i class="fa fa-print"></i>
-                        </a>
-                        <a href="${link_delete}" 
-                        class="btn btn-danger" style="color:white;margin-top:0" title="Delete">
-                            <i class="fa fa-close"></i>
-                        </a> 
-                    </div>
-                    `;
-                }
-
-                var persentase = v.persentase;
-                if (v.jenis_potongan === "nominal") {
-                    persentase = (parseInt(v.nominal_potongan)/nominal * 100).toFixed(2);
-                    potongan_ = parseRupiah(v.nominal_potongan);
-                    potongan = parseInt(v.nominal_potongan);
-                    terbayar = parseInt(v.cicilan);
-                    terbayar_ = parseRupiah(terbayar);
-                    sisa_ = parseRupiah(nominal - (potongan + terbayar));
-                }
-
-                var temp = {
-                    no : no,
-                    name : v.nama,
-                    kelas : `${v.kelas} - ${v.jurusan}`,
-                    besaran :   
-                    `<div style="text-align:right">
-                        ${nominal_}
-                    </div>`,
-                    persentase :
-                    `<div style="text-align:right">
-                        ${persentase} %
-                    </div>`,
-                    potongan : 
-                    `<div style="text-align:right">
-                        ${potongan_}
-                    </div>`,
-                    terbayar :
-                    `<div style="text-align:right">
-                        ${terbayar_}
-                    </div>`,
-                    sisa :
-                    `<div style="text-align:right">
-                        ${sisa_}
-                    </div>`,
-                    metode : metode,
-                    status : status,
-                    action : action
-                }
-                content .push(temp);
-                
-            });
-            $table.bootstrapTable('destroy').bootstrapTable({
-                exportTypes: ['excel', 'pdf'],
-                data: content
-            });
-
+    function changeData() {
+        var kelas = $('select[name=kelas]').val();
+        var jurusan = $('select[name=jurusan]').val();
+        var angkatan = $('select[name=angkatan]').val();
+        $('input[type=hidden][name=kls]').val(kelas);
+        $('input[type=hidden][name=id_jur]').val(jurusan);
+        $('input[type=hidden][name=akt]').val(angkatan);
+        var url = `{{ url('') }}/payment/ajax/{{ $financing->id }}?kelas=${kelas}&jurusan=${jurusan}&angkatan=${angkatan}`;
+        $.ajax({
+            url : url,
+            beforeSend : function(){
+                $table.bootstrapTable('showLoading');
+                $table.bootstrapTable('removeAll');
+            },
+            success : function(response){
+                var data = JSON.parse(response);
+                $table.bootstrapTable('load', data);
+            },
+            complete : function(data){
+                $table.bootstrapTable('hideLoading');
+            }
         });
-        
-        // $table.on('check.bs.table uncheck.bs.table ' +
-        //     'check-all.bs.table uncheck-all.bs.table',
-        //     function () {
-        //         // save your data, here just save the current page
-        //         selections = getIdSelections()
-
-        //         // push or splice the selections if you want to save all data selections
-        //     })
-        // $table.on('all.bs.table', function (e, name, args) {
-        //     console.log('name, args')
-        //     console.log(name, args)
-        // })
-    });
+    }
 </script>
 <!-- data table JS
 ============================================ -->

@@ -46,7 +46,7 @@
       <div >
         <div style="float:left;padding-right:20px;">
         <br>
-          <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" />
+          <!-- <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" /> -->
           <!-- <img style="hight:70; width:70;" src="{{public_path('assets\img\logo\bbl.png')}}" /> -->
         </div>
         <div style="padding-top:10">
@@ -112,7 +112,7 @@
             <td>{{$no++}}</td>
             <td>{{$dt->created_at}}</td>
             <td>{{$dt->title}}</td>
-            <td><div style="text-align: right;">{{$dt->nominal}}</div></td>
+            <td><div style="text-align: right;">{{number_format($dt->nominal,0,',','.')}}</div></td>
           </tr>
           @endforeach
           <tr>
@@ -120,7 +120,7 @@
                   <div style="text-align: center;">Jumlah</div>
               </th>
               <th>
-                  <div style="text-align: right;">{{$total}}</div>
+                  <div style="text-align: right;">{{number_format($total,0,',','.')}}</div>
               </th>
           </tr>
         </table>	

@@ -362,14 +362,11 @@ SPP | Laporan Pengeluaran
                 function () {
                     // save your data, here just save the current page
                     selections = getIdSelections();
-                    console.log(selections);
                     
                     $('input[type=hidden][name=check_options]').val(JSON.stringify(selections));
                     // push or splice the selections if you want to save all data selections
                 })
                 $table.on('all.bs.table', function (e, name, args) {
-                    console.log('name, args')
-                    console.log(name, args)
                 })
             });
             
@@ -378,11 +375,6 @@ SPP | Laporan Pengeluaran
             
             function getIdSelections() {
                 return $.map($table.bootstrapTable('getSelections'), function (row) {
-                    console.log(' row select ');
-                    console.log(row);
-                    console.log('selections row');
-                    console.log(selections);
-                    
                     return row.id
                 })
             }
@@ -416,18 +408,12 @@ SPP | Laporan Pengeluaran
 
                         var bulan_spp = 36;
                         if (v.nama == 'SPP')
-                        {
-                            console.log(v);
-                            console.log(`${v.banyak_tunggakan} ${v.nominal}`);
-                            
+                        {   
                             besaran_ = bulan_spp * parseInt(v.nominal);
                             terbayar_ = (bulan_spp - parseInt(v.banyak_tunggakan)) * besaran_;
                             potongan_ = 0;
                         }
-
                         var sisa_ = besaran_ - ( terbayar_ + potongan_ );
-                        console.log(`${besaran_} ${terbayar_} ${potongan_} ${sisa_}`);
-                        
                         total[0] += besaran_;
                         total[1] += potongan_;
                         total[2] += terbayar_;
@@ -437,6 +423,29 @@ SPP | Laporan Pengeluaran
                         var potongan = parseRupiah(potongan_);
                         var terbayar = parseRupiah(terbayar_);
                         var sisa = parseRupiah(sisa_);
+
+                        var nominal = parseInt(v.nominal);
+                        var persentase = parseFloat(v.persentase);
+
+                        //nominal
+                        var nominal_ = parseRupiah(v.nominal);
+                        
+                        //Potongan
+                        var potongan = nominal * (persentase/100);
+                        
+                        var potongan_ = parseRupiah(potongan);
+
+                        //Terbayar
+                        var terbayar = v.cicilan ? v.cicilan : 0;
+                        if (v.jenis_pembayaran == "Tunai")
+                        {
+                            terbayar = parseInt(v.nominal);
+                        }
+                        var terbayar_ = parseRupiah(terbayar);
+
+                        //Sisa
+                        var sisa = parseInt(v.nominal) - terbayar - potongan;
+                        var sisa_ = parseRupiah(sisa); 
 
                         var temp = {
                             id : v.detail_id,
@@ -463,142 +472,6 @@ SPP | Laporan Pengeluaran
                                 ${sisa}
                             </div>`
                         }
-                        var nominal = parseInt(v.nominal);
-                        var persentase = parseFloat(v.persentase);
-
-                        //nominal
-                        var nominal_ = parseRupiah(v.nominal);
-                        
-                        //Potongan
-                        var potongan = nominal * (persentase/100);
-                        
-                        var potongan_ = parseRupiah(potongan);
-
-                        //Terbayar
-                        var terbayar = v.cicilan ? v.cicilan : 0;
-                        if (v.jenis_pembayaran == "Tunai")
-                        {
-                            terbayar = v.nominal;
-                        }
-                        var terbayar_ = parseRupiah(terbayar);
-
-                        //Sisa
-                        var sisa = parseInt(v.nominal) - terbayar - potongan;
-                        var sisa_ = parseRupiah(sisa);
-
-                        //Metode
-                        if (v.jenis_pembayaran === "Waiting")
-                        {
-                            var metode =
-                            `
-                            <div style="text-align:center">
-                                <span class="badge"
-                                    style="background-color:yellow;color:black">
-                                    Waiting
-                                </span>
-                            </div>
-                            `;
-                        }
-                        else
-                        {
-                            var metode =
-                            `
-                            <div style="text-align:center">
-                                ${v.jenis_pembayaran}
-                            </div>
-                            `;
-                        }
-
-                        //Status
-                        if(v.jenis_pembayaran=="Waiting")
-                        {
-                            var status =
-                            `
-                            <div style="text-align:center">
-                                <span class="badge"
-                                style="background-color:yellow;color:black">
-                                Waiting
-                                </span>
-                            </div>
-                            `;
-                        }
-                        else if(v.jenis_pembayaran=="Nunggak")
-                        {
-                            var status =
-                            `
-                            <div style="text-align:center">
-                                <span class="badge" style="background-color:red">Nunggak</span>
-                            </div>
-                            `;
-                        }
-                        else if(v.jenis_pembayaran=="Cicilan" && sisa !== 0)
-                        {
-                            var status =
-                            `
-                            <div style="text-align:center">
-                                <span class="badge" style="background-color:yellow;color:black">
-                                    Belum Lunas
-                                </span>
-                            </div>
-                            `;
-                        }
-                        else
-                        {
-                            var status =
-                            `
-                            <div style="text-align:center">
-                                <span class="badge" style="background-color:green">Lunas</span>
-                            </div>
-                            `;
-                        }
-
-                        //Action
-                        var obj = JSON.stringify(v);
-                        var link_rincian = `{{ url('payment/details') }}/${v.financing_category_id}/${v.student_id}/${v.id}`;
-                        var link_print = `{{ url('export/sesekali/detail') }}/${v.student_id}/${v.payment_detail_tunai}/tunai`;
-                        var link_delete = `{{ url('payment/detail/delete') }}/${v.payment_detail_tunai}`;
-                        if(v.jenis_pembayaran=="Waiting" || v.jenis_pembayaran=="Nunggak")
-                        {
-                            var action =
-                            `
-                            <div style="text-align:center">
-                                <button class="btn btn-warning"
-                                    onclick='addConfirm(${obj},"${nominal_}")'
-                                    title="Pilih Metode Pembayaran" style="color:black;  ">
-                                    <i class="fa fa-info-circle"> Metode</i>
-                                </button>
-                            </div>
-                            `;
-                        }
-                        else if(v.jenis_pembayaran=="Cicilan")
-                        {
-                            var action =
-                            `
-                            <div style="text-align:center">
-                                <a href="${link_rincian}"
-                                class="btn btn-primary" title="Rincian Cicilan Siswa"
-                                style="color:white;">
-                                    <i class="fa fa-eye"> Rincian</i>
-                                </a>
-                            </div>
-                            `;
-                        }
-                        else
-                        {
-                            var action =
-                            `
-                            <div style="text-align:center">
-                                <a href="${link_print}"
-                                class=" btn btn-success" target="_blank" title="Cetak kwitansi">
-                                    <i class="fa fa-print"></i>
-                                </a>
-                                <a href="${link_delete}" 
-                                class="btn btn-danger" style="color:white;margin-top:0" title="Delete">
-                                    <i class="fa fa-close"></i>
-                                </a> 
-                            </div>
-                            `;
-                        }
 
                         
                         content .push(temp);
@@ -607,11 +480,17 @@ SPP | Laporan Pengeluaran
                         exportTypes: ['excel', 'pdf'],
                         data: content
                     });
+                    console.log('====================================');
+                    console.log(total);
+                    console.log('====================================');
+                    $('#besaran_view').html(parseRupiah(total[0]));
+                    $('#potongan_view').html(parseRupiah(total[1]));
+                    $('#terbayar_view').html(parseRupiah(total[2]));
+                    $('#sisa_view').html(parseRupiah(total[3]));
 
                 });
 
             });
-
         </script>
         @endpush
 
