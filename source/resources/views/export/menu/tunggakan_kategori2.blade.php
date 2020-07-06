@@ -73,8 +73,8 @@ SPP | Laporan Pengeluaran
                                                     <div class="row">
                                                         <table>
                                                             <tbody>
-                                                                <tr>
-                                                                    <td>Besaran </td>
+                                                                <!-- <tr>
+                                                                    <td>Besaran Keseluruhan </td>
                                                                     <td>:</td>
                                                                     <td>Rp.</td>
                                                                     <td>
@@ -86,7 +86,7 @@ SPP | Laporan Pengeluaran
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>Potongan </td>
+                                                                    <td>Potongan Keseluruhan  </td>
                                                                     <td>:</td>
                                                                     <td>Rp.</td>
                                                                     <td>
@@ -98,7 +98,7 @@ SPP | Laporan Pengeluaran
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>Terbayar </td>
+                                                                    <td>Terbayar Keseluruhan </td>
                                                                     <td>:</td>
                                                                     <td>Rp.</td>
                                                                     <td>
@@ -110,7 +110,7 @@ SPP | Laporan Pengeluaran
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>Sisa </td>
+                                                                    <td>Sisa Keseluruhan </td>
                                                                     <td>:</td>
                                                                     <td>Rp.</td>
                                                                     <td>
@@ -120,7 +120,7 @@ SPP | Laporan Pengeluaran
                                                                             </span>
                                                                         </div>
                                                                     </td>
-                                                                </tr>
+                                                                </tr> -->
                                                             </tbody>
                                                         </table>
                                                     </div>
