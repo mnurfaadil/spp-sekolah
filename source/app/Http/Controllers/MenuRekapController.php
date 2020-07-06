@@ -274,7 +274,7 @@ class MenuRekapController extends Controller
                     ->where('payment_details.status','<>','Lunas')
                     ->get();
             $stat = "Kategori";
-            return view('export.menu.tunggakan_kategori',compact('no','datas','filter','pilihan', 'stat', 'kelas', 'jurusan', 'stat'));
+            return view('export.menu.tunggakan_kategori2',compact('no','datas','filter','pilihan', 'stat', 'kelas', 'jurusan', 'stat'));
         }
     }
 
@@ -330,6 +330,8 @@ class MenuRekapController extends Controller
                     financing_periodes.nominal,
                     getNominalCicilan(payment_details.id) as cicilan_dibayar,
                     payments.jenis_pembayaran,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan,
                     payments.persentase,
                     payment_details.status'))
                     ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
@@ -660,6 +662,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                             payments.persentase,
+                            payments.jenis_potongan,
+                            payments.nominal_potongan,  
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -694,6 +698,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                             payments.persentase,
+                            payments.jenis_potongan,
+                            payments.nominal_potongan,
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -729,6 +735,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                             payments.persentase,
+                            payments.jenis_potongan,
+                            payments.nominal_potongan,
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -763,6 +771,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                         payments.persentase,
+                        payments.jenis_potongan,
+                        payments.nominal_potongan,
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -798,6 +808,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                             payments.persentase,
+                            payments.jenis_potongan,
+                            payments.nominal_potongan,
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -834,6 +846,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                             payments.persentase,
+                            payments.jenis_potongan,
+                            payments.nominal_potongan,
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -870,6 +884,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                             payments.persentase,
+                            payments.jenis_potongan,
+                            payments.nominal_potongan,
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -905,6 +921,8 @@ class MenuRekapController extends Controller
                             getNominalCicilan(payment_details.id) as cicilan_dibayar,
                             payments.jenis_pembayaran,
                             payments.persentase,
+                            payments.jenis_potongan,
+                            payments.nominal_potongan,
                             payment_details.status'))
                             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
@@ -920,8 +938,8 @@ class MenuRekapController extends Controller
                             ->where('majors.id', $request->jurusan)
                             ->get();
                 }
-                
-            return view('export.menu.tunggakan_kategori',compact('no','datas','filter','pilihan', 'stat', 'kelas', 'jurusan', 'stat'));
+            return $datas;
+            // return view('export.menu.tunggakan_kategori2',compact('no','datas','filter','pilihan', 'stat', 'kelas', 'jurusan', 'stat'));
             // return view('export.menu.tunggakan_kategori',compact('no','datas','filter','pilihan', 'stat'));
         }
     }
