@@ -46,7 +46,7 @@
       <div >
         <div style="float:left;padding-right:20px;">
         <br>
-          <!-- <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" /> -->
+          <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" />
           <!-- <img style="hight:70; width:70;" src="{{public_path('assets\img\logo\bbl.png')}}" /> -->
         </div>
         <div style="padding-top:10">
