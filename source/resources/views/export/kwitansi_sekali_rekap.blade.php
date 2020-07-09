@@ -20,7 +20,7 @@
       <div >
         <div style="float:left;padding-right:20px;">
         <br>
-          <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" />
+          <!-- <img style="hight:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}" /> -->
         </div>
         <div style="padding-top:10">
           <p> <span style="font-size:14pt;font-style:bold">SMK BAABUL KAMIL</span>
@@ -100,7 +100,8 @@
           
           @foreach($datas as $k)
           @php
-            $d = "Pembayaran cicilan ke {$no} untuk {$data['kategori']}";
+            $ket = $k->keterangan == "" ? "Pribadi" : $k->keterangan;
+            $d = "Pembayaran cicilan ke {$no} untuk {$data['kategori']} ({$ket})";
             $total += $k->nominal;
           @endphp
           <tr>

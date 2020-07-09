@@ -210,6 +210,7 @@ class PaymentController extends Controller
                     financing_categories.id as financing_category_id,
                     payments.id,
                     payments.jenis_potongan,
+                    payments.keterangan,
                     payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
@@ -242,6 +243,7 @@ class PaymentController extends Controller
                     financing_categories.id as financing_category_id,
                     payments.id,
                     payments.jenis_potongan,
+                    payments.keterangan,
                     payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
@@ -273,6 +275,7 @@ class PaymentController extends Controller
                     financing_categories.id as financing_category_id,
                     payments.id,
                     payments.jenis_potongan,
+                    payments.keterangan,
                     payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
@@ -303,6 +306,7 @@ class PaymentController extends Controller
                     financing_categories.id as financing_category_id,
                     payments.id,
                     payments.jenis_potongan,
+                    payments.keterangan,
                     payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
@@ -334,6 +338,7 @@ class PaymentController extends Controller
                     financing_categories.id as financing_category_id,
                     payments.id,
                     payments.jenis_potongan,
+                    payments.keterangan,
                     payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
@@ -365,6 +370,7 @@ class PaymentController extends Controller
                     financing_categories.id as financing_category_id,
                     payments.id,
                     payments.jenis_potongan,
+                    payments.keterangan,
                     payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
@@ -396,6 +402,7 @@ class PaymentController extends Controller
                     financing_categories.id as financing_category_id,
                     payments.id,
                     payments.jenis_potongan,
+                    payments.keterangan,
                     payments.nominal_potongan
                 ')
                 ->join('students','payments.student_id','=','students.id')
@@ -562,7 +569,8 @@ class PaymentController extends Controller
                 "sisa" => $sisa,
                 "metode" => $metode,
                 "status" => $status,
-                "action" => $action
+                "action" => $action,
+                "keterangan" => $data->keterangan
             );
 
             
@@ -836,9 +844,6 @@ class PaymentController extends Controller
     {
         $req = $request->all();
         $payment = Payment::findOrFail($req['payment_id']);
-        // echo '<pre>';
-        // var_dump($payment);
-        // echo "<hr>";
         if ($request->jenis_potongan == "nominal")
         {
             $payment->jenis_potongan = "nominal";
@@ -872,10 +877,19 @@ class PaymentController extends Controller
             $cek = json_decode($req['data']);
             $date = $this->convertToCorrectDateValue($request->tanggal_bayar);
             $penerima = Auth::user()->name;
-            if($obj['kelas']=='ALUMNI')
+            if($obj['kelas']=='ALUMNI' && $req['keterangan'])
+            {
+                $desc = "Pembayaran Tunai ".$req['financing_category']." dari ".$obj['nama']." ".$obj['kelas']." ( ".$obj->major->nama." ) dengan ".$req['keterangan']." diterima oleh ".$penerima;
+            }
+            elseif($obj['kelas']!='ALUMNI' && $req['keterangan'])
+            {
+                $desc = "Pembayaran Tunai ".$req['financing_category']." dari ".$obj['nama']." kelas ".$obj['kelas']." ( ".$obj->major->nama." ) dengan ".$req['keterangan']." diterima oleh ".$penerima;
+            }
+            elseif($obj['kelas']=='ALUMNI')
             {
                 $desc = "Pembayaran Tunai ".$req['financing_category']." dari ".$obj['nama']." ".$obj['kelas']." ( ".$obj->major->nama." )"." diterima oleh ".$penerima;
-            }else
+            }
+            else
             {
                 $desc = "Pembayaran Tunai ".$req['financing_category']." dari ".$obj['nama']." kelas ".$obj['kelas']." ( ".$obj->major->nama." )"." diterima oleh ".$penerima;
             }
@@ -885,6 +899,7 @@ class PaymentController extends Controller
 
             $payment->jenis_pembayaran = "Tunai";
             $payment->persentase = $percent;
+            $payment->keterangan = $req['keterangan'];
             $payment->save();
             
             $detail_new->tgl_dibayar = $date;
@@ -892,6 +907,7 @@ class PaymentController extends Controller
             $detail_new->bulan = $date;
             $detail_new->user_id = $req['user_id'];
             $detail_new->status = "Lunas";
+            $detail_new->keterangan = $req['keterangan'];
             $detail_new->save();
 
             $cicilan_new = Cicilan::create([
@@ -899,10 +915,13 @@ class PaymentController extends Controller
                 'payment_detail_id' => $detail_new->id,
                 'tgl_dibayar' => $date,
                 'nominal' => $nominal,
+                'keterangan' => $req['keterangan'],
                 'user_id' => Auth::user()->id,
             ]);
+
+            $keterangan = $req['keterangan'] == "" ? "Pribadi" : $req['keterangan'];
                 
-            $title = "Pembayaran Tunai {$req['financing_category']} {$obj['nama']}";
+            $title = "Pembayaran Tunai {$req['financing_category']} {$obj['nama']} ({$keterangan})";
             Income::create([
                 'id' => null,
                 'payment_detail_id' => $detail_new->id,
@@ -1025,6 +1044,7 @@ class PaymentController extends Controller
      */
     public function cicilanStore(Request $request)
     {
+
         $request = $request->all();
         if (!isset($request['calendar'])) {
             return redirect()
@@ -1063,23 +1083,27 @@ class PaymentController extends Controller
         $penerima=Auth::user()->name;
         $siswa=Student::where('id',$request['student_id'])->first();
         $category=FinancingCategory::where('id',$request['financing_category_id'])->first();
-        $desc = "Penerimaan pembayaran cicilan ke {$hitungan} untuk {$category['nama']} dari {$siswa['nama']} kelas {$siswa['kelas']} {$siswa->major->nama} diterima oleh {$penerima}";
+        $ket = $request['keterangan'] == "" ? "Pribadi" : $request['keterangan'];
+        $desc = "Penerimaan pembayaran cicilan ke {$hitungan} untuk {$category['nama']} dari {$siswa['nama']} kelas {$siswa['kelas']} {$siswa->major->nama} (Uang {$ket}) diterima oleh {$penerima}";
         $date = $this->convertToCorrectDateValue($request['calendar']);
-        Cicilan::create([
+
+        $ci = Cicilan::create([
             'id' => null,
             'payment_detail_id' => $request['payment_detail_id'],
             'tgl_dibayar' => $date,
             'nominal' => $nominal,
             'simpanan' => $uang_simpanan,
             'tunai' => $uang_tunai,
+            'keterangan' => $request['keterangan'],
             'user_id' => Auth::user()->id,
         ]);
 
         $last_id = DB::getPdo()->lastInsertId();
         
-        $title = "CICILAN {$category['nama']} {$siswa['nama']}";
+        $title = "CICILAN {$category['nama']} {$siswa['nama']} ({$ket})";
         Income::create([
             'id' => null,
+            'payment_detail_id' => $request['payment_detail_id'],
             'cicilan_id' => $last_id,
             'title' => $title,
             'description' => $desc,
@@ -1273,13 +1297,16 @@ class PaymentController extends Controller
             $student = Student::findOrFail($req['student_id']);
             $data = PaymentDetail::findOrFail($req['id']);
             $bulan = $this->convertToCorrectDateValue($req['calendar']);
-            $desc = "Pembayaran {$category->nama} untuk periode {$data->bulan} dari {$student->nama} kelas {$student->kelas} ( {$student->major->nama} ) dibayar pada {$bulan} diterima oleh {$penerima}";
-            $title = "{$category->nama} {$student->nama} periode {$data->bulan}";
+            $keterangan = $req['keterangan'] == "" ? "Pribadi" : $req['keterangan'];
+            $desc = "Pembayaran {$category->nama} untuk periode {$data->bulan} dari {$student->nama} kelas {$student->kelas} ( {$student->major->nama} ) dibayar menggunakan Uang {$keterangan} pada {$bulan} diterima oleh {$penerima}";
+            
+            $title = "{$category->nama} {$student->nama} periode {$data->bulan} ({$keterangan})";
             
             $data->user_id = $user;
             $data->tgl_dibayar = $bulan;
             $data->nominal = $req['nominal_bayar'];
             $data->status = $req['status'];
+            $data->keterangan = $req['keterangan'];
             $data->save();
 
             if($req['set_simpanan']=="1" && $req['gunakan_simpanan']=="1"){

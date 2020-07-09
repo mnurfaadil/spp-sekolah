@@ -98,7 +98,7 @@ SPP | Rekap
                             <i class="fa fa-times" style="color:#e74c3c"></i>
                         </div>
                         <div class="m-t-xl widget-cl-4">
-                            <h1 class="text-danger">Rp. {{number_format($rekap->tunggakan,0,',','.')}}</h1>
+                            <h1 class="text-danger">Rp. {{number_format($tunggakan,0,',','.')}}</h1>
                             <a class="btn btn-block loginbtn" data-toggle="modal" href="#modalAdd" style="background-color:#e74c3c;color:white">
                             <i class="fa fa-eye"></i>
                                 {{ __('Detail') }}

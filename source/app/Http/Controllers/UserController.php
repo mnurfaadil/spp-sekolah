@@ -144,7 +144,7 @@ class UserController extends Controller
         try {
           $req = $request->all();
           $major = User::findOrFail($id);
-          $major->nama = $req['nama'];
+          $major->name = $req['nama'];
           $major->save();
 
           return redirect()

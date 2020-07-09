@@ -22,6 +22,7 @@ class PaymentDetail extends Model
         "bulan",
         "nominal",
         "status",
+        "keterangan",
     ];
 
     public function user()

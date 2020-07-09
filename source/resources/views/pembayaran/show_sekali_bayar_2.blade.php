@@ -95,6 +95,7 @@ SPP | Pembayaran {{$financing->nama}}
                                         <th data-field="sisa">Sisa Pembayaran</th>
                                         <th data-field="metode">Metode Pembayaran</th>
                                         <th data-field="status">Status</th>
+                                        <th data-field="keterangan">Keterangan</th>
                                         <th data-field="action">Action</th>
                                     </tr>
                                 </thead>
@@ -184,6 +185,16 @@ SPP | Pembayaran {{$financing->nama}}
                                     <span class="input-group-addon"><strong>Rp.</strong></span>
                                     <input type="number" min="0" class="form-control" name="nominal_bayar" id="nominal_bayar_add" value="" 
                                     placeholder="Masukan Nominal pembayaran">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Keterangan</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-anchor"></i>
+                                    </span>
+                                    <input type="text" class="form-control" name="keterangan" id="keterangan" value="" 
+                                    placeholder="Keterangan">
                                 </div>
                             </div>
                         </div>

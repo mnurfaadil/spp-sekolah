@@ -117,6 +117,11 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                                     Nominal
                                                     </div>
                                                 </th>
+                                                <th data-field="keterangan">
+                                                    <div style="text-align: center">
+                                                    Keterangan
+                                                    </div>
+                                                </th>
                                                 <th data-field="total">
                                                     <div style="text-align: center">
                                                     Penerima
@@ -169,6 +174,15 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                                 <td>
                                                     <div style="text-align: right">
                                                     {{number_format($data->nominal?$data->nominal:"0",0,',','.')}}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style="text-align: center">
+                                                    @if($data->keterangan)
+                                                     {{$data->keterangan}}
+                                                    @else
+                                                        {{"-"}}
+                                                    @endif
                                                     </div>
                                                 </td>
                                                 <td>
@@ -354,6 +368,13 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                 <div class="input-group date">
                                     <span class="input-group-addon">Rp.</span>
                                     <input type="number" min="0" class="form-control" name="nominal" value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Keterangan</label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-anchor"></i></span>
+                                    <input type="text" class="form-control" name="keterangan" placeholder="Keterangan">
                                 </div>
                             </div>
 

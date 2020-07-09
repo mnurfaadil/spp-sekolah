@@ -51,99 +51,10 @@ class RekapController extends Controller
         $sum = 0;
         $temp = [0,0,0];
         
+        $tunggakan = MenuRekapController::nominalRekapTunggakan();
         
-        // $payments = DB::table('payment_details')
-        //                 ->select(DB::raw('financing_categories.id as financing_category_id,
-        //                 payment_details.id, 
-        //                 payment_details.payment_id,
-        //                 payment_details.payment_periode_id,
-        //                 angkatans.id as angkatan_id,
-        //                 majors.id as major_id,
-        //                 students.nama as nama_murid,
-        //                 students.kelas,
-        //                 angkatans.angkatan,
-        //                 angkatans.tahun as tahun_angkatan,
-        //                 majors.inisial as inisial,
-        //                 majors.nama as jurusan,
-        //                 financing_categories.nama, 
-        //                 count(payment_details.status) as banyak_tunggakan,
-        //                 financing_periodes.nominal,
-        //                 getNominalCicilan(payment_details.id) as cicilan_dibayar,
-        //                 payments.jenis_pembayaran,
-        //             payments.persentase,
-        //                 payment_details.status'))
-        //                 ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
-        //                 ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
-        //                 ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
-        //                 ->join('students', 'students.id', '=', 'payments.student_id')
-        //                 ->join('majors', 'majors.id', '=', 'students.major_id')
-        //                 ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-        //                 ->orderBy('students.id')
-        //                 ->groupBy('payment_details.payment_id')
-        //                 ->where('payment_details.status','<>','Lunas')
-        //                 ->get();
-        // $payments = DB::table('payment_details')
-        //             ->select(DB::raw('financing_categories.id as financing_category_id,
-        //             payment_details.id as detail_id, 
-        //             payment_details.payment_id,
-        //             payment_details.payment_periode_id,
-        //             angkatans.id as angkatan_id,
-        //             majors.id as major_id,
-        //             students.nama as nama_murid,
-        //             students.kelas,
-        //             angkatans.angkatan,
-        //             angkatans.tahun as tahun_angkatan,
-        //             majors.inisial as inisial,
-        //             majors.nama as jurusan,
-        //             financing_categories.nama, 
-        //             count(payment_details.status) as banyak_tunggakan,
-        //             financing_periodes.nominal,
-        //             getNominalCicilan(payment_details.id) as cicilan_dibayar,
-        //             payments.jenis_pembayaran,
-        //             payments.persentase,
-        //             payment_details.status'))
-        //             ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
-        //             ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
-        //             ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
-        //             ->join('students', 'students.id', '=', 'payments.student_id')
-        //             ->join('majors', 'majors.id', '=', 'students.major_id')
-        //             ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-        //             ->orderBy('students.id')
-        //             ->groupBy('payment_details.payment_id')
-        //             ->where('payment_details.status','<>','Lunas')
-        //             ->get();
-
-        // $filter = true;
-        // $sum = 0;
-        // echo '<pre>';
-        // foreach ($payments as $data) {
-        //     $bulan_spp = 36;
-        // if ($data->nama == 'SPP')
-        // {
-        //     $besaran = $bulan_spp * (int) $data->nominal;
-        //     $terbayar = ($bulan_spp - (int) $data->banyak_tunggakan) * (int)$data->nominal;
-        //     $potongan = 0;
-        // }
-        // else
-        // {
-        //     $besaran = (int) $data->nominal;
-        //     $terbayar = $data->cicilan_dibayar == null ? 0 : (int) $data->cicilan_dibayar;
-        //     $potongan = (int) (((int)$data->persentase * (int) $data->nominal)/100);
-        // }
-        // $sisa = $besaran - ( $terbayar + $potongan );
-        
-        // $sum += (int) $sisa;
-        // $temp[0] += $besaran;
-        // $temp[1] += $potongan;
-        // $temp[2] += $terbayar;
-
-        // echo "{$data->nama} | {$besaran} | {$potongan} | {$terbayar} | {$sisa} | {$sum}";
-        // echo "<hr>";
-        // }
-        // echo "{$temp[0]} | {$temp[1]} | {$temp[2]} | {$sum}";
-        // die;
         // $rekap->tunggakan = $sum;
-        return view('export.index',compact('categorys','rekap'));
+        return view('export.index',compact('categorys','rekap','tunggakan'));
     }
 
     public function ajaxMajor($category, $kelas = '')
@@ -417,7 +328,9 @@ class RekapController extends Controller
         $siswa = Student::where('id',$siswa)->first();
         $data = PaymentDetail::where('id',$detail)->first();
 
-        $d = "Pembayaran {$data->payment->category->nama} untuk periode {$data->bulan}";
+        $keterangan = $data->keterangan == "" ? "Pribadi" : $data->keterangan;
+
+        $d = "Pembayaran {$data->payment->category->nama} untuk periode {$data->bulan} dari Uang {$keterangan}";
         
         $data['tanggal'] = $this->getTanggalHariIni();
         $data['waktu'] = $this->getWaktuHariIni();
@@ -908,9 +821,14 @@ class RekapController extends Controller
             $find = Cicilan::where('payment_detail_id', $detail)->first();
             $data = Cicilan::where('id',$find->id)->first();
         }
-        $d = "Pembayaran {$data->detail->payment->category->nama}";
+        $keterangan = $data->keterangan; 
+        if ($data->keterangan == "")
+        {
+            $keterangan = $data->detail->payment->keterangan == "" ? "Pribadi" : $data->detail->payment->keterangan;
+        }
+        $d = "Pembayaran {$data->detail->payment->category->nama} ({$keterangan})";
         if($stat=="tunai"){
-            $d = "Pembayaran {$data->detail->payment->category->nama} secara Tunai";
+            $d = "Pembayaran {$data->detail->payment->category->nama} secara Tunai  ({$keterangan})";
         }
         $idx_bulan = $this->convertSqlDateToMonth($data['tgl_dibayar']);
         $bulan=$this->convertToBulan($idx_bulan);
@@ -954,6 +872,7 @@ class RekapController extends Controller
             $data['kelas'] = $source->detail->payment->student->kelas;
             $data['jurusan'] = $source->detail->payment->student->major->nama;
             $data['kategori'] = $source->detail->payment->category->nama;
+            $data['keterangan'] = $source->detail->payment->keterangan;
         } catch (Throwable $th) {
             abort(500);
         }

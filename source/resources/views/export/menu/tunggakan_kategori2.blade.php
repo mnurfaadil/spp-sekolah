@@ -73,7 +73,7 @@ SPP | Laporan Pengeluaran
                                                     <div class="row">
                                                         <table>
                                                             <tbody>
-                                                                <!-- <tr>
+                                                                <tr>
                                                                     <td>Besaran Keseluruhan </td>
                                                                     <td>:</td>
                                                                     <td>Rp.</td>
@@ -120,7 +120,7 @@ SPP | Laporan Pengeluaran
                                                                             </span>
                                                                         </div>
                                                                     </td>
-                                                                </tr> -->
+                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -270,7 +270,7 @@ SPP | Laporan Pengeluaran
         <!-- Custom Script -->
         <!-- ============================================ -->
         <script>
-        function setTable(data) {    
+            function setTable(data) {    
                 var content = [];
                 var no = 0;
                 var total = [0,0,0,0];
@@ -345,142 +345,6 @@ SPP | Laporan Pengeluaran
                         `<div style="text-align:right">
                             ${sisa}
                         </div>`
-                    }
-                    var nominal = parseInt(v.nominal);
-                    var persentase = parseFloat(v.persentase);
-
-                    //nominal
-                    var nominal_ = parseRupiah(v.nominal);
-                    
-                    //Potongan
-                    var potongan = nominal * (persentase/100);
-                    
-                    var potongan_ = parseRupiah(potongan);
-
-                    //Terbayar
-                    var terbayar = v.cicilan ? v.cicilan : 0;
-                    if (v.jenis_pembayaran == "Tunai")
-                    {
-                        terbayar = v.nominal;
-                    }
-                    var terbayar_ = parseRupiah(terbayar);
-
-                    //Sisa
-                    var sisa = parseInt(v.nominal) - terbayar - potongan;
-                    var sisa_ = parseRupiah(sisa);
-
-                    //Metode
-                    if (v.jenis_pembayaran === "Waiting")
-                    {
-                        var metode =
-                        `
-                        <div style="text-align:center">
-                            <span class="badge"
-                                style="background-color:yellow;color:black">
-                                Waiting
-                            </span>
-                        </div>
-                        `;
-                    }
-                    else
-                    {
-                        var metode =
-                        `
-                        <div style="text-align:center">
-                            ${v.jenis_pembayaran}
-                        </div>
-                        `;
-                    }
-
-                    //Status
-                    if(v.jenis_pembayaran=="Waiting")
-                    {
-                        var status =
-                        `
-                        <div style="text-align:center">
-                            <span class="badge"
-                            style="background-color:yellow;color:black">
-                            Waiting
-                            </span>
-                        </div>
-                        `;
-                    }
-                    else if(v.jenis_pembayaran=="Nunggak")
-                    {
-                        var status =
-                        `
-                        <div style="text-align:center">
-                            <span class="badge" style="background-color:red">Nunggak</span>
-                        </div>
-                        `;
-                    }
-                    else if(v.jenis_pembayaran=="Cicilan" && sisa !== 0)
-                    {
-                        var status =
-                        `
-                        <div style="text-align:center">
-                            <span class="badge" style="background-color:yellow;color:black">
-                                Belum Lunas
-                            </span>
-                        </div>
-                        `;
-                    }
-                    else
-                    {
-                        var status =
-                        `
-                        <div style="text-align:center">
-                            <span class="badge" style="background-color:green">Lunas</span>
-                        </div>
-                        `;
-                    }
-
-                    //Action
-                    var obj = JSON.stringify(v);
-                    var link_rincian = `{{ url('payment/details') }}/${v.financing_category_id}/${v.student_id}/${v.id}`;
-                    var link_print = `{{ url('export/sesekali/detail') }}/${v.student_id}/${v.payment_detail_tunai}/tunai`;
-                    var link_delete = `{{ url('payment/detail/delete') }}/${v.payment_detail_tunai}`;
-                    if(v.jenis_pembayaran=="Waiting" || v.jenis_pembayaran=="Nunggak")
-                    {
-                        var action =
-                        `
-                        <div style="text-align:center">
-                            <button class="btn btn-warning"
-                                onclick='addConfirm(${obj},"${nominal_}")'
-                                title="Pilih Metode Pembayaran" style="color:black;  ">
-                                <i class="fa fa-info-circle"> Metode</i>
-                            </button>
-                        </div>
-                        `;
-                    }
-                    else if(v.jenis_pembayaran=="Cicilan")
-                    {
-                        var action =
-                        `
-                        <div style="text-align:center">
-                            <a href="${link_rincian}"
-                            class="btn btn-primary" title="Rincian Cicilan Siswa"
-                            style="color:white;">
-                                <i class="fa fa-eye"> Rincian</i>
-                            </a>
-                        </div>
-                        `;
-                    }
-                    else
-                    {
-                        var action =
-                        `
-                        <div style="text-align:center">
-                            <a href="${link_print}"
-                            class=" btn btn-success" target="_blank" title="Cetak kwitansi">
-                                <i class="fa fa-print"></i>
-                            </a>
-                            <a href="${link_delete}" 
-                            class="btn btn-danger" style="color:white;margin-top:0" title="Delete">
-                                <i class="fa fa-close"></i>
-                            </a> 
-                        </div>
-                        `;
                     }
 
                     content.push(temp);

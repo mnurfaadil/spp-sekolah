@@ -92,6 +92,62 @@ SPP | Laporan Pengeluaran
                                     <div class="container-sm" style="margin-top:10px">
                                         <div class="row">
                                             <div class="col-md-6">
+                                                <div style="float:right; margin-right:20%">
+                                                    <div class="row">
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Besaran Keseluruhan </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:20px;">
+                                                                                <strong id="besaran_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Potongan Keseluruhan  </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:20px;">
+                                                                                <strong id="potongan_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Terbayar Keseluruhan </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:20px;">
+                                                                                <strong id="terbayar_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Sisa Keseluruhan </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:24px;color:red">
+                                                                                <strong id="sisa_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div style="float:right; margin-right:20%">
@@ -105,7 +161,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong id="besaran_view">{{number_format($total[0],0,',','.')}}</strong>
+                                                                                <strong id="besaran_view"></strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -117,7 +173,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong id="potongan_view">{{number_format($total[1],0,',','.')}}</strong>
+                                                                                <strong id="potongan_view"></strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -129,7 +185,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:20px;">
-                                                                                <strong id="terbayar_view">{{number_format($total[2],0,',','.')}}</strong>
+                                                                                <strong id="terbayar_view"></strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -141,7 +197,7 @@ SPP | Laporan Pengeluaran
                                                                     <td>
                                                                         <div style="text-align: right">
                                                                             <span class="" style="font-size:24px;color:red">
-                                                                                <strong id="sisa_view">{{number_format($total[3],0,',','.')}}</strong>
+                                                                                <strong id="sisa_view"></strong>
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -395,102 +451,132 @@ SPP | Laporan Pengeluaran
             }
 
             $(function () {
-                var content = [];
-                $.get('{{ url('') }}/rekap_tunggakan/data_master/Siswa', function(data){
-                    var no = 0;
+                $table.on(
+                'search.bs.table page-change.bs.table',
+                function () {
+                    var temp = $table.bootstrapTable('getData');
                     var total = [0,0,0,0];
-                    $.each(data, function(i, v){
-                        no += 1;
-
-                        var besaran_ = parseInt(v.nominal);
-                        var terbayar_ = v.cicilan_dibayar == null ? 0 : parseInt(v.cicilan_dibayar);
-                        var potongan_ = parseInt(v.persentase) * parseInt(v.nominal) / 100;
-
-                        var bulan_spp = 36;
-                        if (v.nama == 'SPP')
-                        {   
-                            besaran_ = bulan_spp * parseInt(v.nominal);
-                            terbayar_ = (bulan_spp - parseInt(v.banyak_tunggakan)) * besaran_;
-                            potongan_ = 0;
-                        }
-                        var sisa_ = besaran_ - ( terbayar_ + potongan_ );
-                        total[0] += besaran_;
-                        total[1] += potongan_;
-                        total[2] += terbayar_;
-                        total[3] += sisa_;
-
-                        var besaran = parseRupiah(besaran_);
-                        var potongan = parseRupiah(potongan_);
-                        var terbayar = parseRupiah(terbayar_);
-                        var sisa = parseRupiah(sisa_);
-
-                        var nominal = parseInt(v.nominal);
-                        var persentase = parseFloat(v.persentase);
-
-                        //nominal
-                        var nominal_ = parseRupiah(v.nominal);
-                        
-                        //Potongan
-                        var potongan = nominal * (persentase/100);
-                        
-                        var potongan_ = parseRupiah(potongan);
-
-                        //Terbayar
-                        var terbayar = v.cicilan ? v.cicilan : 0;
-                        if (v.jenis_pembayaran == "Tunai")
-                        {
-                            terbayar = parseInt(v.nominal);
-                        }
-                        var terbayar_ = parseRupiah(terbayar);
-
-                        //Sisa
-                        var sisa = parseInt(v.nominal) - terbayar - potongan;
-                        var sisa_ = parseRupiah(sisa); 
-
-                        var temp = {
-                            id : v.detail_id,
-                            no : no,
-                            nama : v.nama_murid,
-                            kelas : `${v.kelas}`,
-                            jurusan : `${v.inisial}`,
-                            angkatan : `${v.angkatan} (${v.tahun_angkatan})`,
-                            kategori : `${v.nama}`,
-                            besaran :   
-                            `<div style="text-align:right">
-                                ${besaran}
-                            </div>`,
-                            potongan :
-                            `<div style="text-align:right">
-                                ${potongan}
-                            </div>`,
-                            terbayar :
-                            `<div style="text-align:right">
-                                ${terbayar}
-                            </div>`,
-                            sisa :
-                            `<div style="text-align:right">
-                                ${sisa}
-                            </div>`
-                        }
-
-                        
-                        content .push(temp);
-                    });
-                    $table.bootstrapTable('destroy').bootstrapTable({
-                        exportTypes: ['excel', 'pdf'],
-                        data: content
-                    });
-                    console.log('====================================');
-                    console.log(total);
-                    console.log('====================================');
+                    var li = $('li .active').html();
+                    var opt = $table.bootstrapTable('getOptions');
+                    var page_size = opt.pageSize;
+                    var page_total = opt.totalPages;
+                    var data_total = opt.totalRows;
+                    var page_number = opt.pageNumber;
+                    var limit = page_size * page_number;
+                    var i = limit - page_size;
+                    while (i < limit && i < data_total) {
+                        total[0] += temp[i]._besaran;
+                        total[1] += temp[i]._potongan;
+                        total[2] += temp[i]._terbayar;
+                        total[3] += temp[i]._sisa;
+                        i++;
+                    }
                     $('#besaran_view').html(parseRupiah(total[0]));
                     $('#potongan_view').html(parseRupiah(total[1]));
                     $('#terbayar_view').html(parseRupiah(total[2]));
                     $('#sisa_view').html(parseRupiah(total[3]));
-
+                })
+                $.get('{{ url('') }}/rekap_tunggakan/data_master/Siswa', function(data){
+                    setTable(data);
                 });
 
             });
+            function setTable(data) {    
+                var content = [];
+                var no = 0;
+                var total = [0,0,0,0];
+                var total_ = [0,0,0,0];
+
+                var limit = 10;
+                $.each(data, function(i, v){
+                    no += 1;
+
+                    var besaran_ = parseInt(v.nominal);
+                    var terbayar_ = v.cicilan_dibayar == null ? 0 : parseInt(v.cicilan_dibayar);
+                    var potongan_ = parseInt(v.persentase) * parseInt(v.nominal) / 100;
+
+                    var bulan_spp = 36;
+                    if (v.nama == 'SPP')
+                    {
+                        
+                        besaran_ = bulan_spp * parseInt(v.nominal);
+                        terbayar_ = (bulan_spp - parseInt(v.banyak_tunggakan)) * besaran_;
+                        potongan_ = 0;
+                    }
+
+                    if (v.jenis_potongan == "nominal") {
+                        potongan_ = parseInt(v.nominal_potongan);
+                    }
+
+                    var sisa_ = besaran_ - ( terbayar_ + potongan_ );
+                    
+                    total[0] += besaran_;
+                    total[1] += potongan_;
+                    total[2] += terbayar_;
+                    total[3] += sisa_;
+
+                    if (i < limit)
+                    {
+                        total_[0] += besaran_;
+                        total_[1] += potongan_;
+                        total_[2] += terbayar_;
+                        total_[3] += sisa_;
+                    }
+
+                    var besaran = parseRupiah(besaran_);
+                    var potongan = parseRupiah(potongan_);
+                    var terbayar = parseRupiah(terbayar_);
+                    var sisa = parseRupiah(sisa_);
+
+                    var temp = {
+                        id : v.detail_id,
+                        _besaran : besaran_,
+                        _potongan : potongan_,
+                        _terbayar : terbayar_,
+                        _sisa : sisa_,
+                        no : no,
+                        nama : v.nama_murid,
+                        kelas : `${v.kelas}`,
+                        jurusan : `${v.inisial}`,
+                        angkatan : `${v.angkatan} (${v.tahun_angkatan})`,
+                        kategori : `${v.nama}`,
+                        besaran :   
+                        `<div style="text-align:right">
+                            ${besaran}
+                        </div>`,
+                        potongan :
+                        `<div style="text-align:right">
+                            ${potongan}
+                        </div>`,
+                        terbayar :
+                        `<div style="text-align:right">
+                            ${terbayar}
+                        </div>`,
+                        sisa :
+                        `<div style="text-align:right">
+                            ${sisa}
+                        </div>`
+                    }
+
+                    
+                    content .push(temp);
+                });
+                $table.bootstrapTable('destroy').bootstrapTable({
+                    exportTypes: ['excel', 'pdf'],
+                    data: content
+                });
+                
+                $('#besaran_view_2').html(parseRupiah(total[0]));
+                $('#potongan_view_2').html(parseRupiah(total[1]));
+                $('#terbayar_view_2').html(parseRupiah(total[2]));
+                $('#sisa_view_2').html(parseRupiah(total[3]));
+                
+                $('#besaran_view').html(parseRupiah(total_[0]));
+                $('#potongan_view').html(parseRupiah(total_[1]));
+                $('#terbayar_view').html(parseRupiah(total_[2]));
+                $('#sisa_view').html(parseRupiah(total_[3]));
+
+            }
         </script>
         @endpush
 

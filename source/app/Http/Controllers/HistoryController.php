@@ -23,14 +23,14 @@ class HistoryController extends Controller
     {
         $no = 1;
         $today = date("Y-m-d");
+        
         $students = Income::join('payment_details', 'payment_details.id', '=', 'incomes.payment_detail_id')
                 ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
                 ->join('students', 'students.id', '=', 'payments.student_id')
                 ->join('majors', 'majors.id', '=', 'students.major_id')
                 ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
                 ->select(DB::raw('
-                incomes.created_at,
-                incomes.created_at,
+                distinct incomes.created_at,
                 students.id,
                 students.nama,
                 students.kelas,
@@ -44,6 +44,7 @@ class HistoryController extends Controller
                 ->whereDate('incomes.created_at', $today)
                 ->groupBy('students.id')
                 ->get();
+
         return view('histori.index',compact('no','students'));
     }
 

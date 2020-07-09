@@ -66,6 +66,13 @@ SPP | Cicilan Pembayaran
                                     <input type="number" min="0" class="form-control" name="nominal" value="0" readonly>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label>Keterangan</label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-anchor"></i></span>
+                                    <input type="text" class="form-control" name="keterangan" placeholder="Keterangan">
+                                </div>
+                            </div>
                             <div class="login-btn-inner">
                                 <div class="inline-remember-me">
                                     @if($footer['sisa']==0)
@@ -145,6 +152,11 @@ SPP | Cicilan Pembayaran
                                                     Nominal
                                                     </div>
                                                 </th>
+                                                <th data-field="keterangan">
+                                                    <div style="text-align: center">
+                                                    Keterangan
+                                                    </div>
+                                                </th>
                                                 <th data-field="total">
                                                     <div style="text-align: center">
                                                     Penerima
@@ -178,6 +190,15 @@ SPP | Cicilan Pembayaran
                                                 <td>
                                                     <div style="text-align: right">
                                                     {{number_format($cicilan->nominal,0,',','.')}}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style="text-align: center">
+                                                    @if($cicilan->keterangan=="")
+                                                        {{"-"}}
+                                                    @else
+                                                        {{$cicilan->keterangan}}
+                                                    @endif
                                                     </div>
                                                 </td>
                                                 <td>

@@ -20,6 +20,7 @@ class Cicilan extends Model
         "simpanan", 
         "tunai", 
         "nominal", 
+        "keterangan", 
         "created_at",
         "tgl_dibayar",
     ];
