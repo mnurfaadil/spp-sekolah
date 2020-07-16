@@ -23,7 +23,7 @@ class MenuRekapController extends Controller
     public function indexPemasukan()
     {
         $no = 1;
-        $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
+        $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
             ->join('incomes','incomes.id','=','pencatatans.income_id')
             ->where([
                 ['debit','<>','0'],

@@ -1103,6 +1103,7 @@ class PaymentController extends Controller
         $title = "CICILAN {$category['nama']} {$siswa['nama']} ({$ket})";
         Income::create([
             'id' => null,
+            'created_at' => $date,
             'payment_detail_id' => $request['payment_detail_id'],
             'cicilan_id' => $last_id,
             'title' => $title,
@@ -1136,6 +1137,7 @@ class PaymentController extends Controller
             'debit' => $nominal,
             'description' => $desc,
             'kredit' => 0,
+            'created_at' => $date,
         ]);
         return redirect()
                 ->route('payment.details.cicilan', [$request['financing_category_id'], $request['student_id'], $request['payment_id']])

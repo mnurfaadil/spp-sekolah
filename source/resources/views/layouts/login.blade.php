@@ -88,8 +88,9 @@
                 </div>
             </div>
             <div class="text-center login-footer" style="color:white">
-                <p>SPP | Baabulkamil © 2020. <br> Template by <a
-                        href="https://colorlib.com/wp/templates/" style="color:cyan">Colorlib</a></p>
+                <p>
+                <!-- SPP | Baabulkamil © 2020. <br>  -->
+                Template by <a href="https://colorlib.com/wp/templates/" style="color:cyan">Colorlib</a></p>
             </div>
         </div>
     </div>
