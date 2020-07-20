@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Angkatan;
+use App\Student;
 use App\PaymentPeriode;
 use App\FinancingCategory;
 use DB;
