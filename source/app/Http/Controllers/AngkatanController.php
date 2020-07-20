@@ -136,12 +136,17 @@ class AngkatanController extends Controller
         ]);
 
         try {
-          $req = $request->all();
-          $angkatan = Angkatan::findOrFail($id);
-          $angkatan->angkatan = $req['angkatan2'];
-          $angkatan->tahun = $req['tahun2'];
-          $angkatan->status = $req['status'];
-          $angkatan->save();
+            $req = $request->all();
+            $angkatan = Angkatan::findOrFail($id);
+            $angkatan->angkatan = $req['angkatan2'];
+            $angkatan->tahun = $req['tahun2'];
+            $angkatan->status = $req['status'];
+            $angkatan->save();
+            $siswa = Student::where('angkatan_id', $angkatan->id)->get();
+            foreach ($siswa as $key => $value) {
+                $value->kelas = $angkatan->status;
+                $value->save();
+            }
 
           return redirect()
               ->route('angkatan.index')
