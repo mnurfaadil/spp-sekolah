@@ -180,6 +180,39 @@ class PaymentController extends Controller
     {
         $cek = $_GET;
         try {
+            if ($cek['id'] != "")
+            {
+                return Payment::
+                selectRaw('
+                        students.nama, 
+                        students.kelas, 
+                        majors.inisial as jurusan,
+                        financing_periodes.nominal,
+                        financing_categories.jenis, 
+                        payments.persentase,
+                        payments.jenis_pembayaran,
+                        getPaymentDetailsId(payments.id) as payment_detail_tunai,
+                        getNominalCicilan(getPaymentDetailsId(payments.id)) as cicilan,
+                        students.id as student_id,
+                        financing_categories.id as financing_category_id,
+                        payments.id,
+                        payments.jenis_potongan,
+                        payments.keterangan,
+                        payments.nominal_potongan
+                        ')
+                    ->join('students','payments.student_id','=','students.id')
+                    ->join('majors','majors.id','=','students.major_id')
+                    ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
+                    ->join('payment_details','payment_details.payment_id','=','payments.id')
+                    ->leftJoin('cicilans','cicilans.payment_detail_id','=','payment_details.id')
+                    ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+                    ->where('payments.id',$cek['id'])
+                    ->first();
+            }
+        } catch (\Throwable $th) {
+            
+        }
+        try {
             $kelas = $cek['kelas'] == "all" ? "" : $cek['kelas'];
         } catch (\Throwable $th) {
             $kelas = "";
@@ -514,7 +547,7 @@ class PaymentController extends Controller
             }
 
             //Action
-            $obj = json_encode($data);
+            $obj = json_encode($data->id);
             $link_rincian = url('payment/details')."/{$data->financing_category_id}/{$data->student_id}/{$data->id}";
             $link_print = url('export/sesekali/detail')."/{$data->student_id}/{$data->payment_detail_tunai}/tunai";
             $link_delete = url('payment/detail/delete')."/{$data->payment_detail_tunai}";

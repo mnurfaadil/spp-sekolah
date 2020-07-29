@@ -247,17 +247,23 @@ SPP | Pembayaran {{$financing->nama}}
     }
 
     function addConfirm(data, nominal) {
-        $('input[name=persentase]').val(data.persentase);
-        $('input[name=data]').attr('value', JSON.stringify(data));
-        $('input[name=payment_id]').attr('value', data.id);
-        $('input[name=student_id]').attr('value', data.student_id);
-        $('input[name=financing_category_id]').attr('value', data.financing_category_id);
-        $('input[name=nominal]').attr('value', data.nominal);
-        $('input[name=nominal_bayar]').attr('value', data.nominal);
-        $('input[name=nominal_bayar]').attr('min', data.nominal);
-        $('input[name=dump]').attr('value', data.nominal);
-        $('#nominal_show').html(nominal);
-        $('#modalAdd').modal();
+        var raw_url = window.location.pathname;
+        console.log(raw_url);
+        var url = raw_url.split("/");
+        url = window.location.origin+"/"+url[1]+"/ajax/"+url[2]+"?id="+data;
+        $.get(url, function(resp){
+            $('input[name=persentase]').val(resp.persentase);
+            $('input[name=data]').attr('value', JSON.stringify(data));
+            $('input[name=payment_id]').attr('value', resp.id);
+            $('input[name=student_id]').attr('value', resp.student_id);
+            $('input[name=financing_category_id]').attr('value', resp.financing_category_id);
+            $('input[name=nominal]').attr('value', resp.nominal);
+            $('input[name=nominal_bayar]').attr('value', resp.nominal);
+            $('input[name=nominal_bayar]').attr('min', resp.nominal);
+            $('input[name=dump]').attr('value', resp.nominal);
+            $('#nominal_show').html(nominal);
+            $('#modalAdd').modal();
+        })
     }
 
     $(document).ready(function(){
