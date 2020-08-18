@@ -47,19 +47,20 @@ SPP | Pembayaran
                             data-cookie="true"
                             data-cookie-id-table="saveId" 
                             data-show-export="true" 
+                            data-url="{{ url('') }}/payment/ajax_perbulan/{{$financing->id}}"
                             data-click-to-select="true"
                             data-toolbar="#toolbar">
                                 <thead>
                                     <tr>
-                                        <th data-field="no">No</th>
-                                        <th data-field="name">Nama</th>
-                                        <th data-field="kelas">Kelas</th>
-                                        <th data-field="total">Akumulasi Biaya</th>
-                                        <th data-field="terbayar">Sudah dibayar</th>
-                                        <th data-field="sisa">Sisa Pembayaran</th>
-                                        <th data-field="tunggakan">Tunggakan</th>
-                                        <th data-field="status">Status</th>
-                                        <th data-field="action">Action</th>
+                                        <th data-field="no" data-halign="center" data-align="center">No</th>
+                                        <th data-field="nama" data-halign="center" data-align="left">Nama</th>
+                                        <th data-field="kelas" data-halign="center" data-align="center">Kelas</th>
+                                        <th data-field="total" data-halign="center" data-align="right">Biaya</th>
+                                        <th data-field="terbayar" data-halign="center" data-align="right">Terbayar</th>
+                                        <th data-field="sisa" data-halign="center" data-align="right">Sisa</th>
+                                        <th data-field="tunggakan" data-halign="center" data-align="center">Tunggakan</th>
+                                        <th data-field="status" data-halign="center" data-align="center">Status</th>
+                                        <th data-field="action" data-halign="center" data-align="center">Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -279,135 +280,6 @@ SPP | Pembayaran
             return row.id
         })
     }
-
-    function parseRupiah (bilangan)
-    {
-        var	number_string = bilangan.toString(),
-            sisa 	= number_string.length % 3,
-            rupiah 	= number_string.substr(0, sisa),
-            ribuan 	= number_string.substr(sisa).match(/\d{3}/g);
-                
-        if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
-        }
-
-
-        return rupiah;
-    }
-
-    $(function () {
-        var content = [];
-        $.get('{{ url('') }}/payment/ajax_perbulan/{{$financing->id}}', function(data){
-            $.each(data, function(i, v){
-                var nominal = parseInt(v.nominal);
-                var sisa = parseInt(v.sisa_bulan);
-                var nunggak = parseInt(v.spp_nunggak);
-                
-                //Total Biaya
-                var total = 36 * nominal;
-                var total_ = parseRupiah(total);
-
-                //Terbayar
-                var terbayar = (36 - sisa) * nominal;
-                var terbayar_ = parseRupiah(terbayar);
-
-                //Sisa Pembayaran
-                var tersisa = sisa * nominal;
-                var tersisa_ = parseRupiah(tersisa);
-
-                //Tunggakan
-                if (nunggak != 0)
-                {
-                    var tunggakan = 
-                    `
-                    <div style="text-align:center">
-                        <span class="badge" style="background-color:red">${nunggak} Bulan</span>
-                    </div>
-                    `;
-                }
-                else
-                {
-                    var tunggakan = 
-                    `
-                    <div style="text-align:center">
-                        ${nunggak} Bulan
-                    </div>
-                    `;
-                }
-
-                //Status
-                if (tersisa == 0 && nunggak == 0) {
-                    var status =
-                    `
-                    <div style="text-align:center">
-                        <span class="badge" style="background-color:green">Lunas</span>
-                    </div>
-                    `;
-                } else {
-                    var status = 
-                    `
-                    <div style="text-align:center">
-                    `;
-                    if (sisa != 0) {
-                        status += '<span class="badge" style="background-color:yellow;color:black">Waiting</span>';
-                    }
-                    if (nunggak != 0) {
-                        status += '<span class="badge" style="background-color:red">Nunggak</span>';
-                    }
-                    status += '</div>';
-                }
-                
-                //Action
-                var link_detail = `{{ url('payment/perbulan/detail/') }}/${v.id}/${v.student_id}/${v.financing_category_id}`;
-                var action =
-                `
-                    <a href="${link_detail}" 
-                    class="btn btn-success"
-                    title="Detail Pembayaran" 
-                    style="color:white; background-color:green">
-                        <i class="fa fa-eye"> Detail</i>
-                    </a>
-                `;
-
-
-                var temp = {
-                    no: (i+1),
-                    name : `${v.nama}`,
-                    kelas : `${v.kelas} - ${v.jurusan}`,
-                    total : 
-                    `
-                    <div style="text-align:right">
-                        ${total_}
-                    </div>
-                    `,
-                    terbayar : 
-                    `
-                    <div style="text-align:right">
-                        ${terbayar_}
-                    </div>
-                    `,
-                    sisa : 
-                    `
-                    <div style="text-align:right">
-                        ${tersisa_}
-                    </div>
-                    `,
-                    tunggakan : 
-                    tunggakan,
-                    status : status,
-                    action : action
-                };
-
-                content.push(temp);
-            });
-            $table.bootstrapTable('destroy').bootstrapTable({
-                exportTypes: ['excel', 'pdf'],
-                data: content
-            });
-        });
-    });
-
 </script>
 <!-- data table JS
 		============================================ -->

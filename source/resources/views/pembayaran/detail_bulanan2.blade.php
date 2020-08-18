@@ -21,7 +21,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                 <div class="date-picker-inner">
 
                     <div class="basic-login-inner">
-                        
+
                             <div class="form-group">
                                 <label>NIS</label>
                                 <div class="input-group">
@@ -136,7 +136,10 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                         </thead>
                                         <tbody>
                                             @php
-                                            $total= $payment_details->count()*intval($payment_details[0]->periode->nominal);
+                                            $x = 12*intval($payment_details[0]->periode->kelas_x);
+                                            $xi = 12*intval($payment_details[0]->periode->kelas_xi);
+                                            $xii = 12*intval($payment_details[0]->periode->kelas_xii);
+                                            $total= $x + $xi + $xii;
                                             $terbayar = intval($payment_details->sum('nominal'));
                                             $sisa = $total-$terbayar;
                                             @endphp
@@ -202,7 +205,8 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
                                                     <a href="{{ route('pdf.print.bulanan.detail',[$payment_details->first()->payment->student->id, $data->id])}}" class="btn btn-success" style="color:white;margin-top:0" target="_blank"><i class="fa fa-print"></i></a>
                                                     <a href="{{ route('payment.monthly.detail.delete',$data->id) }}" class="btn btn-danger" style="color:white;margin-top:0" title="Delete"><i class="fa fa-close"></i></a>
                                                     @else
-                                                      <button class="btn btn-primary" title="Atur Pembayaran" onclick="addConfirm({{$data}})"><i class="fa fa-credit-card"></i></button>
+                                                      <button class="btn btn-primary" title="Atur Pembayaran" 
+                                                      onclick="addConfirm({{$data->id}})"><i class="fa fa-credit-card"></i></button>
                                                     @endif
                                                     </div>
                                                 </td>
@@ -467,12 +471,17 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
 <script src="{{ asset('assets/js/chosen/chosen-active.js')}}"></script>
 
 <script>
-    function addConfirm(data){
-        $('input[name=id]').attr('value',data.id);
-        $('input[name=periode]').attr('value',data.bulan);
-        $('#periode_modal').html(data.bulan);
-        event.preventDefault();
-        $('#modalAdd').modal();
+    function addConfirm(id){
+        $.get(`{{ url('')}}/payment/perbulan/detail/ajax/${id}?stat=true`, function (response) {
+            var data = JSON.parse(response);
+            $('#besaran_history_modal').html(data.nominal_bayar_format);
+            $('input[type=hidden][name=nominal_bayar]').attr('value',data.nominal_bayar);
+            $('input[name=id]').attr('value',data.data.id);
+            $('input[name=periode]').attr('value',data.data.bulan);
+            $('#periode_modal').html(data.data.bulan);
+            event.preventDefault();
+            $('#modalAdd').modal();
+        });
     }
     function addPeriode() {
         event.preventDefault();

@@ -10,7 +10,7 @@ SPP | Kategori Pembayaran
 
     <div class="hpanel hblue sparkline16-list responsive-mg-b-30">
         <div class="panel-body custom-panel-jw">
-            <h3><a href="">Ubah Biaya {{ $category[0]->nama}}</a></h3>
+            <h3>Ubah Biaya {{ $category[0]->nama}}</h3>
             <p class="all-pro-ad">Ubah biaya pembayaran disini</p>
             <hr>
 
@@ -47,6 +47,7 @@ SPP | Kategori Pembayaran
                                     <input type="text" class="form-control" name="jurusan_show" value="{{ $periodes[0]->major->nama}}" readonly required>
                                 </div>
                             </div>
+                            @if ($category[0]->jenis != "Bayar per Bulan") 
                             <div class="form-group">
                                 <label class="control-label">Nominal</label>
                                 <div class="input-group">
@@ -54,6 +55,29 @@ SPP | Kategori Pembayaran
                                     <input type="number" min="0" class="form-control" name="nominal" value="{{ $periodes[0]->nominal}}" id="edit_nominal" required>
                                 </div>
                             </div>
+                            @else
+                            <div class="form-group">
+                                <label class="control-label">Kelas X</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><strong>Rp.</strong></span>
+                                    <input type="number" min="0" class="form-control" name="kelas_x" value="{{ $periodes[0]->kelas_x}}" id="edit_kelas_x" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Kelas XI</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><strong>Rp.</strong></span>
+                                    <input type="number" min="0" class="form-control" name="kelas_xi" value="{{ $periodes[0]->kelas_xi}}" id="edit_kelas_xi" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Kelas XII</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><strong>Rp.</strong></span>
+                                    <input type="number" min="0" class="form-control" name="kelas_xii" value="{{ $periodes[0]->kelas_xii}}" id="edit_kelas_xii" required>
+                                </div>
+                            </div>
+                            @endif
                             <div class="login-btn-inner">
                                 <div class="inline-remember-me">
                                     <button class="btn btn-sm btn-primary pull-right login-submit-cs"
@@ -61,9 +85,7 @@ SPP | Kategori Pembayaran
                                     <label>
                                 </div>
                             </div>
-                        </form>
-                        
-                        
+                        </form>           
                     </div>
                 </div>
             </div>
@@ -106,9 +128,17 @@ SPP | Kategori Pembayaran
                                         <thead>
                                             <tr>
                                                 <th data-field="id">No</th>
+                                                @if ($category[0]->jenis != "Bayar per Bulan") 
                                                 <th data-field="date" data-editable="false">Terakhir Update</th>
+                                                @endif
                                                 <th data-field="jurusan" data-editable="false">Angkatan</th>
+                                                @if ($category[0]->jenis == "Bayar per Bulan") 
+                                                <th data-field="kelas_x" data-editable="false">Kelas X</th>
+                                                <th data-field="kelas_xi" data-editable="false">Kelas XI</th>
+                                                <th data-field="kelas_xii" data-editable="false">Kelas XII</th>
+                                                @else
                                                 <th data-field="nominal" data-editable="false">Nominal</th>
+                                                @endif
                                                 <th data-field="action" data-editable="false">Action</th>
                                             </tr>
                                         </thead>
@@ -120,22 +150,43 @@ SPP | Kategori Pembayaran
                                             @foreach($periodes as $periode)
                                             <tr>
                                                 <td>{{ $no++ }}</td>
+                                                
+                                                @if ($category[0]->jenis != "Bayar per Bulan")
                                                 <td>{{ $periode->updated_at }}</td>
+                                                @endif
                                                 @if($periode->angkatan->status=='ALUMNI')
                                                 <td>{{ $periode->angkatan->status }} - Angkatan {{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})</td>
                                                 @else
                                                 <td>Kelas {{ $periode->angkatan->status }} - Angkatan {{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})</td>
                                                 @endif
+                                                @if ($category[0]->jenis == "Bayar per Bulan")
+                                                <td>
+                                                    <div style="text-align:right">
+                                                    {{ $periode->kelas_x }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style="text-align:right">
+                                                    {{ $periode->kelas_xi }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style="text-align:right">
+                                                    {{ $periode->kelas_xii }}
+                                                    </div>
+                                                </td>
+                                                @else
                                                 <td>
                                                     <div style="text-align:right">
                                                     {{ $periode->nominal }}
                                                     </div>
                                                 </td>
+                                                @endif
                                                 <td>
                                                 <div style="text-align:center">
                                                     <button class="btn btn-warning editable"
                                                     title="Edit periode {{$category[0]->nama}}" style="color:white" 
-                                                    onclick="editConfirm({{$periode}},'{{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})');">
+                                                    onclick="editConfirm({{$periode->id}},'{{ $periode->angkatan->angkatan }} ({{ $periode->angkatan->tahun }})');">
                                                       <i class="fa fa-edit"></i>
                                                     </button>
                                                 </div>
@@ -226,11 +277,16 @@ SPP | Kategori Pembayaran
         });
     }
     function editConfirm(periode, name) {
-        console.log(periode);
-        $('input[type=hidden][name=id]').val(periode.id);
-        $('input[name=angkatan_show]').val('Kelas '+periode.angkatan.status+" - Angkatan "+periode.angkatan.angkatan+" ("+periode.angkatan.tahun+")");
-        $('#edit_nominal').attr('value', periode.nominal);
-        $('#edit_nominal').focus();
+        $.get("{{ url('') }}/periode/ajax/"+periode, function(data){
+            var periode = JSON.parse(data);
+            $('input[type=hidden][name=id]').val(periode.id);
+            $('input[name=angkatan_show]').val('Kelas '+periode.status+" - Angkatan "+periode.angkatan+" ("+periode.tahun+")");
+            $('input[name=nominal]').attr('value', periode.nominal);
+            $('input[name=kelas_x]').attr('value', periode.kelas_x);
+            $('input[name=kelas_xi]').attr('value', periode.kelas_xi);
+            $('input[name=kelas_xii]').attr('value', periode.kelas_xii);
+            $('#edit_nominal').focus();
+        })
     }
 </script>
 

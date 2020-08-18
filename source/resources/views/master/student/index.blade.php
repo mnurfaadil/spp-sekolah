@@ -51,15 +51,19 @@ SPP | Siswa
                                         </form>
                                     </div>
                                     <div class="col-md-6">
-                                        <div style="float:right;">
+                                        <div style="float:right;flex-direction:row;">
                                             <form target="_blank" action="{{route('pdf.print.rekap.siswa')}}" role="form" method="post">
                                                 @csrf 
                                                 <input type="hidden" name='id_jur' value="{{$fil}}">
                                                 <input type="hidden" name='akt' value="{{$fil2}}">
                                                 <input type="hidden" name='kls' value="{{$kls}}">
+                                                <a @php echo ($jml < 1 ? 'onclick="peringatanJurusan()"': $angkatan->count() ) <1 ? 'onclick="peringatanAngkatan()"' : 'data-toggle="modal" href="#modalAdd"' @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
                                                 <button type='submit' class="btn btn-info" style="color:white; margin-top:0"><i class="fa fa-print"></i>&nbsp; Cetak</button>
-                                            <a @php echo ($jml < 1 ? 'onclick="peringatanJurusan()"': $angkatan->count() ) <1 ? 'onclick="peringatanAngkatan()"' : 'data-toggle="modal" href="#modalAdd"' @endphp class="btn btn-success" ><i class="fa fa-plus"></i> Tambah </a>
                                             </form>
+                                        </div>
+                                        <div style="float:right;padding-right:5px;">
+                                            <!-- <button class="btn btn-primary" onclick="naikKelas();"><i class="fa fa-arrow-up"></i>&nbsp;Naik Kelas</button> -->
+                                            <!-- <button class="btn btn-danger" onclick="turunKelas();"><i class="fa fa-arrow-down"></i>&nbsp;Turun Kelas</button> -->
                                         </div>
                                     </div>
                             </div>
@@ -547,6 +551,60 @@ SPP | Siswa
                 $('#kelas_edit3_chosen .chosen-single span').html(data.kelas);
 
                 $('#modalDetail').modal();
+            }
+
+            function naikKelas() {
+                swal({
+                    title: 'Apakah anda yakin?',
+                    text: 'Siswa akan naik kelas ?',
+                    icon: 'warning',
+                    buttons: ["Cancel", "Yes!"],
+                }).then(function (value) {
+                    if (value) {
+                        swal({
+                            title: 'Siswa naik kelas ?',
+                            text: 'Lanjutkan ?',
+                            icon: 'warning',
+                            buttons: ["Cancel", "Yes!"],
+                        }).then(function (value) {
+                            if (value) {
+                                var ur = window.location.href+"/naik_kelas";
+                                location.replace(ur);
+                            } else {
+                                swal("Dibatalkan!");
+                            }
+                        });
+                    } else {
+                        swal("Dibatalkan!");
+                    }
+                });
+            }
+            
+            function turunKelas() {
+                swal({
+                    title: 'Apakah anda yakin?',
+                    text: 'Siswa akan turun kelas ?',
+                    icon: 'warning',
+                    buttons: ["Cancel", "Yes!"],
+                }).then(function (value) {
+                    if (value) {
+                        swal({
+                            title: 'Siswa turun kelas ?',
+                            text: 'Lanjutkan ?',
+                            icon: 'warning',
+                            buttons: ["Cancel", "Yes!"],
+                        }).then(function (value) {
+                            if (value) {
+                                var ur = window.location.href+"/turun_kelas";
+                                location.replace(ur);
+                            } else {
+                                swal("Dibatalkan!");
+                            }
+                        });
+                    } else {
+                        swal("Dibatalkan!");
+                    }
+                });
             }
 
 
