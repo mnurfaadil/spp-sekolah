@@ -65,13 +65,6 @@ class PeriodeController extends Controller
                 ->orderBy('financing_periodes.updated_at','desc')
                 ->where('major_id',$jurusan)
                 ->get();
-        // //penyesuaian nominal
-        // foreach ($periodes as $key => $value) {
-        //     $value->kelas_x = $value->nominal;
-        //     $value->kelas_xi = $value->nominal;
-        //     $value->kelas_xii = $value->nominal;
-        //     // $value->save();
-        // }
         return view('master.financingcategory.periode_all_setting',compact('periodes','category'));   
     }
 

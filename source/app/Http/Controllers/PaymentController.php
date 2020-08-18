@@ -1400,28 +1400,7 @@ class PaymentController extends Controller
                 'nominal_bayar_format' => number_format($nominal,0,',','.')
             );
             return json_encode($response);
-            //Penyesuaian Nominal
-            // $payments = Payment::where('financing_category_id', 50)->get();
             
-            // foreach ($payments as $i => $payment)
-            // {
-            //     $detail = PaymentDetail::where('payment_id', $payment->id)
-            //                 ->orderBy('bulan')->get();
-            //     $len = count($detail);
-            //     $nominal = 0;
-            //     for ( $j=0; $j<$len; $j++)
-            //     {
-            //         if ($j==0) {
-            //             $nominal = $detail[$j]->periode->kelas_x;        
-            //         } else if ($j==12) {
-            //             $nominal = $detail[$j]->periode->kelas_xi;        
-            //         } else if ($j==24) {
-            //             $nominal = $detail[$j]->periode->kelas_xii;        
-            //         }
-            //         $detail[$j]->nominal_bayar = $nominal;
-            //         // $detail[$j]->save();
-            //     }
-            // }
         } else {
             return PaymentPeriode::findOrFail($periode);
         }
