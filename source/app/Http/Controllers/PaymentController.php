@@ -180,6 +180,21 @@ class PaymentController extends Controller
     {
         $cek = $_GET;
         try {
+            $kelas = $cek['kelas'] == "all" ? "" : $cek['kelas'];
+        } catch (\Throwable $th) {
+            $kelas = "";
+        }
+        try {
+            $jurusan = $cek['jurusan'] == "all" ? "" : $cek['jurusan'];
+        } catch (\Throwable $th) {
+            $jurusan = "";
+        }
+        try {
+            $angkatan = $cek['angkatan'] == "all" ? "" : $cek['angkatan'];
+        } catch (\Throwable $th) {
+            $angkatan = "";
+        }
+        try {
             if ($cek['id'] != "")
             {
                 return Payment::
@@ -211,21 +226,6 @@ class PaymentController extends Controller
             }
         } catch (\Throwable $th) {
             
-        }
-        try {
-            $kelas = $cek['kelas'] == "all" ? "" : $cek['kelas'];
-        } catch (\Throwable $th) {
-            $kelas = "";
-        }
-        try {
-            $jurusan = $cek['jurusan'] == "all" ? "" : $cek['jurusan'];
-        } catch (\Throwable $th) {
-            $jurusan = "";
-        }
-        try {
-            $angkatan = $cek['angkatan'] == "all" ? "" : $cek['angkatan'];
-        } catch (\Throwable $th) {
-            $angkatan = "";
         }
         if ($kelas != "" && $jurusan != "" && $angkatan != "") {
             $datas = Payment::
@@ -624,39 +624,141 @@ class PaymentController extends Controller
 
     public function ajaxIndexPerbulan($id)
     {
-        return Payment::
-                selectRaw('
-                    payments.id,
-                    payments.student_id,
-                    payments.financing_category_id,
-                    students.nama,
-                    students.kelas,
-                    majors.inisial as jurusan,
-                    financing_periodes.nominal,
-                    (SELECT count(*) 
-                    from payment_details
-                    where payment_details.payment_id = payments.id
-                    and status <> "Lunas"
-                    ) as sisa_bulan,
-                    (SELECT count(*) 
-                    from payment_details
-                    where payment_details.payment_id = payments.id
-                    and status = "Nunggak"
-                    ) as spp_nunggak,
-                    (SELECT count(*) 
-                    from payment_details
-                    where payment_details.payment_id = payments.id
-                    and status = "Waiting"
-                    ) as spp_waiting
-                ')
-                ->join('students','payments.student_id','=','students.id')
-                ->join('majors','majors.id','=','students.major_id')
-                ->join('payment_details','payment_details.payment_id','=','payments.id')
-                ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
-                ->where('payments.financing_category_id',$id)
-                ->orderBy('payments.updated_at','desc')
-                ->groupBy('students.id')
+        // $data = Payment::
+        //         selectRaw('
+        //             payments.id,
+        //             payments.student_id,
+        //             payments.financing_category_id,
+        //             students.nama,
+        //             students.kelas,
+        //             majors.inisial as jurusan,
+        //             financing_periodes.nominal,
+        //             (SELECT count(*) 
+        //             from payment_details
+        //             where payment_details.payment_id = payments.id
+        //             and status <> "Lunas"
+        //             ) as sisa_bulan,
+        //             (SELECT count(*) 
+        //             from payment_details
+        //             where payment_details.payment_id = payments.id
+        //             and status = "Nunggak"
+        //             ) as spp_nunggak,
+        //             (SELECT count(*) 
+        //             from payment_details
+        //             where payment_details.payment_id = payments.id
+        //             and status = "Waiting"
+        //             ) as spp_waiting
+        //         ')
+        //         ->join('students','payments.student_id','=','students.id')
+        //         ->join('majors','majors.id','=','students.major_id')
+        //         ->join('payment_details','payment_details.payment_id','=','payments.id')
+        //         ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
+        //         ->where('payments.financing_category_id',$id)
+        //         ->orderBy('payments.updated_at','desc')
+        //         ->groupBy('students.id')
+        //         ->get();
+        $data = Payment::where('financing_category_id', $id)
+                ->orderBy('updated_at','desc')
+                ->groupBy('student_id')
+                // ->first();
                 ->get();
+                
+        // echo "<pre>";
+        // for ($i = 11, $j = 0; $i < 36; $j=$i+1, $i+=12) {
+        //     $b = $data->detail[$i]->bulan;
+        //     $a = $data->detail[$j]->bulan;
+        //     $d = $data->detail
+        //             ->where('bulan','<=', $b)
+        //             ->where('bulan','>=', $a);
+        //     return $d->where('status','!=','Lunas')->count();
+             
+        // }
+        // die;
+        // return $data->detail
+        //         ->where('bulan','<=','2022-06-01')
+        //         ->where('bulan','>','2021-06-01');
+        // return $data->detail[23]->bulan;
+        // return $data->detail->where('bulan','<=','2021-06-01')->count();
+        $response = [];
+        $no = 1;
+        foreach($data as $i => $v) {
+            $x = 12 * $v->detail[0]->periode->kelas_x;
+            $xi = 12 * $v->detail[0]->periode->kelas_xi;
+            $xii = 12 * $v->detail[0]->periode->kelas_xii;
+            $total_ = intval($x) + intval($xi) + intval($xii);
+
+            $kewajiban_bayar = 36;
+            $kewajiban_tahunan = 12;
+            
+            $terbayar_ = 0;
+            $tersisa_ = 0;
+            
+            for ($i = 11, $j = 0, $count=0; $i < $kewajiban_bayar; $count++, $j=$i+1, $i+=12) {
+                $b = $v->detail[$i]->bulan;
+                $a = $v->detail[$j]->bulan;
+                $d = $v->detail
+                        ->where('bulan','<=', $b)
+                        ->where('bulan','>=', $a);
+                $c = $d->where('status','!=','Lunas')->count();
+                $nominal = $v->detail[$j]->periode->kelas_xii;  
+                if ($count == 0) {
+                    $nominal = $v->detail[$j]->periode->kelas_x;
+                } else if ($count == 1) {
+                    $nominal = $v->detail[$j]->periode->kelas_xi;
+                }
+                $s = $c * intval($nominal);
+                $b = ($kewajiban_tahunan - $c) * intval($nominal);
+                
+                $terbayar_ = $terbayar_ + $b;
+                $tersisa_ = $tersisa_ + $s;
+            }
+
+            $nama = $v->student->nama;
+            $kelas = $v->student->kelas." - ".$v->student->major->inisial;
+            
+            $total = number_format($total_,0,',','.');
+            $terbayar = number_format($terbayar_,0,',','.');
+            $sisa = number_format($tersisa_,0,',','.');
+
+            $tunggakan_ = $v->detail->where('status','Nunggak')->count();
+            $waiting = $v->detail->where('status','Waiting')->count();
+
+            $tunggakan = "{$tunggakan_} Bulan";
+            $status = "<span class='badge' style='background-color:green'>Lunas</span>";
+            if ($waiting > 0) {
+                $status = "<span class='badge' style='background-color:yellow;color:black'>Waiting</span>";
+            }
+            if ($tunggakan_ > 0) {
+                $tunggakan = "<span class='badge' style='background-color:red'>{$tunggakan_} Bulan</span>";
+                $status .= "<span class='badge' style='background-color:red'>Nunggak</span>";
+            }
+            
+
+
+            $uri = url('payment/perbulan/detail')."/".$v->id."/".$v->student_id."/".$v->financing_category_id;
+
+            $action = "<a href='{$uri}' 
+            class='btn btn-success'
+            title='Detail Pembayaran' 
+            style='color:white; background-color:green'>
+                <i class='fa fa-eye'> Detail</i>
+            </a>";
+
+            $temp = (object) array (
+                'no' => $no++,
+                'nama' => htmlspecialchars($nama),
+                'kelas' => $kelas,
+                'total' => $total,
+                'terbayar' => $terbayar,
+                'sisa' => $sisa,
+                'tunggakan' => $tunggakan,
+                'status' => $status,
+                'action' => $action,
+
+            );
+            $response[] = $temp;
+        }
+        return $response;
     }
 
     //Show filter Data 
@@ -1136,7 +1238,6 @@ class PaymentController extends Controller
         $title = "CICILAN {$category['nama']} {$siswa['nama']} ({$ket})";
         Income::create([
             'id' => null,
-            'created_at' => $date,
             'payment_detail_id' => $request['payment_detail_id'],
             'cicilan_id' => $last_id,
             'title' => $title,
@@ -1170,7 +1271,6 @@ class PaymentController extends Controller
             'debit' => $nominal,
             'description' => $desc,
             'kredit' => 0,
-            'created_at' => $date,
         ]);
         return redirect()
                 ->route('payment.details.cicilan', [$request['financing_category_id'], $request['student_id'], $request['payment_id']])
@@ -1233,16 +1333,98 @@ class PaymentController extends Controller
                 ->route('payment.index')
                 ->with('error', 'Periode pembiayaan kosong. Untuk Pembiayaan dengan jenis per Bulan, periode harus dicantumkan!');
         }
-  
+        
         //numbering
         $no = 1;
         //data Pembiayaan
         $payments = Payment::where('id',$payment)->first();
         $payment_details = PaymentDetail::where('payment_id',$payment)->orderBy('bulan')->get();
+        
+        //penyesuaian table
+        $payments = Payment::where('financing_category_id',50)->get();
+        
+        // echo '<pre>';
+        // foreach($payments as $val)
+        // {
+        //     $payment_details = PaymentDetail::where('payment_id',$val->id)->orderBy('bulan')->get();
+        //     $count = 0;
+        //     foreach ($payment_details as $key => $detail)
+        //     {
+        //         if ($key != 0 && $key%24==0 )
+        //         {
+        //             $bayar = $detail->periode->kelas_xii;
+        //             echo "xii";
+        //         } else if ($key != 0 && $key%12==0)
+        //         {
+        //             $bayar = $detail->periode->kelas_xi;
+        //             echo "xi";
+        //         } else if ($key == 0) {
+        //             $bayar = $detail->periode->kelas_x;
+        //             echo "x";
+        //         }
+        //         echo "pindah";
+        //         var_dump($bayar);
+        //         echo "<hr>";
+        //     }
+        //     die;
+        // }
+        // die;
+
+
+        // echo '<pre>';
+        // var_dump($payment_details);
 
         $date = $this->getTanggalHariIni();
         
         return view('pembayaran.detail_bulanan2', compact('financing','no','date','payment_details'));
+    }
+
+    public function ajaxBulananDetail($periode)
+    {
+        if (isset($_GET['stat'])) {
+            $detail = PaymentDetail::find($periode);
+            $cek = PaymentDetail::where('payment_id', $detail->payment_id)
+                    ->where('bulan','<=',$detail->bulan)
+                    ->count();
+            $nominal = $detail->periode->kelas_xii;
+            if ($cek < 13) {
+                $nominal = $detail->periode->kelas_x;
+            } else if ($cek < 25) {
+                $nominal = $detail->periode->kelas_xi;
+            }
+            $response = (object) array(
+                'status' => 'OK',
+                'code' => 200,
+                'data' => $detail,
+                'nominal_bayar' => $nominal,
+                'nominal_bayar_format' => number_format($nominal,0,',','.')
+            );
+            return json_encode($response);
+            //Penyesuaian Nominal
+            // $payments = Payment::where('financing_category_id', 50)->get();
+            
+            // foreach ($payments as $i => $payment)
+            // {
+            //     $detail = PaymentDetail::where('payment_id', $payment->id)
+            //                 ->orderBy('bulan')->get();
+            //     $len = count($detail);
+            //     $nominal = 0;
+            //     for ( $j=0; $j<$len; $j++)
+            //     {
+            //         if ($j==0) {
+            //             $nominal = $detail[$j]->periode->kelas_x;        
+            //         } else if ($j==12) {
+            //             $nominal = $detail[$j]->periode->kelas_xi;        
+            //         } else if ($j==24) {
+            //             $nominal = $detail[$j]->periode->kelas_xii;        
+            //         }
+            //         $detail[$j]->nominal_bayar = $nominal;
+            //         // $detail[$j]->save();
+            //     }
+            // }
+        } else {
+            return PaymentPeriode::findOrFail($periode);
+        }
     }
 
     public function bulananStore(Request $request)
@@ -1325,13 +1507,13 @@ class PaymentController extends Controller
                 ->with('error', 'Tanggal Pembayaran Kosong!');
             }
         }
-        if($req['status']=="Lunas"){   
+        if($req['status']=="Lunas"){
+            $bulan = $this->convertToCorrectDateValue($req['calendar']);
+            $data = PaymentDetail::findOrFail($req['id']);
             $user = Auth::user()->id;
             $penerima = Auth::user()->name;
             $category = FinancingCategory::findOrFail($req['category_id']);
             $student = Student::findOrFail($req['student_id']);
-            $data = PaymentDetail::findOrFail($req['id']);
-            $bulan = $this->convertToCorrectDateValue($req['calendar']);
             $keterangan = $req['keterangan'] == "" ? "Pribadi" : $req['keterangan'];
             $desc = "Pembayaran {$category->nama} untuk periode {$data->bulan} dari {$student->nama} kelas {$student->kelas} ( {$student->major->nama} ) dibayar menggunakan Uang {$keterangan} pada {$bulan} diterima oleh {$penerima}";
             

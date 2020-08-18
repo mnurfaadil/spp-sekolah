@@ -23,7 +23,7 @@ class MenuRekapController extends Controller
     public function indexPemasukan()
     {
         $no = 1;
-        $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+        $datas = Pencatatan::orderBy('pencatatans.updated_at', 'desc')
             ->join('incomes','incomes.id','=','pencatatans.income_id')
             ->where([
                 ['debit','<>','0'],
@@ -41,7 +41,7 @@ class MenuRekapController extends Controller
         switch ($request->filter) {
             case 'harian':
                 //Query Filter Harian
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->whereDate('incomes.created_at', $request->pilihan)
                     ->get();
@@ -51,7 +51,7 @@ class MenuRekapController extends Controller
                 //Query Filter Bulanan
                 $temp = $request->pilihan;
                 $_temp = explode('-', $temp);
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->whereMonth('incomes.created_at', $_temp[1])
                     ->whereYear('incomes.created_at', $_temp[0])
@@ -60,7 +60,7 @@ class MenuRekapController extends Controller
 
             case 'tahunan':
                 //Query Filter Tahun
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->whereYear('incomes.created_at', '=', $request->pilihan)
                     ->where([
@@ -71,7 +71,7 @@ class MenuRekapController extends Controller
             
             default:
                 //Query Filter Tahun
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->where([
                         ['debit','<>','0'],
@@ -1987,7 +1987,7 @@ class MenuRekapController extends Controller
         switch ($request->filter) {
             case 'harian':
                 //Query Filter Harian
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->whereDate('incomes.created_at', $request->pilihan)
                     ->get();
@@ -1997,7 +1997,7 @@ class MenuRekapController extends Controller
                 //Query Filter Bulanan
                 $temp = $request->pilihan;
                 $_temp = explode('-', $temp);
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->whereMonth('incomes.created_at', $_temp[1])
                     ->whereYear('incomes.created_at', $_temp[0])
@@ -2006,7 +2006,7 @@ class MenuRekapController extends Controller
 
             case 'tahunan':
                 //Query Filter Tahun
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->whereYear('incomes.created_at', '=', $request->pilihan)
                     ->where([
@@ -2017,7 +2017,7 @@ class MenuRekapController extends Controller
             
             default:
                 //Query Filter Tahun
-                $datas = Pencatatan::orderBy('pencatatans.created_at', 'desc')
+                $datas = Pencatatan::orderBy('incomes.updated_at', 'desc')
                     ->join('incomes','incomes.id','=','pencatatans.income_id')
                     ->where([
                         ['debit','<>','0'],

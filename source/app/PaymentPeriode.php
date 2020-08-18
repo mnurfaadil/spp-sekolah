@@ -12,13 +12,12 @@ class PaymentPeriode extends Model
     protected $table = 'financing_periodes';
 
     /**
-     * Kolom yang dapat di isi
+     * Kolom yang tidak dapat di isi
      */
-    protected $fillable = [
-        "financing_category_id",
-        "angkatan_id",
-        "major_id",
-        "nominal",
+    protected $guarded = [
+        "id",
+        "created_at",
+        "updated_at"
     ];
 
     public function category()

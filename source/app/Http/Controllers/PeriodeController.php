@@ -63,12 +63,38 @@ class PeriodeController extends Controller
         $category = FinancingCategory::where('id',$kategori)->get();
         $periodes = PaymentPeriode::where('financing_category_id',$kategori)
                 ->orderBy('financing_periodes.updated_at','desc')
-                ->where('major_id',$jurusan)->get();
+                ->where('major_id',$jurusan)
+                ->get();
+        // //penyesuaian nominal
+        // foreach ($periodes as $key => $value) {
+        //     $value->kelas_x = $value->nominal;
+        //     $value->kelas_xi = $value->nominal;
+        //     $value->kelas_xii = $value->nominal;
+        //     // $value->save();
+        // }
         return view('master.financingcategory.periode_all_setting',compact('periodes','category'));   
+    }
+
+    public function ajax($id)
+    {
+        $periode = PaymentPeriode::find($id);
+        $data = (object) array(
+            'id'            => $periode->id,
+            'nominal'       => $periode->nominal,
+            'kelas_x'       => $periode->kelas_x,
+            'kelas_xi'      => $periode->kelas_xi,
+            'kelas_xii'     => $periode->kelas_xii,
+            'status'        => $periode->angkatan->status,
+            'angkatan'        => $periode->angkatan->angkatan,
+            'tahun'        => $periode->angkatan->tahun,
+        );
+        return json_encode($data);
     }
 
     public function showAllUpdate(Request $request, $kategori, $jurusan)
     {
+        
+        $request->nominal = isset($request->nominal) ? $request->nominal : $request->kelas_x;
         $periode = PaymentPeriode::findOrFail($request->id);
         $category = FinancingCategory::findOrFail($periode->financing_category_id);
         $temp = $category->nama;
@@ -77,6 +103,9 @@ class PeriodeController extends Controller
         $category->nama = $temp;
         $category->save();  
         $periode->nominal = $request->nominal;
+        $periode->kelas_x = isset($request->kelas_x) ? $request->kelas_x : 0;
+        $periode->kelas_xi = isset($request->kelas_xi) ? $request->kelas_xi : 0;
+        $periode->kelas_xii = isset($request->kelas_xii) ? $request->kelas_xii : 0;
         $periode->save();
         return redirect()
             ->route('periode.all.setting', [$request->kategori, $request->jurusan])

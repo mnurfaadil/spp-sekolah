@@ -21,6 +21,7 @@ class PaymentDetail extends Model
         "tgl_dibayar",
         "bulan",
         "nominal",
+        "nominal_bayar",
         "status",
         "keterangan",
     ];

@@ -165,6 +165,7 @@ class StudentController extends Controller
                             'id' => null,
                             'payment_id' => $payment->id,
                             'payment_periode_id' => $category->periode_id,
+                            'nominal_bayar' => $category->periode_id,
                             'bulan' => $final,
                             'user_id' => 0,
                             'status' => $status,
@@ -261,6 +262,44 @@ class StudentController extends Controller
           return redirect()
               ->route('students.index')
               ->with('error', 'Data siswa gagal diubah!');
+        }
+    }
+
+    /**
+     * Update data siswa untuk naik kelas.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function naikKelas()
+    {
+        try {
+            #code
+            
+            return redirect()
+              ->route('students.index')
+              ->with('success', 'Siswa berhasil naik kelas!');
+        } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
+            return redirect()
+                ->route('students.index')
+                ->with('error', 'Dibatalkan!');
+        }
+    }
+
+    /**
+     * Update data siswa untuk turun kelas.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function turunKelas()
+    {
+        try {
+            return redirect()
+              ->route('students.index')
+              ->with('success', 'Fungsi belum ada!');
+        } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
+            return redirect()
+                ->route('students.index')
+                ->with('error', 'Dibatalkan!');
         }
     }
 
