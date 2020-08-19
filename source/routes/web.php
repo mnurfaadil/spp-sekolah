@@ -28,8 +28,10 @@ Route::resource('/majors', 'MajorController')->middleware('cekstatus');
 //angkatan
 Route::resource('/angkatan', 'AngkatanController')->middleware('cekstatus');
 //student
-Route::resource('students', 'StudentController')->middleware('cekstatus');
+Route::get('students/naik_kelas', 'StudentController@naikKelas')->name('students.naikkelas')->middleware('cekstatus');
+Route::get('students/turun_kelas', 'StudentController@turunKelas')->name('students.turunkelas')->middleware('cekstatus');
 Route::post('students_filter', 'StudentController@filter')->name('students.filter')->middleware('cekstatus');
+Route::resource('students', 'StudentController')->middleware('cekstatus');
 
 /**
  * Route resource untuk User
@@ -49,6 +51,7 @@ Route::get('financing/history/{id}', 'FinancingCategoryController@history')->mid
 Route::get('financing/ajax/periode/{id}', 'FinancingCategoryController@periode_ajax')->middleware('cekstatus');
 Route::get('financing/ajax/form/{id}', 'FinancingCategoryController@showForm')->middleware('cekstatus');
 Route::get('periode/{id}','PeriodeController@periode')->middleware('cekstatus');
+Route::get('periode/ajax/{id}','PeriodeController@ajax')->middleware('cekstatus');
 Route::get('periode/all/{category}','PeriodeController@all')->name('periode.all')->middleware('cekstatus');
 Route::get('periode/all/{category}/{jurusan}','PeriodeController@showAll')->name('periode.all.setting')->middleware('cekstatus');
 Route::put('periode/all/{category}/{jurusan}','PeriodeController@showAllUpdate')->name('periode.all.setting.update')->middleware('cekstatus');
@@ -84,6 +87,7 @@ Route::post('payment/details/store','PaymentController@cicilanStore')->name('pay
  */
 Route::get('payment/perbulan/{id}', 'PaymentController@showBulanan')->name('payment.monthly.show')->middleware('cekstatus');
 Route::get('payment/perbulan/detail/{payment}/{student}/{category}', 'PaymentController@showBulananDetail')->name('payment.monthly.show.detail')->middleware('cekstatus');
+Route::get('payment/perbulan/detail/ajax/{periode}', 'PaymentController@ajaxBulananDetail')->name('payment.monthly.ajax.detail')->middleware('cekstatus');
 Route::post('payment/perbulan/detail/','PaymentController@bulananStore')->name('payment.monthly.detail.store')->middleware('cekstatus');
 Route::put('payment/perbulan/detail/update','PaymentController@updateStatusBulanan')->name('payment.monthly.detail.update')->middleware('cekstatus');
 Route::post('payment/perbulan/detail/add','PaymentController@addPeriodeBulanan')->name('payment.monthly.detail.add')->middleware('cekstatus');
@@ -168,5 +172,3 @@ Route::post('/rekap_Pemasukan/export', 'MenuRekapController@pemasukan')->name('r
 Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->name('rekap.pengeluaran.export');
 Route::post('/rekap_bukbes/export', 'MenuRekapController@bukuBesar')->name('rekap.bukbes.export');
 Route::post('/rekap_tunggakan_export', 'MenuRekapController@tunggakan')->name('rekap.tunggakan.export');
-
-// Route::get('penyesuaian', 'PenyesuaianController@index');

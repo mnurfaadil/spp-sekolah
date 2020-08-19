@@ -660,25 +660,8 @@ class PaymentController extends Controller
         $data = Payment::where('financing_category_id', $id)
                 ->orderBy('updated_at','desc')
                 ->groupBy('student_id')
-                // ->first();
+                ->groupBy('financing_category_id')
                 ->get();
-                
-        // echo "<pre>";
-        // for ($i = 11, $j = 0; $i < 36; $j=$i+1, $i+=12) {
-        //     $b = $data->detail[$i]->bulan;
-        //     $a = $data->detail[$j]->bulan;
-        //     $d = $data->detail
-        //             ->where('bulan','<=', $b)
-        //             ->where('bulan','>=', $a);
-        //     return $d->where('status','!=','Lunas')->count();
-             
-        // }
-        // die;
-        // return $data->detail
-        //         ->where('bulan','<=','2022-06-01')
-        //         ->where('bulan','>','2021-06-01');
-        // return $data->detail[23]->bulan;
-        // return $data->detail->where('bulan','<=','2021-06-01')->count();
         $response = [];
         $no = 1;
         foreach($data as $i => $v) {
@@ -724,13 +707,14 @@ class PaymentController extends Controller
             $waiting = $v->detail->where('status','Waiting')->count();
 
             $tunggakan = "{$tunggakan_} Bulan";
-            $status = "<span class='badge' style='background-color:green'>Lunas</span>";
             if ($waiting > 0) {
                 $status = "<span class='badge' style='background-color:yellow;color:black'>Waiting</span>";
             }
             if ($tunggakan_ > 0) {
                 $tunggakan = "<span class='badge' style='background-color:red'>{$tunggakan_} Bulan</span>";
                 $status .= "<span class='badge' style='background-color:red'>Nunggak</span>";
+            } else {
+                $status = "<span class='badge' style='background-color:green'>{$tunggakan_} {$waiting} Lunas</span>";
             }
             
 
