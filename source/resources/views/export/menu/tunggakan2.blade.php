@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-SPP | Laporan Pengeluaran
+SPP | Laporan Tunggakan
 @endsection
 
 @section('content')

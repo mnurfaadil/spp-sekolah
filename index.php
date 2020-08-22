@@ -1,7 +1,7 @@
 <?php
 ini_set('memory_limit', '67108864');
 ini_set('max_execution_time', '3000');
-set_time_limit(300);
+set_time_limit(3000);
 /**
  * Laravel - A PHP Framework For Web Artisans
  *

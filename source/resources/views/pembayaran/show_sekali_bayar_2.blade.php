@@ -249,7 +249,7 @@ SPP | Pembayaran {{$financing->nama}}
     function addConfirm(data, nominal) {
         var raw_url = window.location.pathname;
         var url = raw_url.split("/");
-        url = window.location.origin+"/"+url[1]+"/"+url[2]+"/ajax/"+url[3]+"?id="+data;
+        url = window.location.origin+"/"+url[1]+"/ajax/"+url[2]+"?id="+data;
         $.get(url, function(resp){
             $('input[name=persentase]').val(resp.persentase);
             $('input[name=data]').attr('value', JSON.stringify(data));

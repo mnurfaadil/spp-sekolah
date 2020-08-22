@@ -133,23 +133,6 @@ class PaymentController extends Controller
         $cek = FinancingCategory::findOrFail($id);
         if($cek->jenis=="Bayar per Bulan")
         {
-           
-            // $datas=DB::table('students')
-            //             ->selectRaw('students.*,getNominalTerbayarBulanan(payments.id) AS terbayar, getCountBulananTidakTerbayar(payments.id) AS bulan_tidak_bayar, getCountNunggak(payments.id) as cekNunggak, getCountWaiting(payments.id) AS cekWaiting, majors.nama AS jurusan, getAkumulasiPerBulan(payments.id) AS akumulasi, financing_categories.`nama` AS financing_nama, financing_categories.id AS financing_id, payments.`id` AS payment_id, payments.`jenis_pembayaran`')
-            //             ->leftJoin('majors','majors.id','=','students.major_id')
-            //             ->leftJoin('payments','payments.student_id','=','students.id')
-            //             ->leftJoin('financing_categories','financing_categories.id','=','payments.financing_category_id')
-            //             ->leftJoin('payment_details','payment_details.payment_id','=','payments.id')
-            // $datas = Student::selectRaw('students.*, payments.*, financing_categories.id as financing_category_id, financing_categories.nama as kategori, financing_categories.jenis    ')
-            //                 ->join('payments','payments.student_id','=','students.id')
-            //                 ->join('financing_categories','financing_categories.id','=','payments.financing_category_id')
-            //                 ->groupBy('students.id')
-            //                 ->where('financing_categories.id',$cek->id)->get();
-
-            // $payments = Payment::where('financing_category_id', $id)->orderBy('updated_at','desc')->get();
-            
-            // $datas = $payments;
-
             $financing = $cek;
             
             $periode = PaymentPeriode::where('financing_category_id',$id)->count(); 
@@ -624,39 +607,6 @@ class PaymentController extends Controller
 
     public function ajaxIndexPerbulan($id)
     {
-        // $data = Payment::
-        //         selectRaw('
-        //             payments.id,
-        //             payments.student_id,
-        //             payments.financing_category_id,
-        //             students.nama,
-        //             students.kelas,
-        //             majors.inisial as jurusan,
-        //             financing_periodes.nominal,
-        //             (SELECT count(*) 
-        //             from payment_details
-        //             where payment_details.payment_id = payments.id
-        //             and status <> "Lunas"
-        //             ) as sisa_bulan,
-        //             (SELECT count(*) 
-        //             from payment_details
-        //             where payment_details.payment_id = payments.id
-        //             and status = "Nunggak"
-        //             ) as spp_nunggak,
-        //             (SELECT count(*) 
-        //             from payment_details
-        //             where payment_details.payment_id = payments.id
-        //             and status = "Waiting"
-        //             ) as spp_waiting
-        //         ')
-        //         ->join('students','payments.student_id','=','students.id')
-        //         ->join('majors','majors.id','=','students.major_id')
-        //         ->join('payment_details','payment_details.payment_id','=','payments.id')
-        //         ->join('financing_periodes','financing_periodes.id','=','payment_details.payment_periode_id')
-        //         ->where('payments.financing_category_id',$id)
-        //         ->orderBy('payments.updated_at','desc')
-        //         ->groupBy('students.id')
-        //         ->get();
         $data = Payment::where('financing_category_id', $id)
                 ->orderBy('updated_at','desc')
                 ->groupBy('student_id')
@@ -714,7 +664,7 @@ class PaymentController extends Controller
                 $tunggakan = "<span class='badge' style='background-color:red'>{$tunggakan_} Bulan</span>";
                 $status .= "<span class='badge' style='background-color:red'>Nunggak</span>";
             } else {
-                $status = "<span class='badge' style='background-color:green'>{$tunggakan_} {$waiting} Lunas</span>";
+                $status = "<span class='badge' style='background-color:green'>Lunas</span>";
             }
             
 
@@ -1324,40 +1274,6 @@ class PaymentController extends Controller
         $payments = Payment::where('id',$payment)->first();
         $payment_details = PaymentDetail::where('payment_id',$payment)->orderBy('bulan')->get();
         
-        //penyesuaian table
-        $payments = Payment::where('financing_category_id',50)->get();
-        
-        // echo '<pre>';
-        // foreach($payments as $val)
-        // {
-        //     $payment_details = PaymentDetail::where('payment_id',$val->id)->orderBy('bulan')->get();
-        //     $count = 0;
-        //     foreach ($payment_details as $key => $detail)
-        //     {
-        //         if ($key != 0 && $key%24==0 )
-        //         {
-        //             $bayar = $detail->periode->kelas_xii;
-        //             echo "xii";
-        //         } else if ($key != 0 && $key%12==0)
-        //         {
-        //             $bayar = $detail->periode->kelas_xi;
-        //             echo "xi";
-        //         } else if ($key == 0) {
-        //             $bayar = $detail->periode->kelas_x;
-        //             echo "x";
-        //         }
-        //         echo "pindah";
-        //         var_dump($bayar);
-        //         echo "<hr>";
-        //     }
-        //     die;
-        // }
-        // die;
-
-
-        // echo '<pre>';
-        // var_dump($payment_details);
-
         $date = $this->getTanggalHariIni();
         
         return view('pembayaran.detail_bulanan2', compact('financing','no','date','payment_details'));

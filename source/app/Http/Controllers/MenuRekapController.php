@@ -8,6 +8,7 @@ use App\Payment;
 use App\Pencatatan;
 use App\Expense;
 use App\Income;
+use App\ViewLaporanTunggakan;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -266,71 +267,41 @@ class MenuRekapController extends Controller
     public function ajaxTunggakanMaster($stat = 'Siswa')
     {
         if ($stat == 'Siswa') {
-            return DB::table('payment_details')
-                    ->select(DB::raw('financing_categories.id as financing_category_id,
-                    payment_details.id as detail_id, 
-                    payment_details.payment_id,
-                    payment_details.payment_periode_id,
-                    angkatans.id as angkatan_id,
-                    majors.id as major_id,
-                    students.nama as nama_murid,
-                    students.kelas,
-                    angkatans.angkatan,
-                    angkatans.tahun as tahun_angkatan,
-                    majors.inisial as inisial,
-                    majors.nama as jurusan,
-                    financing_categories.nama, 
-                    count(payment_details.status) as banyak_tunggakan,
-                    financing_periodes.nominal,
-                    getNominalCicilan(payment_details.id) as cicilan_dibayar,
-                    payments.jenis_pembayaran,
-                    payments.jenis_potongan,
-                    payments.nominal_potongan,
-                    payments.persentase,
-                    payment_details.status'))
-                    ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
-                    ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
-                    ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
-                    ->join('students', 'students.id', '=', 'payments.student_id')
-                    ->join('majors', 'majors.id', '=', 'students.major_id')
-                    ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-                    ->orderBy('students.id')
-                    ->groupBy('payment_details.payment_id')
-                    ->where('payment_details.status','<>','Lunas')
-                    ->get();
+            return ViewLaporanTunggakan::paginate(5);
         } else {
-            return DB::table('payment_details')
-                    ->select(DB::raw('financing_categories.id as financing_category_id,
-                    payment_details.id as detail_id, 
-                    payment_details.payment_id,
-                    payment_details.payment_periode_id,
-                    angkatans.id as angkatan_id,
-                    majors.id as major_id,
-                    students.nama as nama_murid,
-                    students.kelas,
-                    angkatans.angkatan,
-                    angkatans.tahun as tahun_angkatan,
-                    majors.inisial as inisial,
-                    majors.nama as jurusan,
-                    financing_categories.nama, 
-                    count(payment_details.status) as banyak_tunggakan,
-                    financing_periodes.nominal,
-                    getNominalCicilan(payment_details.id) as cicilan_dibayar,
-                    payments.jenis_pembayaran,
-                    payments.jenis_potongan,
-                    payments.nominal_potongan,
-                    payments.persentase,
-                    payment_details.status'))
-                    ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
-                    ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
-                    ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
-                    ->join('students', 'students.id', '=', 'payments.student_id')
-                    ->join('majors', 'majors.id', '=', 'students.major_id')
-                    ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-                    ->orderBy('financing_categories.id')
-                    ->groupBy('payment_details.payment_id')
-                    ->where('payment_details.status','<>','Lunas')
-                    ->get();
+            // return DB::raw('select (ROW_NUMBER() OVER (ORDER BY kategori)) as nomor, * from laporan_tunggakan order by kategori');
+            // return DB::table('payment_details')
+            //         ->select(DB::raw('financing_categories.id as financing_category_id,
+            //         payment_details.id as detail_id, 
+            //         payment_details.payment_id,
+            //         payment_details.payment_periode_id,
+            //         angkatans.id as angkatan_id,
+            //         majors.id as major_id,
+            //         students.nama as nama_murid,
+            //         students.kelas,
+            //         angkatans.angkatan,
+            //         angkatans.tahun as tahun_angkatan,
+            //         majors.inisial as inisial,
+            //         majors.nama as jurusan,
+            //         financing_categories.nama, 
+            //         count(payment_details.status) as banyak_tunggakan,
+            //         financing_periodes.nominal,
+            //         getNominalCicilan(payment_details.id) as cicilan_dibayar,
+            //         payments.jenis_pembayaran,
+            //         payments.jenis_potongan,
+            //         payments.nominal_potongan,
+            //         payments.persentase,
+            //         payment_details.status'))
+            //         ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+            //         ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
+            //         ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+            //         ->join('students', 'students.id', '=', 'payments.student_id')
+            //         ->join('majors', 'majors.id', '=', 'students.major_id')
+            //         ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+            //         ->orderBy('financing_categories.id')
+            //         ->groupBy('payment_details.payment_id')
+            //         ->where('payment_details.status','<>','Lunas')
+            //         ->get();
         }
         
     }

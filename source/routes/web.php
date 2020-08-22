@@ -172,3 +172,6 @@ Route::post('/rekap_Pemasukan/export', 'MenuRekapController@pemasukan')->name('r
 Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->name('rekap.pengeluaran.export');
 Route::post('/rekap_bukbes/export', 'MenuRekapController@bukuBesar')->name('rekap.bukbes.export');
 Route::post('/rekap_tunggakan_export', 'MenuRekapController@tunggakan')->name('rekap.tunggakan.export');
+
+// Route::get('penyesuaian', 'PenyesuaianController@index');
+// Route::get('penyesuaian/ajax', 'PenyesuaianController@ajax');
