@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Cicilan;
 use App\PaymentDetail;
 use App\Payment;
 use App\Pencatatan;
@@ -202,6 +203,7 @@ class MenuRekapController extends Controller
         $datas = DB::table('payment_details')
                     ->select(DB::raw('
                     financing_categories.nama, 
+                    financing_categories.jenis, 
                     count(payment_details.status) as banyak_tunggakan,
                     financing_periodes.nominal,
                     getNominalCicilan(payment_details.id) as cicilan_dibayar,
@@ -215,6 +217,7 @@ class MenuRekapController extends Controller
                     ->orderBy('financing_categories.id')
                     ->groupBy('payment_details.payment_id')
                     ->where('payment_details.status','<>','Lunas')
+                    ->where('financing_categories.jenis','<>','Bayar per Bulan')
                     ->get();
         $total = 0;
         foreach ($datas as $i => $data) {
@@ -223,7 +226,7 @@ class MenuRekapController extends Controller
             $potongan_ = intval($data->persentase) * intval($data->nominal) / 100;
 
             $bulan_spp = 36;
-            if ($data->nama === 'SPP')
+            if ($data->jenis === 'Bayar per Bulan')
             {
                 
                 $besaran_ = $bulan_spp * intval($data->nominal);
@@ -239,6 +242,78 @@ class MenuRekapController extends Controller
             
             $total += $sisa_;
         }
+        $datas = DB::table('payment_details')
+                    ->select(DB::raw('
+                    sum(payment_details.nominal_bayar) as besaran,
+                    sum(payment_details.nominal) as terbayar'))
+                    ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+                    ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
+                    ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+                    ->where('financing_categories.jenis','<>','Sekali Bayar')
+                    ->first();
+        $total = $total + (intval($datas->besaran) - intval($datas->terbayar));
+        return $total;
+    }
+
+    public static function nominalRekapTunggakanArray()
+    {
+        $datas = DB::table('payment_details')
+                    ->select(DB::raw('
+                    financing_categories.nama, 
+                    financing_categories.jenis, 
+                    count(payment_details.status) as banyak_tunggakan,
+                    financing_periodes.nominal,
+                    getNominalCicilan(payment_details.id) as cicilan_dibayar,
+                    payments.jenis_pembayaran,
+                    payments.jenis_potongan,
+                    payments.nominal_potongan,
+                    payments.persentase'))
+                    ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+                    ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
+                    ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+                    ->orderBy('financing_categories.id')
+                    ->groupBy('payment_details.payment_id')
+                    ->where('payment_details.status','<>','Lunas')
+                    ->where('financing_categories.jenis','<>','Bayar per Bulan')
+                    ->get();
+        $total = [0,0,0,0];
+        foreach ($datas as $i => $data) {
+            $besaran_ = intval($data->nominal);
+            $terbayar_ = $data->cicilan_dibayar == null ? 0 : intval($data->cicilan_dibayar);
+            $potongan_ = intval($data->persentase) * intval($data->nominal) / 100;
+
+            $bulan_spp = 36;
+            if ($data->jenis === 'Bayar per Bulan')
+            {
+                
+                // $besaran_ = $bulan_spp * intval($data->nominal);
+                // $terbayar_ = ($bulan_spp - intval($data->banyak_tunggakan)) * $besaran_;
+                // $potongan_ = 0;
+            }
+
+            if ($data->jenis_potongan === "nominal") {
+                $potongan_ = intval($data->nominal_potongan);
+            }
+
+            $sisa_ = $besaran_ - ( $terbayar_ + $potongan_ );
+            
+            $total[0] += $besaran_;
+            $total[1] += $potongan_;
+            $total[2] += $terbayar_;
+            $total[3] += $sisa_;
+        }
+        $datas = DB::table('payment_details')
+                    ->select(DB::raw('
+                    sum(payment_details.nominal_bayar) as besaran,
+                    sum(payment_details.nominal) as terbayar'))
+                    ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+                    ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
+                    ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+                    ->where('financing_categories.jenis','<>','Sekali Bayar')
+                    ->first();
+        $total [0] += intval($datas->besaran);
+        $total [2] += intval($datas->terbayar);
+        $total [3] += (intval($datas->besaran) - intval($datas->terbayar));
         return $total;
     }
 
@@ -266,44 +341,98 @@ class MenuRekapController extends Controller
 
     public function ajaxTunggakanMaster($stat = 'Siswa')
     {
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
+        $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
+        $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
         if ($stat == 'Siswa') {
-            return ViewLaporanTunggakan::paginate(5);
+            $sort = isset($_GET['sort']) ? $_GET['sort'] : 'student_id';
         } else {
-            // return DB::raw('select (ROW_NUMBER() OVER (ORDER BY kategori)) as nomor, * from laporan_tunggakan order by kategori');
-            // return DB::table('payment_details')
-            //         ->select(DB::raw('financing_categories.id as financing_category_id,
-            //         payment_details.id as detail_id, 
-            //         payment_details.payment_id,
-            //         payment_details.payment_periode_id,
-            //         angkatans.id as angkatan_id,
-            //         majors.id as major_id,
-            //         students.nama as nama_murid,
-            //         students.kelas,
-            //         angkatans.angkatan,
-            //         angkatans.tahun as tahun_angkatan,
-            //         majors.inisial as inisial,
-            //         majors.nama as jurusan,
-            //         financing_categories.nama, 
-            //         count(payment_details.status) as banyak_tunggakan,
-            //         financing_periodes.nominal,
-            //         getNominalCicilan(payment_details.id) as cicilan_dibayar,
-            //         payments.jenis_pembayaran,
-            //         payments.jenis_potongan,
-            //         payments.nominal_potongan,
-            //         payments.persentase,
-            //         payment_details.status'))
-            //         ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
-            //         ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
-            //         ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
-            //         ->join('students', 'students.id', '=', 'payments.student_id')
-            //         ->join('majors', 'majors.id', '=', 'students.major_id')
-            //         ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
-            //         ->orderBy('financing_categories.id')
-            //         ->groupBy('payment_details.payment_id')
-            //         ->where('payment_details.status','<>','Lunas')
-            //         ->get();
+            $sort = isset($_GET['sort']) ? $_GET['sort'] : 'financing_category_id';
         }
-        
+
+
+            $total = Payment::count();
+            $data = Payment::limit($limit)
+                    ->offset($offset)
+                    ->orderBy($sort, $order)
+                    ->get();
+            $rows  = [];
+            foreach ($data as $i => $v){
+                if ($v->category->jenis == "Bayar per Bulan") {
+                    $kelas_x = $v->detail[0]->periode->kelas_x;
+                    $kelas_xi = $v->detail[0]->periode->kelas_xi;
+                    $kelas_xii = $v->detail[0]->periode->kelas_xii;
+                    $besaran = $kelas_x*12 + $kelas_xi*12 + $kelas_xii*12;
+                    $potongan = 0;
+                    $terbayar = $v->detail->sum('nominal');
+                }
+                else
+                {
+                    $besaran = $v->detail[0]->periode->nominal;
+                    if ( $v->jenis_potongan == "persentase")
+                    {
+                        $potongan = (intval($v->persentase) / 100) * $besaran;
+                    }
+                    else
+                    {
+                        $potongan = intval($v->nominal_potongan);
+                    }
+                    $terbayar = $v->detail[0]->cicilan->sum('nominal');
+                }
+                $sisa = $besaran - ($potongan + $terbayar);
+                $angkatan = $v->student->angkatans->angkatan . " (" . $v->student->angkatans->tahun . ")";
+                $item = (object) array (
+                    'id'        => $v->id,
+                    'nama'      => $v->student->nama,
+                    'kategori'  => $v->category->nama,
+                    'kelas'     => $v->student->kelas,
+                    'jurusan'   => $v->student->major->inisial,
+                    'angkatan'  => $angkatan,
+                    'besaran'   => $besaran,
+                    'potongan'  => $potongan,
+                    'terbayar'  => $terbayar,
+                    'sisa'      => $sisa,
+                );
+                $rows[] = $item;
+            }
+            return [
+                'total' => $total,
+                'rows'  => $rows
+            ];
+
+        $data = Payment::all();
+        $total  = [0,0,0,0];
+        foreach ($data as $i => $v){
+            if ($v->category->jenis == "Bayar per Bulan") {
+                $kelas_x = $v->detail[0]->periode->kelas_x;
+                $kelas_xi = $v->detail[0]->periode->kelas_xi;
+                $kelas_xii = $v->detail[0]->periode->kelas_xii;
+                $besaran = $kelas_x*12 + $kelas_xi*12 + $kelas_xii*12;
+                $potongan = 0;
+                $terbayar = $v->detail->sum('nominal');
+            }
+            else
+            {
+                $besaran = $v->detail[0]->periode->nominal;
+                if ( $v->jenis_potongan == "persentase")
+                {
+                    $potongan = (intval($v->persentase) / 100) * $besaran;
+                }
+                else
+                {
+                    $potongan = intval($v->nominal_potongan);
+                }
+                $terbayar = $v->detail[0]->cicilan->sum('nominal');
+            }
+            $sisa = $besaran - ($potongan + $terbayar);
+            
+            $total[0] += $besaran;
+            $total[1] += $potongan;
+            $total[2] += $terbayar;
+            $total[3] += $sisa;
+        }
+        return $total;
     }
 
     public function indexTunggakanFilter(Request $request, $stat = 'Siswa')

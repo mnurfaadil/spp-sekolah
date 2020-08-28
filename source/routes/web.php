@@ -105,6 +105,7 @@ Route::get('expense/download/{path}', 'ExpenseController@download')->name('expen
  * Route resource untuk Pembayaran
  */ 
 Route::resource('rekap', 'RekapController');
+Route::get('rekap/ajax/custom_tunggakan', 'MenuRekapController@nominalRekapTunggakanArray');
 
 /**
  * Route resource untuk Pembayaran
@@ -173,5 +174,5 @@ Route::post('/rekap_Pengeluaran/export', 'MenuRekapController@pengeluaran')->nam
 Route::post('/rekap_bukbes/export', 'MenuRekapController@bukuBesar')->name('rekap.bukbes.export');
 Route::post('/rekap_tunggakan_export', 'MenuRekapController@tunggakan')->name('rekap.tunggakan.export');
 
-// Route::get('penyesuaian', 'PenyesuaianController@index');
-// Route::get('penyesuaian/ajax', 'PenyesuaianController@ajax');
+Route::get('penyesuaian', 'PenyesuaianController@index');
+Route::get('penyesuaian/ajax', 'PenyesuaianController@ajax');

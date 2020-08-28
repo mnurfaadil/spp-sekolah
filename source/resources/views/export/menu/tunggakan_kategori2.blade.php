@@ -46,30 +46,119 @@ SPP | Laporan Pengeluaran
                         <div class="datatable-dashv1-list custom-datatable-overright">
                             <div id="toolbar">
                             </div>
-                            <table id="table" data-toggle="table" data-pagination="true" data-search="true" 
-                            data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" 
-                            data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
-                            data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" 
-                            data-toolbar="#toolbar">
+                            <table id="table" 
+                            data-toggle="table" 
+                            data-pagination="true" 
+                            data-search="true" 
+                            data-show-columns="true"
+                            data-show-footer="true"
+                            data-show-pagination-switch="true" 
+                            data-show-refresh="true" 
+                            data-key-events="true" 
+                            data-show-toggle="true" 
+                            data-resizable="true" 
+                            data-side-pagination="server"
+                            data-url="/rekap_tunggakan/data_master/Kategori"
+                            data-footer-style="footerStyle"
+                            data-cookie="true"
+                            data-cookie-id-table="saveId" 
+                            data-show-export="true" 
+                            data-click-to-select="true" 
+                            data-toolbar="#toolbar" >
                                 <thead>
                                     <tr>
-                                        <th data-field="no"><div style="text-align:center;">No</div></th>
-                                        <th data-field="kategori"><div style="text-align:center;">Kategori</div></th>
-                                        <th data-field="nama"><div style="text-align:center;">Nama</div></th>
-                                        <th data-field="kelas"><div style="text-align:center;">Kelas</div></th>
-                                        <th data-field="jurusan"><div style="text-align:center;">Jurusan</div></th>
-                                        <th data-field="angkatan"><div style="text-align:center;">Angkatan</div></th>
-                                        <th data-field="besaran"><div style="text-align:center;">Besaran</div></th>
-                                        <th data-field="potongan"><div style="text-align:center;">Potongan</div></th>
-                                        <th data-field="terbayar"><div style="text-align:center;">Terbayar</div></th>
-                                        <th data-field="sisa"><div style="text-align:center;">Sisa</div></th>
+                                        <th data-checkbox="true" data-width="20" ></th>
+                                        <th data-field="id" data-visible="false" >Id</th>
+                                        <th data-formatter="runningFormatter" data-width="30"
+                                        data-halign="center" data-align="center">No</th>
+                                        <th data-field="kategori" data-width="100"
+                                        data-halign="center" data-align="center">Kategori</th>
+                                        <th data-field="nama" 
+                                        data-halign="center">Nama</th>
+                                        <th data-field="kelas" data-width="100"
+                                        data-halign="center" data-align="center">Kelas</th>
+                                        <th data-field="jurusan" data-width="100"
+                                        data-halign="center" data-align="center">Jurusan</th>
+                                        <th data-field="angkatan" data-width="100"
+                                        data-halign="center" data-align="center">Angkatan</th>
+                                        <th data-field="besaran" data-halign="center" data-width="150"
+									    data-align="right" data-footer-formatter="totalFormatter"
+										data-formatter="parseRupiah">Besaran</th>
+                                        <th data-field="potongan" data-halign="center" data-width="150"
+									    data-align="right" data-footer-formatter="totalFormatter"
+										data-formatter="parseRupiah">Potongan</th>
+                                        <th data-field="terbayar" data-halign="center" data-width="150"
+									    data-align="right" data-footer-formatter="totalFormatter"
+										data-formatter="parseRupiah">Terbayar</th>
+                                        <th data-field="sisa" data-halign="center" data-width="150"
+									    data-align="right" data-footer-formatter="totalFormatter"
+										data-formatter="parseRupiah">Sisa</th>
                                     </tr>
                                 </thead>
+                                <tfoot></tfoot>
                             </table>
                                     <div class="container-sm" style="margin-top:10px">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <div style="float:right; margin-right:20%">
+                                                <!-- <div style="float:right; margin-right:20%">
+                                                    <div class="row">
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Besaran Keseluruhan </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:20px;">
+                                                                                <strong id="besaran_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Potongan Keseluruhan  </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:20px;">
+                                                                                <strong id="potongan_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Terbayar Keseluruhan </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:20px;">
+                                                                                <strong id="terbayar_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Sisa Keseluruhan </td>
+                                                                    <td>:</td>
+                                                                    <td>Rp.</td>
+                                                                    <td>
+                                                                        <div style="text-align: right">
+                                                                            <span class="" style="font-size:24px;color:red">
+                                                                                <strong id="sisa_view_2"></strong>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div> -->
+                                            </div>
+                                            <div class="col-md-6">
+                                            <div style="float:right; margin-right:20%">
                                                     <div class="row">
                                                         <table>
                                                             <tbody>
@@ -125,9 +214,7 @@ SPP | Laporan Pengeluaran
                                                         </table>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div style="float:right; margin-right:20%">
+                                                <!-- <div style="float:right; margin-right:20%">
                                                     <div class="row">
                                                         <table>
                                                             <tbody>
@@ -182,7 +269,7 @@ SPP | Laporan Pengeluaran
                                                             </tbody>
                                                         </table>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
@@ -270,99 +357,36 @@ SPP | Laporan Pengeluaran
         <!-- Custom Script -->
         <!-- ============================================ -->
         <script>
-            function setTable(data) {    
-                var content = [];
-                var no = 0;
-                var total = [0,0,0,0];
-                var total_ = [0,0,0,0];
-
-                var limit = 10;
-                $.each(data, function(i, v){
-                    no += 1;
-
-                    var besaran_ = parseInt(v.nominal);
-                    var terbayar_ = v.cicilan_dibayar == null ? 0 : parseInt(v.cicilan_dibayar);
-                    var potongan_ = parseInt(v.persentase) * parseInt(v.nominal) / 100;
-
-                    var bulan_spp = 36;
-                    if (v.nama == 'SPP')
-                    {
-                        
-                        besaran_ = bulan_spp * parseInt(v.nominal);
-                        terbayar_ = (bulan_spp - parseInt(v.banyak_tunggakan)) * besaran_;
-                        potongan_ = 0;
-                    }
-
-                    if (v.jenis_potongan === "nominal") {
-                        potongan_ = parseInt(v.nominal_potongan);
-                    }
-
-                    var sisa_ = besaran_ - ( terbayar_ + potongan_ );
-                    
-                    total[0] += besaran_;
-                    total[1] += potongan_;
-                    total[2] += terbayar_;
-                    total[3] += sisa_;
-
-                    if (i < limit)
-                    {
-                        total_[0] += besaran_;
-                        total_[1] += potongan_;
-                        total_[2] += terbayar_;
-                        total_[3] += sisa_;
-                    }
-
-                    var besaran = parseRupiah(besaran_);
-                    var potongan = parseRupiah(potongan_);
-                    var terbayar = parseRupiah(terbayar_);
-                    var sisa = parseRupiah(sisa_);
-
-                    var temp = {
-                        id : v.detail_id,
-                        _besaran : besaran_,
-                        _potongan : potongan_,
-                        _terbayar : terbayar_,
-                        _sisa : sisa_,
-                        no : no,
-                        nama : v.nama_murid,
-                        kelas : `${v.kelas}`,
-                        jurusan : `${v.inisial}`,
-                        angkatan : `${v.angkatan} (${v.tahun_angkatan})`,
-                        kategori : `${v.nama}`,
-                        besaran :   
-                        `<div style="text-align:right">
-                            ${besaran}
-                        </div>`,
-                        potongan :
-                        `<div style="text-align:right">
-                            ${potongan}
-                        </div>`,
-                        terbayar :
-                        `<div style="text-align:right">
-                            ${terbayar}
-                        </div>`,
-                        sisa :
-                        `<div style="text-align:right">
-                            ${sisa}
-                        </div>`
-                    }
-
-                    content.push(temp);
-                });
-                table.bootstrapTable('destroy').bootstrapTable({
-                    exportTypes: ['excel', 'pdf'],
-                    data: content
-                });
-                $('#besaran_view_2').html(parseRupiah(total[0]));
-                $('#potongan_view_2').html(parseRupiah(total[1]));
-                $('#terbayar_view_2').html(parseRupiah(total[2]));
-                $('#sisa_view_2').html(parseRupiah(total[3]));
-                
-                $('#besaran_view').html(parseRupiah(total_[0]));
-                $('#potongan_view').html(parseRupiah(total_[1]));
-                $('#terbayar_view').html(parseRupiah(total_[2]));
-                $('#sisa_view').html(parseRupiah(total_[3]));
-
+            function idFormatter() {
+                return '-'
+            }
+            function parseRupiah (bilangan)
+            {
+                var	reverse = bilangan.toString().split('').reverse().join(''),
+                    ribuan 	= reverse.match(/\d{1,3}/g);
+                    ribuan	= ribuan.join('.').split('').reverse().join('');
+                return ribuan;
+            }
+            function totalFormatter(data) {
+                var field = this.field
+                let d = data[0];
+                if (d != undefined) {
+                    return '<b>' + 'Rp. ' + parseRupiah(data.map(function (row) {
+                        return +row[field]
+                    }).reduce(function (sum, i) {
+                        return sum + i
+                    }, 0)) + '&nbsp;&nbsp;</b>'
+                }
+            }
+            function runningFormatter(value, row, index) {
+                $table = $('#table'); // your tablegrid id
+                var tableOptions = $table.bootstrapTable('getOptions');
+                return ((tableOptions.pageNumber-1) * tableOptions.pageSize)+(1 + index);
+            }
+            function footerStyle(column) {
+                return {
+                    css: { 'width': '100%' },
+                }
             }
             function change_filter() {
                 var filter = $('#filter').val();
@@ -469,6 +493,12 @@ SPP | Laporan Pengeluaran
                 let search = document.getElementsByClassName('search');
                 let form = search[0].lastChild;
                 form.addEventListener("keyup", change_search);
+                $.get('{{ url('') }}/rekap/ajax/custom_tunggakan', function(data){
+                    $('#besaran_view_2').html(parseRupiah(data[0]));
+                    $('#potongan_view_2').html(parseRupiah(data[1]));
+                    $('#terbayar_view_2').html(parseRupiah(data[2]));
+                    $('#sisa_view_2').html(parseRupiah(data[3]));
+                })
             });
 
             var table = $('#table');

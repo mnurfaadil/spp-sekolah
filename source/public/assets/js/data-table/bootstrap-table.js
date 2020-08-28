@@ -2279,7 +2279,7 @@
 
         this.$body.find('>tr:first-child:not(.no-records-found) > *').each(function (i) {
             var $this = $(this);
-
+            console.log($this.innerWidth());
             $footerTd.eq(i).find('.fht-cell').width($this.innerWidth());
         });
     };

@@ -90,6 +90,10 @@ class PeriodeController extends Controller
         $request->nominal = isset($request->nominal) ? $request->nominal : $request->kelas_x;
         $periode = PaymentPeriode::findOrFail($request->id);
         $category = FinancingCategory::findOrFail($periode->financing_category_id);
+        $details = PaymentDetail::where('payment_periode_id', $periode->id)
+                    ->orderBy('payment_id')
+                    ->orderBy('bulan')
+                    ->get();
         $temp = $category->nama;
         $category->nama = "";
         $category->save();
@@ -100,6 +104,32 @@ class PeriodeController extends Controller
         $periode->kelas_xi = isset($request->kelas_xi) ? $request->kelas_xi : 0;
         $periode->kelas_xii = isset($request->kelas_xii) ? $request->kelas_xii : 0;
         $periode->save();
+        $cek = 0;
+        foreach($details as $i => $v )
+        {
+            if ($category->jenis == "Bayar per Bulan")
+            {
+                if ($cek < 12){
+                    $n = $periode->kelas_x;
+                }elseif ($cek < 24){
+                    $n = $periode->kelas_xi;
+                }else{
+                    $n = $periode->kelas_xii;
+                }
+                $cek++;
+                if ($cek == 36){
+                    $cek = 0;
+                }
+            } else {
+                $n = $periode->nominal;
+            }
+            
+            if ($v->status != 'Lunas')
+            {
+                $v->nominal_bayar = $n;
+                $v->save();
+            }
+        }
         return redirect()
             ->route('periode.all.setting', [$request->kategori, $request->jurusan])
             ->with('success','Nominal berhasil diubah');

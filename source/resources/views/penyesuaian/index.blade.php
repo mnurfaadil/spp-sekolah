@@ -41,7 +41,7 @@ SPP | Pengeluaran
                             data-show-toggle="true" 
                             data-resizable="true" 
                             data-side-pagination="server"
-							data-url="/penyesuaian/ajax"
+							              data-url="/penyesuaian/ajax"
                             data-cookie="true"
                             data-cookie-id-table="saveId" 
                             data-show-export="true" 
