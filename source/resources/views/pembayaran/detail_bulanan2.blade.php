@@ -474,6 +474,7 @@ $bulan = ['',"Januari", "Februari", "Maret","April","Mei","Juni","Juli","Agustus
     function addConfirm(id){
         $.get(`{{ url('')}}/payment/perbulan/detail/ajax/${id}?stat=true`, function (response) {
             var data = JSON.parse(response);
+            console.log(data);
             $('#besaran_history_modal').html(data.nominal_bayar_format);
             $('input[type=hidden][name=nominal_bayar]').attr('value',data.nominal_bayar);
             $('input[name=id]').attr('value',data.data.id);

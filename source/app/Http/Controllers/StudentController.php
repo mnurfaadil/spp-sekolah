@@ -245,7 +245,7 @@ class StudentController extends Controller
             $student->nama = $req['nama'];
             $student->nis = $req['nis'];
             $student->jenis_kelamin = $req['jenis_kelamin'];
-            $student->major_id = $req['major_id'];
+            // $student->major_id = $req['major_id']; //disable update di kolom jurusan
             $student->kelas = $req['kelas'];
             $student->phone = $req['phone'];
             $student->email = $req['email'];

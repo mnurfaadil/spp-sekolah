@@ -279,7 +279,7 @@ SPP | Siswa
                                 <label class="control-label col-md-2">Jurusan<kode>*</kode></label>
                                 <div class="chosen-select-single mg-b-20">
                                     <select class="chosen-select" name="major_id" id="major_id_edit"
-                                        required>
+                                        disabled readonly>
                                         <option value="">-- Pilih Jurusan --</option>
                                         @if(isset($majors))
                                         @foreach($majors as $d)

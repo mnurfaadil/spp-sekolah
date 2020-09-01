@@ -1283,14 +1283,21 @@ class PaymentController extends Controller
     {
         if (isset($_GET['stat'])) {
             $detail = PaymentDetail::find($periode);
+            $jur = $detail->payment->student->major_id;
+            $akt = $detail->payment->student->angkatan_id;
+            $cat = $detail->payment->financing_category_id;
+            $per = PaymentPeriode::where('major_id', $jur)
+                    ->where('angkatan_id',$akt)
+                    ->where('financing_category_id', $cat)
+                    ->first();
             $cek = PaymentDetail::where('payment_id', $detail->payment_id)
                     ->where('bulan','<=',$detail->bulan)
                     ->count();
-            $nominal = $detail->periode->kelas_xii;
+            $nominal = $per->kelas_xii;
             if ($cek < 13) {
-                $nominal = $detail->periode->kelas_x;
+                $nominal = $per->kelas_x;
             } else if ($cek < 25) {
-                $nominal = $detail->periode->kelas_xi;
+                $nominal = $per->kelas_xi;
             }
             $response = (object) array(
                 'status' => 'OK',

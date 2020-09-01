@@ -351,58 +351,22 @@ class MenuRekapController extends Controller
             $sort = isset($_GET['sort']) ? $_GET['sort'] : 'financing_category_id';
         }
 
-
-            $total = Payment::count();
+        if ( $search=='' ) {
             $data = Payment::limit($limit)
                     ->offset($offset)
                     ->orderBy($sort, $order)
                     ->get();
-            $rows  = [];
-            foreach ($data as $i => $v){
-                if ($v->category->jenis == "Bayar per Bulan") {
-                    $kelas_x = $v->detail[0]->periode->kelas_x;
-                    $kelas_xi = $v->detail[0]->periode->kelas_xi;
-                    $kelas_xii = $v->detail[0]->periode->kelas_xii;
-                    $besaran = $kelas_x*12 + $kelas_xi*12 + $kelas_xii*12;
-                    $potongan = 0;
-                    $terbayar = $v->detail->sum('nominal');
-                }
-                else
-                {
-                    $besaran = $v->detail[0]->periode->nominal;
-                    if ( $v->jenis_potongan == "persentase")
-                    {
-                        $potongan = (intval($v->persentase) / 100) * $besaran;
-                    }
-                    else
-                    {
-                        $potongan = intval($v->nominal_potongan);
-                    }
-                    $terbayar = $v->detail[0]->cicilan->sum('nominal');
-                }
-                $sisa = $besaran - ($potongan + $terbayar);
-                $angkatan = $v->student->angkatans->angkatan . " (" . $v->student->angkatans->tahun . ")";
-                $item = (object) array (
-                    'id'        => $v->id,
-                    'nama'      => $v->student->nama,
-                    'kategori'  => $v->category->nama,
-                    'kelas'     => $v->student->kelas,
-                    'jurusan'   => $v->student->major->inisial,
-                    'angkatan'  => $angkatan,
-                    'besaran'   => $besaran,
-                    'potongan'  => $potongan,
-                    'terbayar'  => $terbayar,
-                    'sisa'      => $sisa,
-                );
-                $rows[] = $item;
-            }
-            return [
-                'total' => $total,
-                'rows'  => $rows
-            ];
+        } else {
+            $data = Payment::limit($limit)
+                    ->join('students', 'students.id', '=', 'payments.student_id')
+                    ->offset($offset)
+                    ->where('students.nama', 'like', '%' .$search. '%')
+                    ->get();
+        }
 
-        $data = Payment::all();
-        $total  = [0,0,0,0];
+        $total = Payment::count();
+        
+        $rows  = [];
         foreach ($data as $i => $v){
             if ($v->category->jenis == "Bayar per Bulan") {
                 $kelas_x = $v->detail[0]->periode->kelas_x;
@@ -426,13 +390,25 @@ class MenuRekapController extends Controller
                 $terbayar = $v->detail[0]->cicilan->sum('nominal');
             }
             $sisa = $besaran - ($potongan + $terbayar);
-            
-            $total[0] += $besaran;
-            $total[1] += $potongan;
-            $total[2] += $terbayar;
-            $total[3] += $sisa;
+            $angkatan = $v->student->angkatans->angkatan . " (" . $v->student->angkatans->tahun . ")";
+            $item = (object) array (
+                'id'        => $v->id,
+                'nama'      => $v->student->nama,
+                'kategori'  => $v->category->nama,
+                'kelas'     => $v->student->kelas,
+                'jurusan'   => $v->student->major->inisial,
+                'angkatan'  => $angkatan,
+                'besaran'   => $besaran,
+                'potongan'  => $potongan,
+                'terbayar'  => $terbayar,
+                'sisa'      => $sisa,
+            );
+            $rows[] = $item;
         }
-        return $total;
+        return [
+            'total' => $total,
+            'rows'  => $rows
+        ];
     }
 
     public function indexTunggakanFilter(Request $request, $stat = 'Siswa')
