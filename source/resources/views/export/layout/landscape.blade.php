@@ -70,8 +70,7 @@
     <header class="clearfix">
       <div >
         <div style="float:left;padding-right:20px;">
-        <br>
-          <img style="height:70; width:70;" src="{{asset('assets/img/logo/bbl.png')}}"/>
+          <img style="height:70px; width:70px; margin: 5px;" src="{{asset('assets/img/logo/bbl.png')}}"/>
           <!-- <img style="height:70; width:70;" src="{{public_path('assets\img\logo\bbl.png')}}"/> -->
         </div>
         <div style="padding-top:10">

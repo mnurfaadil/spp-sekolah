@@ -176,3 +176,122 @@ Route::post('/rekap_tunggakan_export', 'MenuRekapController@tunggakan')->name('r
 
 Route::get('penyesuaian', 'PenyesuaianController@index');
 Route::get('penyesuaian/ajax', 'PenyesuaianController@ajax');
+
+
+use Illuminate\Support\Facades\DB;
+Route::get('penyesuaian/print', function() {
+    $title = "Laporan Tunggakan";
+    $datas = DB::table('payment_details')
+            ->select(DB::raw('students.nama as nama_murid,
+            financing_categories.nama as nama_kategori,
+	financing_categories.id as financing_category_id,
+	financing_categories.jenis as jenis_kategori,
+            payment_details.id, 
+            payment_details.payment_id,
+            payment_details.payment_periode_id,
+            angkatans.id as angkatan_id,
+            majors.id as major_id,
+            students.kelas,
+            students.id as student_id,
+            angkatans.angkatan,
+            angkatans.tahun as tahun_angkatan,
+            majors.inisial as inisial,
+            majors.nama as jurusan, 
+            count(payment_details.status) as banyak_tunggakan,
+            financing_periodes.nominal,
+            financing_periodes.kelas_x,
+            financing_periodes.kelas_xi,
+            financing_periodes.kelas_xii,
+            getNominalCicilan(payment_details.id) as cicilan_dibayar,
+            payments.jenis_pembayaran,
+            payments.persentase,
+            payments.nominal_potongan,
+		payments.jenis_potongan,
+	sum(payment_details.nominal) as nominal_detail,
+	sum(cicilans.nominal) as nominal_cicilan,
+            payment_details.status'))
+            ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+            ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
+            ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+            ->join('students', 'students.id', '=', 'payments.student_id')
+            ->join('majors', 'majors.id', '=', 'students.major_id')
+            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+            ->leftJoin('cicilans', 'cicilans.payment_detail_id', '=', 'payment_details.id')
+            ->orderBy('students.nama', 'asc')
+            ->orderBy('financing_categories.nama', 'asc')
+            ->groupBy('payments.id')
+            ->where('payment_details.status','<>','Lunas')
+            ->where('angkatans.tahun', '=', '2019')
+            ->where('financing_periodes.nominal', '<>', '0')
+            ->get();
+    return view('export.coba', compact('title', 'datas'));
+});
+
+Route::get('penyesuaian/print/tunggakan/{kategori?}', function($kategori = "SPP") {
+    $title = "Laporan Tunggakan";
+    $datas = DB::table('payment_details')
+            ->select(DB::raw('students.nama as nama_murid,
+            financing_categories.nama as nama_kategori,
+	financing_categories.id as financing_category_id,
+	financing_categories.jenis as jenis_kategori,
+            payment_details.id, 
+            payment_details.payment_id,
+            payment_details.payment_periode_id,
+            angkatans.id as angkatan_id,
+            majors.id as major_id,
+            students.kelas,
+            students.id as student_id,
+            angkatans.angkatan,
+            angkatans.tahun as tahun_angkatan,
+            majors.inisial as inisial,
+            majors.nama as jurusan, 
+            count(payment_details.status) as banyak_tunggakan,
+            financing_periodes.nominal,
+            financing_periodes.kelas_x,
+            financing_periodes.kelas_xi,
+            financing_periodes.kelas_xii,
+            getNominalCicilan(payment_details.id) as cicilan_dibayar,
+            payments.jenis_pembayaran,
+            payments.persentase,
+            payments.nominal_potongan,
+		payments.jenis_potongan,
+	sum(payment_details.nominal) as nominal_detail,
+	sum(cicilans.nominal) as nominal_cicilan,
+            payment_details.status'))
+            ->join('payments', 'payments.id', '=', 'payment_details.payment_id')
+            ->join('financing_periodes', 'financing_periodes.id', '=', 'payment_details.payment_periode_id')
+            ->join('financing_categories', 'financing_categories.id', '=', 'payments.financing_category_id')
+            ->join('students', 'students.id', '=', 'payments.student_id')
+            ->join('majors', 'majors.id', '=', 'students.major_id')
+            ->join('angkatans', 'angkatans.id', '=', 'students.angkatan_id')
+            ->leftJoin('cicilans', 'cicilans.payment_detail_id', '=', 'payment_details.id')
+            ->orderBy('students.angkatan_id', 'desc')
+            ->orderBy('students.nama', 'asc')
+            // ->orderBy('financing_categories.nama', 'asc')
+            ->groupBy('payments.id')
+            // ->where('payment_details.status','<>','Lunas')
+            ->where('financing_categories.nama','=',$kategori)
+            // ->where('angkatans.tahun', '=', '2019')
+            ->where('financing_periodes.nominal', '<>', '0')
+            // ->first();
+            ->get();
+    // dd($datas);
+    return view('export.coba', compact('title', 'datas'));
+});
+
+Route::get('penyesuaian/print/buku-besar/{keyword?}', function($tahun="2019") {
+    $title = "Laporan Buku Besar";
+    $datas = DB::table('pencatatans')
+            ->whereYear('pencatatans.created_at', '=', $tahun)
+            ->orderBy('pencatatans.created_at', 'desc')
+            ->get();
+    return view('export.coba_buku', compact('title', 'datas'));
+});
+Route::get('penyesuaian/print/pemasukan/{keyword?}', function($tahun="2019") {
+    $title = "Laporan Pemasukan";
+    $datas = DB::table('incomes')
+            ->whereYear('incomes.created_at', '=', $tahun)
+            ->orderBy('incomes.created_at', 'desc')
+            ->get();
+    return view('export.coba_pemasukan', compact('title', 'datas'));
+});

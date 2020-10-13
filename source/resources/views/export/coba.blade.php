@@ -1,302 +1,200 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('export.layout.landscape')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+@section('title-html')
+{{$title}}
+@endsection
+
+@section('title')
+{{$title}}
+@endsection
+
+@section('content')
+<table class="table1">
+    <thead>
+        <th data-field="no"><div style="text-align:center;">No</div></th>
+        <th data-field="tanggal"><div style="text-align:center;">Nama</div></th>
+        <th data-field="kategori"><div style="text-align:center;">Kategori</div></th>
+        <th data-field="deskripsi"><div style="text-align:center;">Kelas</div></th>
+        <th data-field="jurusan"><div style="text-align:center;">Jurusan</div></th>
+        <th data-field="angkatan"><div style="text-align:center;">Angkatan</div></th>
+        <th data-field="besaran"><div style="text-align:center;">Besaran</div></th>
+        <th data-field="potongan"><div style="text-align:center;">Potongan</div></th>
+        <th data-field="terbayar"><div style="text-align:center;">Terbayar</div></th>
+        <th data-field="sisa"><div style="text-align:center;">Sisa</div></th>
+    </thead>
+    @php
+    $no = 1;
+    $total = [0,0,0,0];
+    $rowTotal = [0,0,0,0];
+    $tData = $datas[0];
+    $stat = false;
+    @endphp
+    @foreach($datas as $i => $data)
+    @php
+        if ($data->jenis_kategori == "Bayar per Bulan") {
+            $kelas_x = $data->kelas_x;
+            $kelas_xi = $data->kelas_xi;
+            $kelas_xii = $data->kelas_xii;
+            $besaran = $kelas_x*12 + $kelas_xi*12 + $kelas_xii*12;
+            $potongan = 0;
+            $terbayar = $data->nominal_detail;
+        }
+        else
+        {
+            $besaran = $data->nominal;
+            if ( $data->jenis_potongan == "persentase")
+            {
+                $potongan = (intval($data->persentase) / 100) * $besaran;
+            }
+            else
+            {
+                $potongan = intval($data->nominal_potongan);
+            }
+            $terbayar = $data->nominal_cicilan;
+        }
+        $sisa = $besaran - ($potongan + $terbayar);
+        if ($sisa != 0) {
+            $total[0] += (int) $besaran;
+            $total[1] += (int) $potongan;
+            $total[2] += (int) $terbayar;
+            $total[3] += (int) $sisa;
+            
+            $rowTotal[0] += (int) $besaran;
+            $rowTotal[1] += (int) $potongan;
+            $rowTotal[2] += (int) $terbayar;
+            $rowTotal[3] += (int) $sisa;
+            if($i==0 || $data->student_id == $tData->student_id ) {
+                
+                $stat = false;
+                if(isset($datas[$i+1]) && $datas[$i+1]->student_id != $tData->student_id){
+                    $stat = true;
+                }
+                
+            }else{
+                $stat = true;
+                $tData = $datas[$i];
+            }
+        }
+    @endphp
+        
+        @if($sisa != 0)
+        <tr>
+            <td>{{$no++}}</td>
+            <td >{{$data->nama_murid}}</td>
+            <td ><div style="text-align:center;">{{$data->nama_kategori}}</div></td>
+            <td ><div style="text-align:center;">{{$data->kelas}}</div></td>
+            <td ><div style="text-align:center;">{{$data->inisial}}</div></td>
+            <td ><div style="text-align:center;">{{$data->angkatan}} ({{$data->tahun_angkatan}})</div></td>
+            <td ><div style="text-align:right;">{{number_format($besaran,0,',','.')}}</div></td>
+            <td ><div style="text-align:right;">{{number_format($potongan,0,',','.')}}</div></td>
+            <td ><div style="text-align:right;">{{number_format($terbayar,0,',','.')}}</div></td>
+            <td ><div style="text-align:right;">{{number_format($sisa,0,',','.')}}</div></td>
+        </tr>
+        @if($stat)
+        <tr class="footer-section">
+            <th colspan="6" style="text-align:center"><span style="font-size:20px;font-weight:bold;">Total Tunggakan Siswa </span></th>
+            <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($rowTotal[0],0,',','.')}}</th>
+            <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($rowTotal[1],0,',','.')}}</th>
+            <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($rowTotal[2],0,',','.')}}</th>
+            <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($rowTotal[3],0,',','.')}}</th>
+            <th>&nbsp;</th>
+        </tr>
+        @php
+            $rowTotal = [0,0,0,0];
+        @endphp
+        @endif
+        @endif
+    @endforeach
+    <tr class="footer-section">
+        <th colspan="6" style="text-align:center"><span style="font-size:20px;font-weight:bold;">Total </span></th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[0],0,',','.')}}</th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[1],0,',','.')}}</th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[2],0,',','.')}}</th>
+        <th style="text-align:right;font-size:12pt;font-weight:bold;">{{number_format($total[3],0,',','.')}}</th>
+        <th>&nbsp;</th>
+    </tr>
+</table>
+<small><span style="font-style:italic">Dicetak pada {{now()}}</span></small>
+
+
+@endsection
+
+@push('custom-style')
     <style>
-        @page {
-            margin: 70px 50px;
-        }
+        @media print {
+            @page {size: landscape}
+            
+            body {
+                margin: 0;
+                color: #000;
+                background-color: #fff;
+            }
+            .page_break { page-break-before: always; }
 
-        header {
-            position: fixed;
-            top: -70px;
-            left: 0px;
-            right: 0px;
-            background-color: lightblue;
-            height: 70px;
-        }
+            .garis_dua{ 
+                border: 0;
+                border-top: 5px double #8c8c8c;
+            }
 
-        footer {
-            position: fixed;
-            bottom: -70px;
-            left: 0px;
-            right: 0px;
-            background-color: lightblue;
-            height: 70px;
-        }
+            .table1 {
+                font-family: serif;
+                font-size: 11pt;
+                color: #444;
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #f2f5f7;
+            }
+            
+            .table1 tr th{
+                /* background: #35A9DB; */
+                font-weight: bold;
+                color: black;
+            }
 
-        table {
-            border-collapse: collapse;
-        }
+            .table1 tr td{
+                font-size:10pt;
+            }
 
-        .page {
-            page-break-after: always;
-        }
+            .table1 tr th .footer-right{
+                background-color: #F0FFFF;
+                font-weight: bold;
+                font-size:10pt;
+                text-align:right;
+                color: black;
+            }
+            
+            .page { width: 100%; height: 100%; }
 
-        .page:last-child {
-            page-break-after: never;
-        }
+            .table1, th, td {
+                padding: 8px 14px;
+                text-align: center;
+                font-size: 12pt;
+            }
+            
+            .table1 tr:hover {
+                background-color: #f5f5f5;
+            }
+            
+            .table1 tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            .table-content tr td{
+            font-size: 10pt;
+            }
+            .row-content td{
+            font-size: 10pt;
+            }
 
-        .box {
-            height: 65mm;
-            width: 85mm;
-            background-color: pink;
-            margin: auto;
-        }
+            .table1 .footer-section {
 
-        .box-logo {
-            height: 64px;
-            width: 128px;
-            background-color: pink;
-            margin: auto;
-        }
+            }
 
-        .box-logo-left{
-            height: 64px;
-            width: 128px;
-            background-color: pink;
-        }
-
-        .box-potrait{
-            height: 170mm;
-            width: 126mm;
-            background-color: pink;
-            margin: auto;
-        }
-
-        .box-landscape{
-            height: 124mm;
-            width: 166mm;
-            background-color: pink;
-            margin: auto;
-        }
-
-        .profil-foto {
-            margin-top: 20px;
-        }
-
-        .profil-foto .title {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .foto {
-            padding-top: 5px;
-            padding-bottom: 5px;
-            background-color: cyan;
-        }
-
-        .description {
-            text-align: center;
         }
     </style>
-</head>
+@endpush
 
-<body>
-    <main>
-        <div class="page">
-            <div class="profil">
-                <table border="1" width="100%">
-                    <tr >
-                        <th rowspan="3" width="50%">
-                            <div class="box-logo">&nbsp;</div>
-                        </th>
-                        <th width="22%">SITE ID</th>
-                        <td width="28%">_ID_SITUS_</td>
-                    </tr>
-                    <tr>
-                        <th >SITE NAME</th>
-                        <td >_nama_situs_</td>
-                    </tr>
-                    <tr>
-                        <th >TOWER TYPE</th>
-                        <td >_jenis_tower_</td>
-                    </tr>
-                    <tr>
-                        <td>_judul_</td>
-                        <th>DATA ISSUED</th>
-                        <td>_tanggal_dibuat_</td>
-                    </tr>
-                    <tr>
-                        <td><b>Addres : </b>_alamat_</td>
-                        <th>DATA REVISION</th>
-                        <td>_tanggal_direvisi_optional_</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="profil-foto">
-                <div class="title">_title_</div>
-                <div class="box-potrait"></div>
-            </div>
-        </div>
-        <div class="page">
-            <div class="profil">
-                <table border="1" width="100%">
-                    <tr >
-                        <th rowspan="3" width="50%">
-                            <div class="box-logo">&nbsp;</div>
-                        </th>
-                        <th width="22%">SITE ID</th>
-                        <td width="28%">_ID_SITUS_</td>
-                    </tr>
-                    <tr>
-                        <th >SITE NAME</th>
-                        <td >_nama_situs_</td>
-                    </tr>
-                    <tr>
-                        <th >TOWER TYPE</th>
-                        <td >_jenis_tower_</td>
-                    </tr>
-                    <tr>
-                        <td>_judul_</td>
-                        <th>DATA ISSUED</th>
-                        <td>_tanggal_dibuat_</td>
-                    </tr>
-                    <tr>
-                        <td><b>Addres : </b>_alamat_</td>
-                        <th>DATA REVISION</th>
-                        <td>_tanggal_direvisi_optional_</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="profil-foto">
-                <div class="title">_title_</div>
-                <div class="box-landscape"></div>
-            </div>
-        </div>
-        <div class="page">
-            <div class="profil">
-                <table border="1" width="100%">
-                    <tr >
-                        <th rowspan="3" width="50%">
-                            <div class="box-logo">&nbsp;</div>
-                        </th>
-                        <th width="22%">SITE ID</th>
-                        <td width="28%">_ID_SITUS_</td>
-                    </tr>
-                    <tr>
-                        <th >SITE NAME</th>
-                        <td >_nama_situs_</td>
-                    </tr>
-                    <tr>
-                        <th >TOWER TYPE</th>
-                        <td >_jenis_tower_</td>
-                    </tr>
-                    <tr>
-                        <td>_judul_</td>
-                        <th>DATA ISSUED</th>
-                        <td>_tanggal_dibuat_</td>
-                    </tr>
-                    <tr>
-                        <td><b>Addres : </b>_alamat_</td>
-                        <th>DATA REVISION</th>
-                        <td>_tanggal_direvisi_optional_</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="profil-foto">
-                <table border="1" width="100%">
-                    <tr>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                    </tr>
-                    <tr>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <div class="page">
-            <div class="profil">
-                <table border="1" width="100%">
-                    <tr >
-                        <th rowspan="3" width="50%">
-                            <div class="box-logo">&nbsp;</div>
-                        </th>
-                        <th width="22%">SITE ID</th>
-                        <td width="28%">_ID_SITUS_</td>
-                    </tr>
-                    <tr>
-                        <th >SITE NAME</th>
-                        <td >_nama_situs_</td>
-                    </tr>
-                    <tr>
-                        <th >TOWER TYPE</th>
-                        <td >_jenis_tower_</td>
-                    </tr>
-                    <tr>
-                        <td>_judul_</td>
-                        <th>DATA ISSUED</th>
-                        <td>_tanggal_dibuat_</td>
-                    </tr>
-                    <tr>
-                        <td><b>Addres : </b>_alamat_</td>
-                        <th>DATA REVISION</th>
-                        <td>_tanggal_direvisi_optional_</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="profil-foto">
-                <table border="1" width="100%">
-                    <tr>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                    </tr>
-                    <tr>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                    </tr>
-                    <tr>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                        <td width="50%">    
-                            <div class="box"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                        <td>_PANORAMIK_VIEW_X_&deg;_</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </main>
-</body>
-</html>
+@push('scripts')
+    <script>
+    window.addEventListener("load", window.print());
+  </script>
+@endpush
