@@ -295,3 +295,6 @@ Route::get('penyesuaian/print/pemasukan/{keyword?}', function($tahun="2019") {
             ->get();
     return view('export.coba_pemasukan', compact('title', 'datas'));
 });
+
+route::get('registrasi','RegistrasiPembayaranController@index')->name('registrasi.index');
+route::post('registrasi','RegistrasiPembayaranController@store')->name('registrasi.store');

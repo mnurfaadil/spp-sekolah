@@ -17,6 +17,7 @@
                     <li><a title="Data Master Jurusan" href="{{ route('majors.index') }}"><span class="mini-sub-pro">Jurusan</span></a></li>
                     <li><a title="Data Master Angkatan" href="{{ route('angkatan.index') }}"><span class="mini-sub-pro">Angkatan</span></a></li>
                     <li><a title="Data Master Kategori Pembiayaan" href="{{ url('financing') }}"><span class="mini-sub-pro">Kategori
+                    <li><a title="Data Master Kategori Pembiayaan" href="{{ url('registrasi') }}"><span class="mini-sub-pro">Registrasi Pembayaran
                                 Pembiayaan</span></a></li>
                 </ul>
             </li>
