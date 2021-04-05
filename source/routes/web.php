@@ -298,3 +298,5 @@ Route::get('penyesuaian/print/pemasukan/{keyword?}', function($tahun="2019") {
 
 route::get('registrasi','RegistrasiPembayaranController@index')->name('registrasi.index');
 route::post('registrasi','RegistrasiPembayaranController@store')->name('registrasi.store');
+
+bjbbjbbkbbbjk
