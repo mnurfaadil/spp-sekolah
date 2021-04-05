@@ -1,0 +1,8 @@
+Tugas :
+
+1. mengatasi ngeload lama 
+- Ngeload di bagian rekap detail (contoh ada di pembayaran)
+- Ngeload di bagan pembayaran di bagian proses
+
+2. menambahkan menu register pembiayaan
+- isinya nama siswa dan kategori pembiayaan yg diambil 

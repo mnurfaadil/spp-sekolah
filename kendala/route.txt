@@ -1,0 +1,2 @@
+route::get('registrasi','RegistrasiPembayaranController@index')->name('registrasi.index');
+route::post('registrasi','RegistrasiPembayaranController@store')->name('registrasi.store');
