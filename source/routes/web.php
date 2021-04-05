@@ -295,3 +295,7 @@ Route::get('penyesuaian/print/pemasukan/{keyword?}', function($tahun="2019") {
             ->get();
     return view('export.coba_pemasukan', compact('title', 'datas'));
 });
+
+Route::get('cek', function (){
+    return "oke";
+});
