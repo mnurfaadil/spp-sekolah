@@ -71,7 +71,7 @@ SPP | Laporan Pemasukan
                                                 $url = "nota/{$data->pemasukan->foto}";
                                                 $url = asset('').$url;
                                             }
-                                            $temp = strtotime($data->created_at);
+                                            $temp = strtotime($data->updated_at);
                                             $tanggal = date('j - M - Y', $temp); 
                                         @endphp
                                         <tr>
